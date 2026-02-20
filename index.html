@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SAME - Dashboard de Incidentes</title>
     
-    <!-- Librerías: Gráficos y Procesamiento de PDF -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
@@ -28,7 +27,6 @@
             min-height: 100vh;
         }
 
-        /* HEADER */
         header {
             background-color: var(--header-bg);
             padding: 10px 50px;
@@ -39,7 +37,6 @@
         }
         .logo { height: 60px; }
 
-        /* SECCIÓN PRINCIPAL */
         main { padding: 40px; flex-grow: 1; }
 
         .hero {
@@ -49,7 +46,6 @@
             align-items: flex-start;
         }
 
-        /* Cuadro Naranja */
         .orange-box {
             background-color: var(--orange-card);
             color: #333;
@@ -63,7 +59,6 @@
         .orange-box p { font-size: 1rem; line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
         .pdf-link { color: #333; font-weight: bold; text-decoration: underline; font-size: 0.9rem; }
 
-        /* Título y Selector */
         .title-section h1 { font-size: 2.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
         .title-section .subtitle { font-size: 1.1rem; opacity: 0.9; margin: 10px 0 25px 0; }
         
@@ -79,11 +74,10 @@
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            width: 200px;
+            width: 250px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
 
-        /* GRID DE GRÁFICOS */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -112,16 +106,12 @@
 
         .chart-container { height: 180px; position: relative; }
 
-        /* PICO FRECUENCIA */
         .pico-data { text-align: center; margin-top: 30px; }
         .pico-dia { font-size: 2.8rem; color: #e74c3c; font-weight: bold; }
         .pico-hora { font-size: 1.2rem; color: #666; }
 
-        /* FOOTER */
         footer { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px;}
         .btn-lang { padding: 6px 12px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; background: white; color: #333; margin-left: 5px;}
-        
-        #loader { font-style: italic; font-size: 0.9rem; color: #333; }
     </style>
 </head>
 <body>
@@ -133,54 +123,30 @@
 
     <main>
         <div class="hero">
-            <!-- CUADRO NARANJA -->
             <div class="orange-box">
                 <h2>Informe mensual</h2>
-                <p id="parrafo-pdf"><span id="loader">Cargando resumen del reporte...</span></p>
+                <p id="parrafo-pdf">Cargando información del reporte...</p>
                 <a id="pdf-url" href="#" target="_blank" class="pdf-link">Ver informe completo</a>
             </div>
 
-            <!-- TÍTULO Y SELECTOR -->
             <div class="title-section">
                 <h1>INCIDENTES DE TRÁNSITO</h1>
                 <p class="subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
                 
                 <div class="period-container">
-                    <label>Periodo</label>
-                    <select id="selector-periodo" onchange="cargarPDF(this.value)">
-                        <option value="2026-01">Enero 2026</option>
-                        <option value="2026-02">Febrero 2026</option>
-                        <!-- Agregar más opciones aquí mensualmente -->
-                    </select>
+                    <label>Seleccionar Periodo</label>
+                    <!-- El selector se llena automáticamente con JS -->
+                    <select id="selector-periodo" onchange="cargarPDF(this.value)"></select>
                 </div>
             </div>
         </div>
 
-        <!-- GRÁFICOS -->
         <div class="dashboard-grid">
-            <div class="card">
-                <h3>Tipos de Incidentes</h3>
-                <div class="chart-container"><canvas id="c1"></canvas></div>
-            </div>
-            <div class="card">
-                <h3>Participación Vehicular</h3>
-                <div class="chart-container"><canvas id="c2"></canvas></div>
-            </div>
-            <div class="card">
-                <h3>Distribución por Comuna</h3>
-                <div class="chart-container"><canvas id="c3"></canvas></div>
-            </div>
-            <div class="card">
-                <h3>Pico de Frecuencia</h3>
-                <div class="pico-data">
-                    <div class="pico-dia" id="p-dia">---</div>
-                    <div class="pico-hora" id="p-hora">--:-- — --:-- hs</div>
-                </div>
-            </div>
-            <div class="card">
-                <h3>Solicitudes vs Pacientes</h3>
-                <div class="chart-container"><canvas id="c4"></canvas></div>
-            </div>
+            <div class="card"><h3>Tipos de Incidentes</h3><div class="chart-container"><canvas id="c1"></canvas></div></div>
+            <div class="card"><h3>Participación Vehicular</h3><div class="chart-container"><canvas id="c2"></canvas></div></div>
+            <div class="card"><h3>Distribución por Comuna</h3><div class="chart-container"><canvas id="c3"></canvas></div></div>
+            <div class="card"><h3>Pico de Frecuencia</h3><div class="pico-data"><div class="pico-dia" id="p-dia">---</div><div class="pico-hora" id="p-hora">--:-- hs</div></div></div>
+            <div class="card"><h3>Solicitudes vs Pacientes</h3><div class="chart-container"><canvas id="c4"></canvas></div></div>
             <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
                 <h3>Mapa Interactivo</h3>
                 <button class="btn-lang" style="background:#242f48; color:white; padding: 15px 30px; border-radius: 10px;" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">🌐 VER MAPA</button>
@@ -189,29 +155,50 @@
     </main>
 
     <footer>
-        <div style="font-size: 0.85rem; opacity: 0.7;">
-            SAME / ECUES (Equipo de Comunicación Unificada en Emergencias Sanitarias)
-        </div>
-        <div>
-            <button class="btn-lang">ES</button>
-            <button class="btn-lang">EN</button>
-            <button class="btn-lang">PT</button>
-        </div>
+        <div style="font-size: 0.85rem; opacity: 0.7;">SAME / ECUES (Equipo de Comunicación Unificada en Emergencias Sanitarias)</div>
+        <div><button class="btn-lang">ES</button><button class="btn-lang">EN</button><button class="btn-lang">PT</button></div>
     </footer>
 
     <script>
+        // ==========================================
+        // CONFIGURACIÓN DE PERIODOS
+        // Cada vez que subas un PDF a la carpeta /reportes/, 
+        // agrega el nombre (sin el .pdf) a esta lista:
+        // ==========================================
+        const periodosDisponibles = [
+            "2025-12",
+            "2026-01", 
+            "2026-02"
+        ];
+
+        // --- INICIALIZACIÓN ---
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         let charts = {};
 
+        function inicializarMenu() {
+            const selector = document.getElementById('selector-periodo');
+            // Ordenar de más reciente a más antiguo
+            periodosDisponibles.sort().reverse();
+
+            periodosDisponibles.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p;
+                opt.innerHTML = p.replace('-', ' - ');
+                selector.appendChild(opt);
+            });
+
+            // Cargar el más reciente por defecto
+            cargarPDF(periodosDisponibles[0]);
+        }
+
         async function cargarPDF(mes) {
-            const url = `reportes/${mes}.pdf`; // Los archivos deben estar en la carpeta /reportes/
+            const url = `reportes/${mes}.pdf`;
             document.getElementById('pdf-url').href = url;
-            document.getElementById('parrafo-pdf').innerHTML = '<span id="loader">Extrayendo información...</span>';
+            document.getElementById('parrafo-pdf').innerText = 'Extrayendo información del PDF...';
 
             try {
                 const response = await fetch(url);
-                if (!response.ok) throw new Error("No se encontró el archivo");
-                
+                if (!response.ok) throw new Error();
                 const data = await response.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({data}).promise;
                 
@@ -221,47 +208,45 @@
                     const content = await page.getTextContent();
                     textoCompleto += content.items.map(item => item.str).join(" ");
                 }
-                
                 procesarYMostrar(textoCompleto);
             } catch (e) {
-                document.getElementById('parrafo-pdf').innerText = "Error: Asegúrate de que el archivo PDF esté en la carpeta /reportes/ de tu servidor.";
+                document.getElementById('parrafo-pdf').innerText = "Error: No se pudo leer el archivo reportes/" + mes + ".pdf";
             }
         }
 
         function procesarYMostrar(textoRaw) {
             const texto = textoRaw.replace(/\s+/g, ' ');
 
-            // 1. Extraer primer párrafo (Desde "En el mes de" hasta el primer punto seguido de "pacientes")
-            const regexParrafo = /(En el mes de.*?pacientes\.)/i;
-            const matchParrafo = texto.match(regexParrafo);
-            document.getElementById('parrafo-pdf').innerText = matchParrafo ? matchParrafo[1] : "No se pudo extraer el resumen del PDF.";
+            // Extraer párrafo naranja (En el mes de... pacientes.)
+            const matchParrafo = texto.match(/(En el mes de.*?pacientes\.)/i);
+            document.getElementById('parrafo-pdf').innerText = matchParrafo ? matchParrafo[1] : "Resumen no encontrado.";
 
-            // 2. Extraer Números para Gráficos
-            const solicitudes = texto.match(/total de (\d+) solicitudes/i) ? texto.match(/total de (\d+) solicitudes/i)[1] : 0;
-            const pacientes = texto.match(/total de (\d+) pacientes/i) ? texto.match(/total de (\d+) pacientes/i)[1] : 0;
-            const autos = texto.match(/automóviles corresponden a (\d+)/i) ? texto.match(/automóviles corresponden a (\d+)/i)[1] : 0;
-            const motos = texto.match(/motovehículos, (\d+)/i) ? texto.match(/motovehículos, (\d+)/i)[1] : 0;
-            const atropellos = texto.match(/representan (\d+) casos/i) ? texto.match(/representan (\d+) casos/i)[1] : 0;
+            // Extraer Números
+            const sol = texto.match(/total de (\d+) solicitudes/i) ? texto.match(/total de (\d+) solicitudes/i)[1] : 0;
+            const pac = texto.match(/total de (\d+) pacientes/i) ? texto.match(/total de (\d+) pacientes/i)[1] : 0;
+            const aut = texto.match(/automóviles corresponden a (\d+)/i) ? texto.match(/automóviles corresponden a (\d+)/i)[1] : 0;
+            const mot = texto.match(/motovehículos, (\d+)/i) ? texto.match(/motovehículos, (\d+)/i)[1] : 0;
+            const atr = texto.match(/representan (\d+) casos/i) ? texto.match(/representan (\d+) casos/i)[1] : 0;
 
-            // 3. Pico Frecuencia
+            // Extraer Pico
             const dia = texto.match(/los (\w+) entre/i) ? texto.match(/los (\w+) entre/i)[1] : "---";
             const hora = texto.match(/entre las (\d+) y las (\d+)/i) ? `${texto.match(/entre las (\d+) y las (\d+)/i)[1]}:00 — ${texto.match(/entre las (\d+) y las (\d+)/i)[2]}:00 hs` : "--:--";
             
             document.getElementById('p-dia').innerText = dia;
             document.getElementById('p-hora').innerText = hora;
 
-            dibujarTodo(solicitudes, pacientes, autos, motos, atropellos);
+            dibujarGraficos(sol, pac, aut, mot, atr);
         }
 
-        function dibujarTodo(sol, pac, aut, mot, atr) {
+        function dibujarGraficos(sol, pac, aut, mot, atr) {
             if(charts.c1) Object.values(charts).forEach(c => c.destroy());
 
-            const baseOptions = { maintainAspectRatio: false, plugins: { legend: { display: false } } };
+            const baseOpt = { maintainAspectRatio: false, plugins: { legend: { display: false } } };
 
             charts.c1 = new Chart(document.getElementById('c1'), {
                 type: 'bar',
                 data: { labels: ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], datasets: [{ data: [464, 238, 178, 142], backgroundColor: '#242f48' }] },
-                options: baseOptions
+                options: baseOpt
             });
 
             charts.c2 = new Chart(document.getElementById('c2'), {
@@ -273,18 +258,17 @@
             charts.c3 = new Chart(document.getElementById('c3'), {
                 type: 'bar',
                 data: { labels: ['C1', 'C9', 'C14', 'C4'], datasets: [{ data: [100, 85, 75, 65], backgroundColor: '#f5a65b' }] },
-                options: { indexAxis: 'y', ...baseOptions }
+                options: { indexAxis: 'y', ...baseOpt }
             });
 
             charts.c4 = new Chart(document.getElementById('c4'), {
                 type: 'bar',
                 data: { labels: ['Solicitudes', 'Pacientes'], datasets: [{ data: [sol, pac], backgroundColor: '#27ae60' }] },
-                options: baseOptions
+                options: baseOpt
             });
         }
 
-        // Carga inicial (Enero)
-        window.onload = () => cargarPDF('2026-01');
+        window.onload = inicializarMenu;
     </script>
 </body>
 </html>
