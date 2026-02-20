@@ -3,29 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAME - Dashboard Automático</title>
+    <title>SAME - Dashboard de Incidentes</title>
     
-    <!-- Librerías -->
+    <!-- Librerías: Gráficos y Procesamiento de PDF -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
-        :root { --bg-navy: #2b3a51; --orange: #f5a65b; --white: #ffffff; }
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-navy); color: white; }
-        header { background: white; padding: 10px 50px; display: flex; justify-content: space-between; align-items: center; }
+        :root {
+            --bg-navy: #2b3a51;
+            --orange-card: #f5a65b;
+            --white-card: #ffffff;
+            --header-bg: #ffffff;
+            --text-gray: #555;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg-navy);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* HEADER */
+        header {
+            background-color: var(--header-bg);
+            padding: 10px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
         .logo { height: 60px; }
-        main { padding: 40px; }
-        .hero { display: flex; gap: 40px; margin-bottom: 40px; }
-        .orange-box { background: var(--orange); color: #333; padding: 25px; border-radius: 15px; width: 380px; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .card { background: white; border-radius: 15px; padding: 20px; color: #333; min-height: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .card h3 { margin: 0 0 15px 0; font-size: 0.8rem; color: #666; text-transform: uppercase; border-left: 4px solid var(--orange); padding-left: 10px; }
+
+        /* SECCIÓN PRINCIPAL */
+        main { padding: 40px; flex-grow: 1; }
+
+        .hero {
+            display: flex;
+            gap: 50px;
+            margin-bottom: 50px;
+            align-items: flex-start;
+        }
+
+        /* Cuadro Naranja */
+        .orange-box {
+            background-color: var(--orange-card);
+            color: #333;
+            padding: 25px;
+            border-radius: 15px;
+            width: 420px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            min-height: 200px;
+        }
+        .orange-box h2 { margin: 0 0 15px 0; font-size: 1.4rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px;}
+        .orange-box p { font-size: 1rem; line-height: 1.5; margin-bottom: 20px; font-weight: 500; }
+        .pdf-link { color: #333; font-weight: bold; text-decoration: underline; font-size: 0.9rem; }
+
+        /* Título y Selector */
+        .title-section h1 { font-size: 2.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .title-section .subtitle { font-size: 1.1rem; opacity: 0.9; margin: 10px 0 25px 0; }
+        
+        .period-container { display: flex; flex-direction: column; gap: 5px; }
+        .period-container label { font-size: 0.75rem; font-weight: bold; opacity: 0.8; text-transform: uppercase; }
+        
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: none;
+            background: #1a2436;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 200px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        /* GRID DE GRÁFICOS */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--white-card);
+            border-radius: 15px;
+            padding: 20px;
+            color: #333;
+            min-height: 260px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .card h3 {
+            margin: 0 0 15px 0;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            border-left: 4px solid var(--orange-card);
+            padding-left: 10px;
+        }
+
         .chart-container { height: 180px; position: relative; }
-        .pico-dia { font-size: 2.5rem; color: #e74c3c; font-weight: bold; text-align: center; margin-top: 20px; }
-        .pico-hora { text-align: center; color: #666; }
-        footer { padding: 20px 50px; display: flex; gap: 20px; align-items: center; }
-        select, button { padding: 8px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; }
-        #debug-info { color: #f1c40f; font-size: 0.8rem; margin-top: 10px; }
+
+        /* PICO FRECUENCIA */
+        .pico-data { text-align: center; margin-top: 30px; }
+        .pico-dia { font-size: 2.8rem; color: #e74c3c; font-weight: bold; }
+        .pico-hora { font-size: 1.2rem; color: #666; }
+
+        /* FOOTER */
+        footer { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px;}
+        .btn-lang { padding: 6px 12px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; background: white; color: #333; margin-left: 5px;}
+        
+        #loader { font-style: italic; font-size: 0.9rem; color: #333; }
     </style>
 </head>
 <body>
@@ -37,128 +133,158 @@
 
     <main>
         <div class="hero">
+            <!-- CUADRO NARANJA -->
             <div class="orange-box">
-                <h2 id="mes-titulo">Cargando...</h2>
-                <p id="resumen">Buscando datos en el PDF...</p>
-                <div id="debug-info">Estado: Esperando archivo...</div>
+                <h2>Informe mensual</h2>
+                <p id="parrafo-pdf"><span id="loader">Cargando resumen del reporte...</span></p>
+                <a id="pdf-url" href="#" target="_blank" class="pdf-link">Ver informe completo</a>
             </div>
-            <div>
+
+            <!-- TÍTULO Y SELECTOR -->
+            <div class="title-section">
                 <h1>INCIDENTES DE TRÁNSITO</h1>
-                <p>Información procesada automáticamente desde reportes PDF en la carpeta /reportes/.</p>
+                <p class="subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
+                
+                <div class="period-container">
+                    <label>Periodo</label>
+                    <select id="selector-periodo" onchange="cargarPDF(this.value)">
+                        <option value="2026-01">Enero 2026</option>
+                        <option value="2026-02">Febrero 2026</option>
+                        <!-- Agregar más opciones aquí mensualmente -->
+                    </select>
+                </div>
             </div>
         </div>
 
+        <!-- GRÁFICOS -->
         <div class="dashboard-grid">
-            <div class="card"><h3>Tipos de Incidentes</h3><div class="chart-container"><canvas id="c1"></canvas></div></div>
-            <div class="card"><h3>Participación Vehicular</h3><div class="chart-container"><canvas id="c2"></canvas></div></div>
-            <div class="card"><h3>Distribución por Comuna</h3><div class="chart-container"><canvas id="c3"></canvas></div></div>
-            <div class="card"><h3>Pico de Frecuencia</h3><div class="pico-dia" id="p-dia">---</div><div class="pico-hora" id="p-hora">--:--</div></div>
-            <div class="card"><h3>Solicitudes vs Pacientes</h3><div class="chart-container"><canvas id="c4"></canvas></div></div>
+            <div class="card">
+                <h3>Tipos de Incidentes</h3>
+                <div class="chart-container"><canvas id="c1"></canvas></div>
+            </div>
+            <div class="card">
+                <h3>Participación Vehicular</h3>
+                <div class="chart-container"><canvas id="c2"></canvas></div>
+            </div>
+            <div class="card">
+                <h3>Distribución por Comuna</h3>
+                <div class="chart-container"><canvas id="c3"></canvas></div>
+            </div>
+            <div class="card">
+                <h3>Pico de Frecuencia</h3>
+                <div class="pico-data">
+                    <div class="pico-dia" id="p-dia">---</div>
+                    <div class="pico-hora" id="p-hora">--:-- — --:-- hs</div>
+                </div>
+            </div>
+            <div class="card">
+                <h3>Solicitudes vs Pacientes</h3>
+                <div class="chart-container"><canvas id="c4"></canvas></div>
+            </div>
             <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
                 <h3>Mapa Interactivo</h3>
-                <button style="background:var(--bg-navy); color:white;" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">ABRIR MAPA</button>
+                <button class="btn-lang" style="background:#242f48; color:white; padding: 15px 30px; border-radius: 10px;" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">🌐 VER MAPA</button>
             </div>
         </div>
     </main>
 
     <footer>
-        <select id="sel-mes" onchange="iniciarCarga(this.value)">
-            <option value="2026-01">Enero 2026</option>
-            <option value="2026-02">Febrero 2026</option>
-        </select>
-        <span>SAME / ECUES - 2026</span>
+        <div style="font-size: 0.85rem; opacity: 0.7;">
+            SAME / ECUES (Equipo de Comunicación Unificada en Emergencias Sanitarias)
+        </div>
+        <div>
+            <button class="btn-lang">ES</button>
+            <button class="btn-lang">EN</button>
+            <button class="btn-lang">PT</button>
+        </div>
     </footer>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         let charts = {};
 
-        async function iniciarCarga(mes) {
-            const status = document.getElementById('debug-info');
-            status.innerText = "Estado: Intentando leer reportes/" + mes + ".pdf";
-            
+        async function cargarPDF(mes) {
+            const url = `reportes/${mes}.pdf`; // Los archivos deben estar en la carpeta /reportes/
+            document.getElementById('pdf-url').href = url;
+            document.getElementById('parrafo-pdf').innerHTML = '<span id="loader">Extrayendo información...</span>';
+
             try {
-                // El PDF debe estar en una carpeta llamada 'reportes' junto al index.html
-                const url = `reportes/${mes}.pdf`;
                 const response = await fetch(url);
-                
-                if (!response.ok) throw new Error("No se encontró el archivo PDF en " + url);
+                if (!response.ok) throw new Error("No se encontró el archivo");
                 
                 const data = await response.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({data}).promise;
-                let text = "";
                 
+                let textoCompleto = "";
                 for(let i=1; i<=pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
-                    text += content.items.map(item => item.str).join(" ");
+                    textoCompleto += content.items.map(item => item.str).join(" ");
                 }
-
-                console.log("Texto extraído con éxito.");
-                status.innerText = "Estado: Texto extraído. Buscando datos...";
-                procesarTexto(text, mes);
-
+                
+                procesarYMostrar(textoCompleto);
             } catch (e) {
-                console.error(e);
-                status.innerText = "Error: " + e.message + ". ¿Estás usando un servidor local o GitHub?";
+                document.getElementById('parrafo-pdf').innerText = "Error: Asegúrate de que el archivo PDF esté en la carpeta /reportes/ de tu servidor.";
             }
         }
 
-        function procesarTexto(t, mes) {
-            // Limpiamos el texto para evitar errores de espacios o saltos de línea
-            const texto = t.replace(/\s+/g, ' ');
+        function procesarYMostrar(textoRaw) {
+            const texto = textoRaw.replace(/\s+/g, ' ');
 
-            // EXTRACCIÓN CON REGEX FLEXIBLE (Ignora mayúsculas y acentos)
-            const getNum = (regex) => {
-                const res = texto.match(regex);
-                return res ? parseInt(res[1]) : 0;
-            };
+            // 1. Extraer primer párrafo (Desde "En el mes de" hasta el primer punto seguido de "pacientes")
+            const regexParrafo = /(En el mes de.*?pacientes\.)/i;
+            const matchParrafo = texto.match(regexParrafo);
+            document.getElementById('parrafo-pdf').innerText = matchParrafo ? matchParrafo[1] : "No se pudo extraer el resumen del PDF.";
 
-            const solicitudes = getNum(/total de (\d+) solicitudes/i);
-            const pacientes = getNum(/total de (\d+) pacientes/i);
-            const autos = getNum(/autom[oó]viles corresponden a (\d+)/i);
-            const motos = getNum(/motoveh[ií]culos, (\d+)/i);
-            const atropellos = getNum(/representan (\d+) casos/i);
+            // 2. Extraer Números para Gráficos
+            const solicitudes = texto.match(/total de (\d+) solicitudes/i) ? texto.match(/total de (\d+) solicitudes/i)[1] : 0;
+            const pacientes = texto.match(/total de (\d+) pacientes/i) ? texto.match(/total de (\d+) pacientes/i)[1] : 0;
+            const autos = texto.match(/automóviles corresponden a (\d+)/i) ? texto.match(/automóviles corresponden a (\d+)/i)[1] : 0;
+            const motos = texto.match(/motovehículos, (\d+)/i) ? texto.match(/motovehículos, (\d+)/i)[1] : 0;
+            const atropellos = texto.match(/representan (\d+) casos/i) ? texto.match(/representan (\d+) casos/i)[1] : 0;
 
-            // Pico Frecuencia
-            const diaMatch = texto.match(/los (\w+) entre/i);
-            const horaMatch = texto.match(/entre las (\d+) y las (\d+)/i);
+            // 3. Pico Frecuencia
+            const dia = texto.match(/los (\w+) entre/i) ? texto.match(/los (\w+) entre/i)[1] : "---";
+            const hora = texto.match(/entre las (\d+) y las (\d+)/i) ? `${texto.match(/entre las (\d+) y las (\d+)/i)[1]}:00 — ${texto.match(/entre las (\d+) y las (\d+)/i)[2]}:00 hs` : "--:--";
             
-            document.getElementById('p-dia').innerText = diaMatch ? diaMatch[1] : "---";
-            document.getElementById('p-hora').innerText = horaMatch ? `${horaMatch[1]}:00 - ${horaMatch[2]}:00 hs` : "--:--";
-            
-            document.getElementById('mes-titulo').innerText = mes;
-            document.getElementById('resumen').innerText = `Se detectaron ${solicitudes} solicitudes y ${pacientes} pacientes.`;
-            document.getElementById('debug-info').innerText = "Estado: ¡Dashboard actualizado!";
+            document.getElementById('p-dia').innerText = dia;
+            document.getElementById('p-hora').innerText = hora;
 
-            dibujarGráficos({
-                solicitudes, pacientes, 
-                vehiculos: [autos, motos, atropellos]
-            });
+            dibujarTodo(solicitudes, pacientes, autos, motos, atropellos);
         }
 
-        function dibujarGráficos(d) {
-            // Destruir gráficos anteriores para evitar errores
+        function dibujarTodo(sol, pac, aut, mot, atr) {
             if(charts.c1) Object.values(charts).forEach(c => c.destroy());
 
-            const config = (ctx, type, labels, data, color) => new Chart(ctx, {
-                type: type,
-                data: { labels, datasets: [{ data, backgroundColor: color, borderRadius: 5 }] },
-                options: { maintainAspectRatio: false, plugins: { legend: { display: type === 'doughnut' } } }
+            const baseOptions = { maintainAspectRatio: false, plugins: { legend: { display: false } } };
+
+            charts.c1 = new Chart(document.getElementById('c1'), {
+                type: 'bar',
+                data: { labels: ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], datasets: [{ data: [464, 238, 178, 142], backgroundColor: '#242f48' }] },
+                options: baseOptions
             });
 
-            charts.c1 = config(document.getElementById('c1'), 'bar', ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], [464, 238, 178, 142], '#242f48');
-            charts.c2 = config(document.getElementById('c2'), 'doughnut', ['Autos', 'Motos', 'Atropellos'], d.vehiculos, ['#e74c3c', '#f5a65b', '#27ae60']);
-            charts.c3 = config(document.getElementById('c3'), 'bar', ['Comuna 1', 'Comuna 9', 'Comuna 14', 'Comuna 4'], [100, 85, 75, 65], '#f5a65b');
-            charts.c4 = config(document.getElementById('c4'), 'bar', ['Solicitudes', 'Pacientes'], [d.solicitudes, d.pacientes], '#27ae60');
-            
-            // Gráfico 3 necesita ser horizontal
-            charts.c3.options.indexAxis = 'y';
-            charts.c3.update();
+            charts.c2 = new Chart(document.getElementById('c2'), {
+                type: 'doughnut',
+                data: { labels: ['Autos', 'Motos', 'Atropellos'], datasets: [{ data: [aut, mot, atr], backgroundColor: ['#e74c3c', '#f5a65b', '#27ae60'] }] },
+                options: { maintainAspectRatio: false }
+            });
+
+            charts.c3 = new Chart(document.getElementById('c3'), {
+                type: 'bar',
+                data: { labels: ['C1', 'C9', 'C14', 'C4'], datasets: [{ data: [100, 85, 75, 65], backgroundColor: '#f5a65b' }] },
+                options: { indexAxis: 'y', ...baseOptions }
+            });
+
+            charts.c4 = new Chart(document.getElementById('c4'), {
+                type: 'bar',
+                data: { labels: ['Solicitudes', 'Pacientes'], datasets: [{ data: [sol, pac], backgroundColor: '#27ae60' }] },
+                options: baseOptions
+            });
         }
 
-        // Carga automática inicial
-        window.onload = () => iniciarCarga('2026-01');
+        // Carga inicial (Enero)
+        window.onload = () => cargarPDF('2026-01');
     </script>
 </body>
 </html>
