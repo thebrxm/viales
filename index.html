@@ -3,31 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAME - Dashboard Interactivo</title>
+    <title>SAME - Dashboard Interactivo Profesional</title>
     
+    <!-- Librerías -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
     <style>
-        :root { --bg: #2b3a51; --orange: #f5a65b; --white: #ffffff; }
+        :root { --bg: #2b3a51; --orange: #f5a65b; --white: #ffffff; --navy: #242f48; }
         body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: white; min-height: 100vh; }
-        header { background: white; padding: 10px 50px; display: flex; justify-content: space-between; align-items: center; }
+        
+        header { background: white; padding: 10px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         .logo { height: 60px; }
+
         main { padding: 40px; }
+
+        /* HERO AREA */
         .hero { display: flex; gap: 40px; margin-bottom: 40px; align-items: flex-start; }
+        
         .orange-box { background: var(--orange); color: #333; padding: 25px; border-radius: 15px; width: 420px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-        .orange-box h2 { margin: 0 0 10px; font-size: 1.4rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; }
-        .title-section h1 { font-size: 2.8rem; margin: 0; text-transform: uppercase; }
-        .subtitle { font-size: 1.1rem; opacity: 0.9; margin: 10px 0 20px; }
-        select { padding: 10px; border-radius: 8px; background: #1a2436; color: white; border: none; font-weight: bold; width: 220px; cursor: pointer; }
-        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; max-width: 1250px; margin: 0 auto; }
-        .card { background: white; border-radius: 15px; padding: 20px; color: #333; min-height: 250px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
-        .card h3 { margin: 0 0 15px; font-size: 0.8rem; color: #666; text-transform: uppercase; border-left: 4px solid var(--orange); padding-left: 10px; }
-        .chart-wrap { height: 180px; position: relative; }
-        .pico-val { text-align: center; margin-top: 25px; }
-        .pico-dia { font-size: 2.8rem; color: #e74c3c; font-weight: bold; }
-        .pico-hora { color: #666; font-size: 1.2rem; }
-        footer { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; opacity: 0.7; font-size: 0.8rem; }
+        .orange-box h2 { margin: 0 0 10px; font-size: 1.3rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; text-transform: uppercase; }
+        .orange-box p { font-size: 0.95rem; line-height: 1.5; font-weight: 500; }
+
+        .title-section h1 { font-size: 2.8rem; margin: 0; text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { font-size: 1.1rem; opacity: 0.8; margin: 10px 0 20px; }
+        
+        select { padding: 12px; border-radius: 8px; background: #1a2436; color: white; border: 1px solid rgba(255,255,255,0.2); font-weight: bold; width: 250px; cursor: pointer; font-size: 1rem; }
+
+        /* DASHBOARD GRID */
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; max-width: 1300px; margin: 0 auto; }
+        .card { background: white; border-radius: 15px; padding: 20px; color: #333; min-height: 280px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); display: flex; flex-direction: column; }
+        .card h3 { margin: 0 0 15px; font-size: 0.8rem; color: #777; text-transform: uppercase; border-left: 4px solid var(--orange); padding-left: 10px; }
+        .chart-wrap { flex-grow: 1; position: relative; min-height: 180px; }
+
+        /* ESTILO LISTA COMUNAS */
+        .comuna-row { margin-bottom: 15px; }
+        .comuna-info { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; color: var(--navy); }
+        .progress-bg { background: #eee; height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-fill { background: var(--orange); height: 100%; border-radius: 5px; width: 0%; transition: width 1s ease-in-out; }
+
+        /* PICO FRECUENCIA */
+        .pico-val { text-align: center; margin: auto 0; }
+        .pico-dia { font-size: 3rem; color: #e74c3c; font-weight: bold; }
+        .pico-hora { color: #555; font-size: 1.3rem; margin-top: 5px; }
+
+        footer { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); margin-top: 20px; font-size: 0.85rem; opacity: 0.7; }
+        .btn-lang { background: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-left: 5px; }
     </style>
 </head>
 <body>
@@ -41,46 +62,81 @@
         <div class="hero">
             <div class="orange-box">
                 <h2>Informe mensual</h2>
-                <p id="txt-parrafo">Cargando reporte...</p>
-                <a id="lnk-pdf" href="#" target="_blank" style="color:#333; font-weight:bold;">Ver informe completo</a>
+                <p id="txt-parrafo">Cargando datos del PDF...</p>
+                <a id="lnk-pdf" href="#" target="_blank" style="color:#333; font-size: 0.8rem; font-weight:bold;">📄 VER PDF COMPLETO</a>
             </div>
 
             <div class="title-section">
                 <h1>INCIDENTES DE TRÁNSITO</h1>
                 <p class="subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
                 <div style="display:flex; flex-direction:column; gap:5px;">
-                    <label style="font-size:0.7rem; font-weight:bold;">PERIODO</label>
+                    <label style="font-size:0.7rem; font-weight:bold; opacity: 0.7;">PERIODO</label>
                     <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
                 </div>
             </div>
         </div>
 
         <div class="grid">
-            <div class="card"><h3>Tipos de Incidentes (%)</h3><div class="chart-wrap"><canvas id="c1"></canvas></div></div>
-            <div class="card"><h3>Participación Vehicular (Casos)</h3><div class="chart-wrap"><canvas id="c2"></canvas></div></div>
-            <div class="card"><h3>Distribución por Comuna</h3><div class="chart-wrap"><canvas id="c3"></canvas></div></div>
-            <div class="card"><h3>Pico de Frecuencia</h3><div class="pico-val"><div class="pico-dia" id="p-dia">---</div><div class="pico-hora" id="p-hora">--:-- hs</div></div></div>
-            <div class="card"><h3>Solicitudes vs Pacientes</h3><div class="chart-wrap"><canvas id="c4"></canvas></div></div>
-            <div class="card" style="display:flex; flex-direction:column; justify-content:center; align-items:center;">
+            <!-- Gráfico 1 -->
+            <div class="card">
+                <h3>Tipos de Incidentes (%)</h3>
+                <div class="chart-wrap"><canvas id="c1"></canvas></div>
+            </div>
+
+            <!-- Gráfico 2 -->
+            <div class="card">
+                <h3>Participación Vehicular (Casos)</h3>
+                <div class="chart-wrap"><canvas id="c2"></canvas></div>
+            </div>
+
+            <!-- Diseño Nuevo para Comunas -->
+            <div class="card">
+                <h3>Distribución por Comuna</h3>
+                <div id="comuna-list" style="margin-top:10px;">
+                    <!-- Se llena con JS -->
+                </div>
+            </div>
+
+            <!-- Pico -->
+            <div class="card">
+                <h3>Pico de Frecuencia</h3>
+                <div class="pico-val">
+                    <div class="pico-dia" id="p-dia">---</div>
+                    <div class="pico-hora" id="p-hora">--:-- hs</div>
+                </div>
+            </div>
+
+            <!-- Comparativa -->
+            <div class="card">
+                <h3>Solicitudes vs Pacientes</h3>
+                <div class="chart-wrap"><canvas id="c4"></canvas></div>
+            </div>
+
+            <!-- Mapa -->
+            <div class="card" style="justify-content:center; align-items:center;">
                 <h3>Mapa Interactivo</h3>
-                <button style="background:#242f48; color:white; padding:15px 30px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">🌐 VER MAPA</button>
+                <button style="background:var(--navy); color:white; padding:18px 35px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">🌐 ABRIR MAPA INTERACTIVO</button>
             </div>
         </div>
     </main>
 
     <footer>
         <div>SAME / ECUES (Equipo de Comunicación Unificada en Emergencias Sanitarias)</div>
-        <div>ES | EN | PT</div>
+        <div>
+            <button class="btn-lang">ES</button>
+            <button class="btn-lang">EN</button>
+            <button class="btn-lang">PT</button>
+        </div>
     </footer>
 
     <script>
-        // --- 1. LISTA DE PERIODOS (Agrega aquí tus nuevos PDFs) ---
+        // --- CONFIGURACIÓN DE PERIODOS (Añade aquí tus PDFs) ---
         const periodos = ["2025-12", "2026-01"];
 
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
         let charts = {};
 
-        function initMenu() {
+        function init() {
             const sel = document.getElementById('sel-periodo');
             periodos.sort().reverse().forEach(p => {
                 const o = document.createElement('option');
@@ -103,38 +159,58 @@
                     fullText += content.items.map(item => item.str).join(" ");
                 }
                 procesar(fullText);
-            } catch (e) { document.getElementById('txt-parrafo').innerText = "Archivo no encontrado en /reportes/"; }
+            } catch (e) { document.getElementById('txt-parrafo').innerText = "Archivo reportes/" + mes + ".pdf no encontrado."; }
         }
 
         function procesar(t) {
             const texto = t.replace(/\s+/g, ' ');
 
-            // Párrafo naranja
+            // 1. Extraer primer párrafo (En el mes de... pacientes.)
             const mP = texto.match(/(En el mes de.*?pacientes\.)/i);
             document.getElementById('txt-parrafo').innerText = mP ? mP[1] : "Resumen no disponible.";
 
-            // EXTRACCIÓN DINÁMICA DE DATOS
+            // 2. Extraer Vehículos desde "Del total de incidentes registrados..."
+            const sVehicular = texto.match(/Del total de incidentes registrados.*?(automóviles corresponden a (\d+)).*?(motovehículos, (\d+)).*?(representan (\d+) casos)/i);
+            const aut = sVehicular ? sVehicular[2] : 0;
+            const mot = sVehicular ? sVehicular[4] : 0;
+            const atr = sVehicular ? sVehicular[6] : 0;
+
+            // 3. Extraer Tipos desde "El tipo de incidente más frecuente..."
+            const sTipos = texto.match(/El tipo de incidente más frecuente.*?(Auto-Moto \((\d+,\d+)%\)).*?(auto – auto \((\d+,\d+)%\)).*?(moto \((\d+,\d+)%\)).*?(atropellamientos \((\d+,\d+)%\))/i);
+            const p1 = sTipos ? parseFloat(sTipos[3].replace(',','.')) : 0;
+            const p2 = sTipos ? parseFloat(sTipos[5].replace(',','.')) : 0;
+            const p3 = sTipos ? parseFloat(sTipos[7].replace(',','.')) : 0;
+            const p4 = sTipos ? parseFloat(sTipos[9].replace(',','.')) : 0;
+
+            // Solicitudes vs Pacientes
             const sol = texto.match(/total de (\d+) solicitudes/i) ? texto.match(/total de (\d+) solicitudes/i)[1] : 0;
             const pac = texto.match(/total de (\d+) pacientes/i) ? texto.match(/total de (\d+) pacientes/i)[1] : 0;
 
-            // Gráfico 2: Vehicular (Captura "902 casos", "629 casos", "243 casos")
-            const aut = texto.match(/automóviles corresponden a (\d+)/i) ? texto.match(/automóviles corresponden a (\d+)/i)[1] : 0;
-            const mot = texto.match(/motovehículos, (\d+)/i) ? texto.match(/motovehículos, (\d+)/i)[1] : 0;
-            const atr = texto.match(/representan (\d+) casos/i) ? texto.match(/representan (\d+) casos/i)[1] : 0;
-
-            // Gráfico 1: Tipos (Captura los porcentajes escritos)
-            const p1 = texto.match(/Auto-Moto \((\d+,\d+)%\)/i) ? parseFloat(texto.match(/Auto-Moto \((\d+,\d+)%\)/i)[1].replace(',','.')) : 0;
-            const p2 = texto.match(/auto – auto \((\d+,\d+)%\)/i) ? parseFloat(texto.match(/auto – auto \((\d+,\d+)%\)/i)[1].replace(',','.')) : 0;
-            const p3 = texto.match(/moto \((\d+,\d+)%\)/i) ? parseFloat(texto.match(/moto \((\d+,\d+)%\)/i)[1].replace(',','.')) : 0;
-            const p4 = texto.match(/atropellamientos \((\d+,\d+)%\)/i) ? parseFloat(texto.match(/atropellamientos \((\d+,\d+)%\)/i)[1].replace(',','.')) : 0;
-
-            // Pico Frecuencia
+            // Pico
             const d = texto.match(/los (\w+) entre/i) ? texto.match(/los (\w+) entre/i)[1] : "---";
             const h = texto.match(/entre las (\d+) y las (\d+)/i) ? `${texto.match(/entre las (\d+) y las (\d+)/i)[1]}:00 — ${texto.match(/entre las (\d+) y las (\d+)/i)[2]}:00 hs` : "--:--";
             document.getElementById('p-dia').innerText = d;
             document.getElementById('p-hora').innerText = h;
 
             dibujar(sol, pac, aut, mot, atr, [p1, p2, p3, p4]);
+            dibujarComunas(); // Renderiza la lista visual
+        }
+
+        function dibujarComunas() {
+            const list = document.getElementById('comuna-list');
+            const data = [
+                {n: "Comuna 1", v: "100%", p: 100},
+                {n: "Comuna 9", v: "85%", p: 85},
+                {n: "Comuna 14", v: "75%", p: 75},
+                {n: "Comuna 4", v: "65%", p: 65}
+            ];
+            
+            list.innerHTML = data.map(c => `
+                <div class="comuna-row">
+                    <div class="comuna-info"><span>${c.n}</span><span>${c.v}</span></div>
+                    <div class="progress-bg"><div class="progress-fill" style="width:${c.p}%"></div></div>
+                </div>
+            `).join('');
         }
 
         function dibujar(sol, pac, aut, mot, atr, tipos) {
@@ -149,17 +225,12 @@
                 type: 'doughnut', data: { labels: ['Autos', 'Motos', 'Atropellos'], datasets: [{ data: [aut, mot, atr], backgroundColor: ['#e74c3c', '#f5a65b', '#27ae60'] }] }, options: { maintainAspectRatio: false }
             });
 
-            // Gráfico de Comunas (Nota: Como no hay números en texto, se usan datos fijos o proporcionales)
-            charts.c3 = new Chart(document.getElementById('c3'), {
-                type: 'bar', data: { labels: ['Comuna 1', 'Comuna 9', 'Comuna 14', 'Comuna 4'], datasets: [{ data: [100, 85, 75, 65], backgroundColor: '#f5a65b' }] }, options: { indexAxis: 'y', ...opt }
-            });
-
             charts.c4 = new Chart(document.getElementById('c4'), {
                 type: 'bar', data: { labels: ['Solicitudes', 'Pacientes'], datasets: [{ data: [sol, pac], backgroundColor: '#27ae60' }] }, options: opt
             });
         }
 
-        window.onload = initMenu;
+        window.onload = init;
     </script>
 </body>
 </html>
