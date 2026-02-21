@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAME - Dashboard Interactivo</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+
+    <style>
+        :root { --bg: #2b3a51; --orange: #f5a65b; --white: #ffffff; --navy: #242f48; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: white; min-height: 100vh; }
+        header { background: white; padding: 10px 50px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .logo { height: 60px; }
+        main { padding: 40px; }
+        .hero { display: flex; gap: 40px; margin-bottom: 40px; align-items: flex-start; }
+        .orange-box { background: var(--orange); color: #333; padding: 25px; border-radius: 15px; width: 420px; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        .orange-box h2 { margin: 0 0 10px; font-size: 1.3rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; }
+        .title-section h1 { font-size: 2.8rem; margin: 0; text-transform: uppercase; }
+        .subtitle { font-size: 1.1rem; opacity: 0.8; margin: 10px 0 20px; }
+        select { padding: 12px; border-radius: 8px; background: #1a2436; color: white; border: 1px solid rgba(255,255,255,0.2); font-weight: bold; width: 250px; cursor: pointer; }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; max-width: 1300px; margin: 0 auto; }
+        .card { background: white; border-radius: 15px; padding: 20px; color: #333; min-height: 280px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .card h3 { margin: 0 0 15px; font-size: 0.8rem; color: #777; text-transform: uppercase; border-left: 4px solid var(--orange); padding-left: 10px; }
+        .chart-wrap { height: 200px; position: relative; }
+        .comuna-row { margin-bottom: 12px; }
+        .comuna-info { display: flex; justify-content: space-between; font-weight: bold; font-size: 0.85rem; margin-bottom: 4px; color: var(--navy); }
+        .progress-bg { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; }
+        .progress-fill { background: var(--orange); height: 100%; border-radius: 4px; width: 0%; transition: width 1s; }
+        .pico-val { text-align: center; margin-top: 30px; }
+        .pico-dia { font-size: 2.8rem; color: #e74c3c; font-weight: bold; }
+        footer { padding: 30px 50px; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.1); font-size: 0.8rem; opacity: 0.7; }
+        #status-msg { color: #f1c40f; font-size: 0.75rem; margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <img src="https://i.imgur.com/GXTFolo.png" alt="SAME" class="logo">
+        <img src="https://i.imgur.com/W5Mo4rc.png" alt="ECUES" class="logo">
+    </header>
+
+    <main>
+        <div class="hero">
+            <div class="orange-box">
+                <h2>Informe mensual</h2>
+                <p id="txt-parrafo">Cargando reporte...</p>
+                <div id="status-msg">Estado: Esperando...</div>
+            </div>
+
+            <div class="title-section">
+                <h1>INCIDENTES DE TRÁNSITO</h1>
+                <p class="subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label style="font-size:0.7rem; font-weight:bold; opacity: 0.7;">SELECCIONAR PERIODO</label>
+                    <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="card"><h3>Tipos de Incidentes (%)</h3><div class="chart-wrap"><canvas id="c1"></canvas></div></div>
+            <div class="card"><h3>Participación Vehicular (Casos)</h3><div class="chart-wrap"><canvas id="c2"></canvas></div></div>
+            <div class="card"><h3>Distribución por Comuna</h3><div id="comuna-list" style="margin-top:10px;"></div></div>
+            <div class="card"><h3>Pico de Frecuencia</h3><div class="pico-val"><div class="pico-dia" id="p-dia">---</div><div id="p-hora" style="color:#666">--:-- hs</div></div></div>
+            <div class="card"><h3>Solicitudes vs Pacientes</h3><div class="chart-wrap"><canvas id="c4"></canvas></div></div>
+            <div class="card" style="display:flex; justify-content:center; align-items:center;">
+                <button style="background:var(--navy); color:white; padding:18px; border:none; border-radius:10px; font-weight:bold; cursor:pointer;" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">🌐 VER MAPA INTERACTIVO</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div>SAME / ECUES (Equipo de Comunicación Unificada en Emergencias Sanitarias)</div>
+        <div>ES | EN | PT</div>
+    </footer>
+
+    <script>
+        // --- 1. LISTA DE PERIODOS (Añade aquí los nuevos archivos que subas) ---
+        const periodos = ["2026-01", "2025-12"];
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        let charts = {};
+
+        function init() {
+            const sel = document.getElementById('sel-periodo');
+            periodos.sort().reverse().forEach(p => {
+                const o = document.createElement('option');
+                o.value = p; o.innerHTML = p; sel.appendChild(o);
+            });
+            cargarPDF(periodos[0]);
+        }
+
+        async function cargarPDF(mes) {
+            const url = `reportes/${mes}.pdf`;
+            const status = document.getElementById('status-msg');
+            status.innerText = "Cargando: " + url + "...";
+            
+            try {
+                const res = await fetch(url);
+                if (!res.ok) throw new Error("No encontrado");
+                
+                const data = await res.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({data}).promise;
+                let fullText = "";
+                for(let i=1; i<=pdf.numPages; i++){
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    fullText += content.items.map(item => item.str).join(" ");
+                }
+                status.innerText = "¡PDF leído con éxito!";
+                procesar(fullText);
+            } catch (e) { 
+                status.innerText = "Error: El archivo " + url + " no existe o el navegador bloqueó la lectura local.";
+            }
+        }
+
+        function procesar(t) {
+            const texto = t.replace(/\s+/g, ' ');
+
+            // Párrafo naranja
+            const mP = texto.match(/(En el mes de.*?pacientes\.)/i);
+            document.getElementById('txt-parrafo').innerText = mP ? mP[1] : "Resumen no disponible.";
+
+            // FUNCIÓN PARA BUSCAR NÚMEROS DE FORMA FLEXIBLE
+            const findNum = (key, suffix = "") => {
+                const reg = new RegExp(`${key}.*?(\\d+${suffix})`, "i");
+                const m = texto.match(reg);
+                return m ? m[1].replace(',', '.') : 0;
+            };
+
+            // Gráfico 1: Tipos de Incidentes (%)
+            const p1 = parseFloat(findNum("Auto-Moto", ",\\d+"));
+            const p2 = parseFloat(findNum("auto.*?auto", ",\\d+"));
+            const p3 = parseFloat(findNum("ca[íi]dos.*?moto", ",\\d+"));
+            const p4 = parseFloat(findNum("atropellamientos", ",\\d+"));
+
+            // Gráfico 2: Participación Vehicular
+            const aut = findNum("autom[oó]viles.*?corresponden a");
+            const mot = findNum("motoveh[ií]culos");
+            const atr = findNum("atropellamientos.*?representan");
+
+            // Otros Datos
+            const sol = findNum("solicitudes.*?atenci[oó]n");
+            const pac = findNum("total de.*?pacientes");
+            
+            // Pico
+            const diaMatch = texto.match(/los (\w+) entre/i);
+            const horaMatch = texto.match(/las (\d+) y las (\d+)/i);
+            document.getElementById('p-dia').innerText = diaMatch ? diaMatch[1] : "---";
+            document.getElementById('p-hora').innerText = horaMatch ? `${horaMatch[1]}:00 - ${horaMatch[2]}:00 hs` : "--:--";
+
+            dibujar(sol, pac, aut, mot, atr, [p1, p2, p3, p4]);
+            dibujarComunas();
+        }
+
+        function dibujarComunas() {
+            const list = document.getElementById('comuna-list');
+            const data = [{n:"Comuna 1",p:100},{n:"Comuna 9",p:85},{n:"Comuna 14",p:75},{n:"Comuna 4",p:65}];
+            list.innerHTML = data.map(c => `
+                <div class="comuna-row">
+                    <div class="comuna-info"><span>${c.n}</span><span>${c.p}</span></div>
+                    <div class="progress-bg"><div class="progress-fill" style="width:${c.p}%"></div></div>
+                </div>
+            `).join('');
+        }
+
+        function dibujar(sol, pac, aut, mot, atr, tipos) {
+            if(charts.c1) Object.values(charts).forEach(c => c.destroy());
+            
+            const scaleCfg = { y: { beginAtZero: true, ticks: { precision: 0 } } };
+
+            charts.c1 = new Chart(document.getElementById('c1'), {
+                type: 'bar', 
+                data: { labels: ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], datasets: [{ data: tipos, backgroundColor: '#242f48' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: scaleCfg }
+            });
+
+            charts.c2 = new Chart(document.getElementById('c2'), {
+                type: 'doughnut', 
+                data: { labels: ['Autos', 'Motos', 'Atropellos'], datasets: [{ data: [aut, mot, atr], backgroundColor: ['#e74c3c', '#f5a65b', '#27ae60'] }] },
+                options: { maintainAspectRatio: false }
+            });
+
+            charts.c4 = new Chart(document.getElementById('c4'), {
+                type: 'bar', 
+                data: { labels: ['Solicitudes', 'Pacientes'], datasets: [{ data: [sol, pac], backgroundColor: '#27ae60' }] },
+                options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: scaleCfg }
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
