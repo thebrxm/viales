@@ -481,7 +481,7 @@
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-        // 6. ZONAS DE MAYOR IMPACTO (COMUNAS) - LÓGICA FINAL SOLICITADA
+// 6. ZONAS DE MAYOR IMPACTO (COMUNAS) - LÓGICA FINAL SOLICITADA
         // Buscamos el título ignorando posibles tildes (O u Ó) para evitar fallos
         const matchTitulo = texto.match(/DISTRIBUCI[OÓ]N POR COMUNAS/i);
         let comunasExtraidas = [];
@@ -495,8 +495,8 @@
             const regexComunas = /Comuna\s+(\d+)/gi;
             let match;
             
-            // Extraemos hasta un máximo de 4 comunas en el orden de aparición
-            while ((match = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 4) {
+            // Extraemos hasta un máximo de 5 comunas en el orden de aparición
+            while ((match = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 5) {
                 let nombreComuna = `Comuna ${match[1]}`;
                 // Agregamos a la lista solo si no está repetida
                 if (!comunasExtraidas.includes(nombreComuna)) {
@@ -505,11 +505,11 @@
             }
         }
 
-        // Preparamos los datos visuales para las barras
-        const barrasVisuales = [100, 75, 50, 25]; 
+        // Preparamos los datos visuales para las barras (¡AQUÍ AGREGAMOS EL 5TO VALOR!)
+        const barrasVisuales = [100, 80, 60, 40, 20]; 
         let dataComunas = [];
 
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 5; i++) {
             if (comunasExtraidas[i]) {
                 dataComunas.push({
                     n: comunasExtraidas[i],
@@ -522,6 +522,7 @@
         }
 
         // LLAMADAS PARA DIBUJAR LOS GRÁFICOS
+        // (Dejamos hasta p4 a menos que hayas creado una variable p5 más arriba)
         dibujar(sol, pac, aut, mot, atr, [p1, p2, p3, p4]);
         dibujarComunas(dataComunas); 
     }
@@ -544,7 +545,7 @@
             });
         }, 100);
     }
-
+    
     function dibujar(sol, pac, aut, mot, atr, tipos) {
         if(charts.c1) Object.values(charts).forEach(c => c.destroy());
         
