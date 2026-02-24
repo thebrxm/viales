@@ -421,10 +421,21 @@
     }
 
     async function cargarPDF(mes) {
-        const url = `reportes/${mes}.pdf`;
-        document.getElementById('lnk-pdf').href = url;
+        // Obtenemos el año separando el texto (Ej: de "2026-01" sacamos "2026")
+        const anio = mes.split("-")[0];
+        
+        // Armamos la nueva ruta organizada por carpetas y evitamos el caché de paso
+        const timeStamp = new Date().getTime();
+        const urlFetch = `reportes/${anio}/${mes}.pdf?v=${timeStamp}`;
+        const urlEnlace = `reportes/${anio}/${mes}.pdf`;
+        
+        // Actualizamos el botón de "Ver informe"
+        document.getElementById('lnk-pdf').href = urlEnlace;
+        
         try {
-            const res = await fetch(url);
+            const res = await fetch(urlFetch);
+            if (!res.ok) throw new Error("PDF no encontrado");
+            
             const data = await res.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({data}).promise;
             let fullText = "";
