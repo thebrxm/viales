@@ -451,78 +451,83 @@ footer {
 </style>
     
 </head>
-<body>
+ <body>
 
-<header>
-    <img src="https://i.imgur.com/GXTFolo.png" class="logo">
-    <img src="https://i.imgur.com/W5Mo4rc.png" class="logo">
-</header>
+    <header>
+        <img src="https://i.imgur.com/GXTFolo.png" alt="SAME" class="logo">
+        <img src="https://i.imgur.com/W5Mo4rc.png" alt="ECUES" class="logo">
+    </header>
 
-<main>
-<div class="hero">
-    <div class="orange-box">
-        <h2 id="mes-header">INFORME MENSUAL</h2>
-        <p id="txt-parrafo">Cargando reporte...</p>
-        <a id="btn-descarga" class="btn-download" target="_blank">📄 VISUALIZAR REPORTE PDF</a>
-    </div>
-
-    <div class="title-section">
-            <h1>INCIDENTES DE TRÁNSITO</h1>
-            <p class="subtitle">
-                Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.
-            </p>
-
-            <div style="display:flex; flex-direction:column; gap:5px;">
-                <label style="font-size:0.75rem; font-weight:bold; opacity:0.6;">
-                    SELECCIONAR PERIODO
-                </label>
-                <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
+    <main>
+        <div class="hero">
+            <div class="orange-box">
+                <h2>Informe mensual</h2>
+                <p id="txt-parrafo">Cargando datos del PDF...</p>
+                <a id="lnk-pdf" href="#" target="_blank" style="color:#333; font-size: 0.8rem; font-weight:bold;">📄 VER PDF COMPLETO</a>
             </div>
-        </div>
-    </div>
 
-    <div class="grid">
-        <div class="card">
-            <h3>Tipos de Incidentes (%)</h3>
-            <div class="chart-wrap"><canvas id="c1"></canvas></div>
-        </div>
-
-        <div class="card">
-            <h3>Participación Vehicular (Casos)</h3>
-            <div class="chart-wrap"><canvas id="c2"></canvas></div>
-        </div>
-
-        <div class="card">
-            <h3>Distribución por Comuna</h3>
-            <div id="comuna-list" style="margin-top:10px;"></div>
-        </div>
-
-        <div class="card">
-            <h3>Pico de Frecuencia</h3>
-            <div class="pico-val">
-                <div class="pico-dia" id="p-dia">---</div>
-                <div id="p-hora" style="color:#666">--:-- hs</div>
+            <div class="title-section">
+                <h1>INCIDENTES DE TRÁNSITO</h1>
+                <p class="subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
+                <div style="display:flex; flex-direction:column; gap:5px;">
+                    <label style="font-size:0.7rem; font-weight:bold; opacity: 0.7;">PERIODO</label>
+                    <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
+                </div>
             </div>
         </div>
 
-        <div class="card">
-            <h3>Solicitudes vs Pacientes</h3>
-            <div class="chart-wrap"><canvas id="c4"></canvas></div>
-        </div>
+        <div class="grid">
+            <!-- Gráfico 1 -->
+            <div class="card">
+                <h3>Tipos de Incidentes (%)</h3>
+                <div class="chart-wrap"><canvas id="c1"></canvas></div>
+            </div>
 
-        <div class="card" style="display:flex; justify-content:center; align-items:center;">
-            <button class="btn-mapa"
-                onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.incidentesenero2026.html')">
-                🌐 VER MAPA INTERACTIVO
-            </button>
-        </div>
-    </div>
-</main>
+            <!-- Gráfico 2 -->
+            <div class="card">
+                <h3>Participación Vehicular (Casos)</h3>
+                <div class="chart-wrap"><canvas id="c2"></canvas></div>
+            </div>
 
-<footer>
-<div>SAME / ECUES (Equipo de Comunicación Unificada de Emergencias Sanitarias)</div>
-<div>ES | EN | PT</div>
-</footer>
+            <!-- Diseño Nuevo para Comunas -->
+            <div class="card">
+                <h3>Distribución por Comuna</h3>
+                <div id="comuna-list" style="margin-top:10px;">
+                    <!-- Se llena con JS -->
+                </div>
+            </div>
+
+            <!-- Pico -->
+            <div class="card">
+                <h3>Pico de Frecuencia</h3>
+                <div class="pico-val">
+                    <div class="pico-dia" id="p-dia">---</div>
+                    <div class="pico-hora" id="p-hora">--:-- hs</div>
+                </div>
+            </div>
+
+            <!-- Comparativa -->
+            <div class="card">
+                <h3>Solicitudes vs Pacientes</h3>
+                <div class="chart-wrap"><canvas id="c4"></canvas></div>
+            </div>
+
+            <!-- Mapa -->
+            <div class="card" style="justify-content:center; align-items:center;">
+                <h3>Mapa Interactivo</h3>
+                <button style="background:var(--navy); color:white; padding:18px 35px; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.2);" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.incidentesenero2026.html')">🌐 ABRIR MAPA INTERACTIVO</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div>SAME / ECUES (Equipo de Comunicación Unificada en Emergencias Sanitarias)</div>
+        <div>
+            <button class="btn-lang">ES</button>
+            <button class="btn-lang">EN</button>
+            <button class="btn-lang">PT</button>
+        </div>
+    </footer>
 
 <script>
 // --- CONFIGURACIÓN DE PERIODOS (Añade aquí tus PDFs) ---
