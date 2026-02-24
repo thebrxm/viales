@@ -187,76 +187,43 @@
     </footer>
 
 <script>
-    // --- SISTEMA DE IDIOMAS ---
+// --- SISTEMA DE IDIOMAS ---
     let idiomaActual = 'es';
     let datosGlobales = { sol: 0, pac: 0, vehLabels: [], vehData: [] }; // Guarda datos para redibujar gráficos al cambiar idioma
 
     const diccionario = {
         es: {
-            box_title: "Informe Mensual",
-            box_btn: "📄 Ver informe",
-            main_title: "Incidentes de Tránsito",
-            main_subtitle: "Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.",
-            select_label: "Seleccionar Periodo",
-            card1_title: "Tipos de Incidentes",
-            card2_title: "Participación Vehicular",
-            card3_title: "Zonas de Mayor Impacto",
-            card4_title: "Pico de Frecuencia",
-            card5_title: "Solicitudes vs Pacientes",
-            card6_title: "Geolocalización",
-            card6_desc: "Visualiza los puntos críticos de incidentes en el mapa de la Ciudad.",
-            card6_btn: "🌐 Abrir Mapa Interactivo",
-            footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias",
-            loading_chart: "Cargando gráfico...",
-            no_chart: "Gráfico no disponible para este periodo.",
-            no_summary: "Resumen no disponible.",
-            lbl_sol: "Solicitudes",
-            lbl_pac: "Pacientes",
-            lbl_casos: "casos"
+            box_title: "Informe Mensual", box_btn: "📄 Ver informe",
+            main_title: "Incidentes de Tránsito", main_subtitle: "Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.",
+            select_label: "Seleccionar Periodo", card1_title: "Tipos de Incidentes",
+            card2_title: "Participación Vehicular", card3_title: "Zonas de Mayor Impacto",
+            card4_title: "Pico de Frecuencia", card5_title: "Solicitudes vs Pacientes",
+            card6_title: "Geolocalización", card6_desc: "Visualiza los puntos críticos de incidentes en el mapa de la Ciudad.",
+            card6_btn: "🌐 Abrir Mapa Interactivo", footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias",
+            loading_chart: "Cargando gráfico...", no_chart: "Gráfico no disponible para este periodo.",
+            no_summary: "Resumen no disponible.", lbl_sol: "Solicitudes", lbl_pac: "Pacientes", lbl_casos: "casos"
         },
         en: {
-            box_title: "Monthly Report",
-            box_btn: "📄 View report",
-            main_title: "Traffic Incidents",
-            main_subtitle: "Monitoring of traffic incidents attended by the SAME / ECUES team.",
-            select_label: "Select Period",
-            card1_title: "Types of Incidents",
-            card2_title: "Vehicle Involvement",
-            card3_title: "Highest Impact Zones",
-            card4_title: "Peak Frequency",
-            card5_title: "Requests vs Patients",
-            card6_title: "Geolocation",
-            card6_desc: "Visualize critical incident hotspots on the City map.",
-            card6_btn: "🌐 Open Interactive Map",
-            footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team",
-            loading_chart: "Loading chart...",
-            no_chart: "Chart not available for this period.",
-            no_summary: "Summary not available.",
-            lbl_sol: "Requests",
-            lbl_pac: "Patients",
-            lbl_casos: "cases"
+            box_title: "Monthly Report", box_btn: "📄 View report",
+            main_title: "Traffic Incidents", main_subtitle: "Monitoring of traffic incidents attended by the SAME / ECUES team.",
+            select_label: "Select Period", card1_title: "Types of Incidents",
+            card2_title: "Vehicle Involvement", card3_title: "Highest Impact Zones",
+            card4_title: "Peak Frequency", card5_title: "Requests vs Patients",
+            card6_title: "Geolocation", card6_desc: "Visualize critical incident hotspots on the City map.",
+            card6_btn: "🌐 Open Interactive Map", footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team",
+            loading_chart: "Loading chart...", no_chart: "Chart not available for this period.",
+            no_summary: "Summary not available.", lbl_sol: "Requests", lbl_pac: "Patients", lbl_casos: "cases"
         },
         pt: {
-            box_title: "Relatório Mensal",
-            box_btn: "📄 Ver relatório",
-            main_title: "Incidentes de Trânsito",
-            main_subtitle: "Monitoramento de incidentes de trânsito atendidos pela equipe SAME / ECUES.",
-            select_label: "Selecionar Período",
-            card1_title: "Tipos de Incidentes",
-            card2_title: "Participação de Veículos",
-            card3_title: "Zonas de Maior Impacto",
-            card4_title: "Pico de Frequência",
-            card5_title: "Solicitações vs Pacientes",
-            card6_title: "Geolocalização",
-            card6_desc: "Visualize os pontos críticos de incidentes no mapa da Cidade.",
-            card6_btn: "🌐 Abrir Mapa Interativo",
-            footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde",
-            loading_chart: "Carregando gráfico...",
-            no_chart: "Gráfico não disponível para este período.",
-            no_summary: "Resumo não disponível.",
-            lbl_sol: "Solicitações",
-            lbl_pac: "Pacientes",
-            lbl_casos: "casos"
+            box_title: "Relatório Mensal", box_btn: "📄 Ver relatório",
+            main_title: "Incidentes de Trânsito", main_subtitle: "Monitoramento de incidentes de trânsito atendidos pela equipe SAME / ECUES.",
+            select_label: "Selecionar Período", card1_title: "Tipos de Incidentes",
+            card2_title: "Participação de Veículos", card3_title: "Zonas de Maior Impacto",
+            card4_title: "Pico de Frequência", card5_title: "Solicitações vs Pacientes",
+            card6_title: "Geolocalização", card6_desc: "Visualize os pontos críticos de incidentes no mapa da Cidade.",
+            card6_btn: "🌐 Abrir Mapa Interativo", footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde",
+            loading_chart: "Carregando gráfico...", no_chart: "Gráfico não disponível para este período.",
+            no_summary: "Resumo não disponível.", lbl_sol: "Solicitações", lbl_pac: "Pacientes", lbl_casos: "casos"
         }
     };
 
@@ -275,11 +242,17 @@
             }
         });
 
-        // Actualizar el enlace del PDF para que apunte a la carpeta del idioma correspondiente
-        // CUANDO CREES TUS CARPETAS (es, en, pt), DESCOMENTA LA LÍNEA DE ABAJO Y BORRA LA SIGUIENTE:
-        // const urlEnlace = `reportes/${idiomaActual}/${document.getElementById('sel-periodo').value.split("-")[0]}/${document.getElementById('sel-periodo').value}.pdf`;
-        const urlEnlace = `reportes/${document.getElementById('sel-periodo').value.split("-")[0]}/${document.getElementById('sel-periodo').value}.pdf`; 
+        const periodoSeleccionado = document.getElementById('sel-periodo').value;
+        const anio = periodoSeleccionado.split("-")[0];
+        const timeStamp = new Date().getTime();
+
+        // Actualizar el enlace del PDF para descargar el idioma correcto (Ej: reportes/en/2026/2026-01.pdf)
+        const urlEnlace = `reportes/${idiomaActual}/${anio}/${periodoSeleccionado}.pdf`; 
         document.getElementById('lnk-pdf').href = urlEnlace;
+
+        // Actualizar la imagen del gráfico al idioma correcto (Ej: graficos/en/2026/2026-01.png)
+        const imgEl = document.getElementById('img-tipos');
+        imgEl.src = `graficos/${idiomaActual}/${anio}/${periodoSeleccionado}.png?v=${timeStamp}`;
 
         // Redibujar gráficos para traducir sus etiquetas
         if (datosGlobales.vehLabels.length > 0) {
@@ -305,7 +278,7 @@
         const anio = mes.split("-")[0];
         const timeStamp = new Date().getTime();
         
-        // 1. CARGA DE IMAGEN MANUAL PARA TIPOS DE INCIDENTES (Busca en graficos/es/ o graficos/en/)
+        // 1. CARGA DE IMAGEN MANUAL PARA TIPOS DE INCIDENTES (Busca en graficos/es/ o graficos/en/ etc)
         const imgEl = document.getElementById('img-tipos');
         const errEl = document.getElementById('img-fallback');
         
@@ -313,20 +286,17 @@
         errEl.style.display = 'block';
         errEl.innerText = diccionario[idiomaActual].loading_chart;
         
-        // LÓGICA DE CARPETAS PARA GRÁFICOS
-        // Idealmente: `graficos/${idiomaActual}/${anio}/${mes}.png`
-        // Por ahora lo dejamos simple para que no se rompa:
-        const imgPath = `graficos/${anio}/${mes}.png?v=${timeStamp}`;
+        const imgPath = `graficos/${idiomaActual}/${anio}/${mes}.png?v=${timeStamp}`;
         
         imgEl.onload = () => { imgEl.style.display = 'block'; errEl.style.display = 'none'; };
         imgEl.onerror = () => { imgEl.style.display = 'none'; errEl.style.display = 'block'; errEl.innerText = diccionario[idiomaActual].no_chart; };
         imgEl.src = imgPath;
 
-        // 2. CARGA DEL PDF EN ESPAÑOL PARA EXTRAER LOS NÚMEROS (SIEMPRE LEE EL DE ESPAÑOL POR DEBAJO)
-        const urlFetch = `reportes/${anio}/${mes}.pdf?v=${timeStamp}`; // El escáner siempre mira el original
+        // 2. CARGA DEL PDF EN ESPAÑOL PARA EXTRAER LOS NÚMEROS (SIEMPRE LEE LA CARPETA /es/ PARA NO ROMPER EL ESCÁNER)
+        const urlFetch = `reportes/es/${anio}/${mes}.pdf?v=${timeStamp}`; 
         
-        // Actualizamos el enlace visual para el usuario (si usa carpetas por idioma, usa la variable urlEnlace comentada arriba en cambiarIdioma)
-        document.getElementById('lnk-pdf').href = `reportes/${anio}/${mes}.pdf`;
+        // Actualizamos el enlace visual para que el usuario descargue el idioma que tenga seleccionado
+        document.getElementById('lnk-pdf').href = `reportes/${idiomaActual}/${anio}/${mes}.pdf`;
         
         try {
             const res = await fetch(urlFetch);
@@ -342,6 +312,7 @@
             }
             procesar(fullText);
         } catch (e) { 
+            console.error(e);
             document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
             document.getElementById('p-dia').innerText = "---";
             document.getElementById('p-hora').innerText = "--:-- hs";
@@ -358,8 +329,6 @@
         const matchResumen = texto.match(/((?:En el mes|Durante el mes|En [a-záéíóú]+ de).{10,250}?(?:pacientes|atenciones)\.?)/i) 
                           || texto.match(/([A-Z][^\.]{10,150}solicitudes[^\.]{5,150}pacientes\.)/i);
         if (matchResumen) { textoResumen = matchResumen[1]; }
-        // NOTA: Para traducir el resumen, tendrías que tener un diccionario pre-armado o cargar el texto del PDF en inglés si logras extraerlo.
-        // Por ahora mostramos el extraído tal cual (en español).
         document.getElementById('txt-parrafo').innerText = textoResumen;
 
         // 2. PARTICIPACIÓN VEHICULAR
