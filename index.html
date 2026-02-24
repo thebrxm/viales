@@ -447,8 +447,7 @@
             document.getElementById('p-dia').innerText = "---";
             document.getElementById('p-hora').innerText = "--:-- hs";
             
-            // Llama a dibujar con los arrays dinámicos vacíos/dummy
-            dibujar(150, 120, ['Autos', 'Motos', 'Atropellos'], [80, 45, 25], ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], [40, 30, 20, 10]);
+            dibujar(150, 120, ['Autos', 'Motos', 'Atropellos'], [80, 45, 25], [40, 30, 20, 10]);
             
             dibujarComunas([
                 {n: "Comuna 1", v: "", p: 100},
@@ -462,7 +461,7 @@
     function procesar(t) {
         const texto = t.replace(/\s+/g, ' ');
 
-        // 1. PÁRRAFO RESUMEN
+        // 1. PÁRRAFO RESUMEN 
         let textoResumen = "Resumen no disponible.";
         const matchResumen = texto.match(/((?:En el mes|Durante el mes|En [a-záéíóú]+ de).{10,250}?(?:pacientes|atenciones)\.?)/i) 
                           || texto.match(/([A-Z][^\.]{10,150}solicitudes[^\.]{5,150}pacientes\.)/i);
@@ -471,7 +470,7 @@
         }
         document.getElementById('txt-parrafo').innerText = textoResumen;
 
-        // 2. PARTICIPACIÓN VEHICULAR
+        // 2. PARTICIPACIÓN VEHICULAR 
         let vehiculosMap = {};
         const fragmentoVehicular = texto.substring(0, 1500); 
         
@@ -512,88 +511,34 @@
             vehiculosData = [0, 0, 0];
         }
 
-        // 3. TIPOS DE INCIDENTES (NUEVA LÓGICA DINÁMICA DE LA LISTA APORTADA)
-        let tiposMap = {};
-        
-        // Buscamos la frase gatillo para situarnos en esa parte del texto
-        let fragmentoTipos = texto;
-        const indexTipos = texto.toUpperCase().indexOf("EL TIPO DE INCIDENTE");
-        if (indexTipos !== -1) {
-             fragmentoTipos = texto.substring(Math.max(0, indexTipos - 50), indexTipos + 1000);
-        } else {
-             const fallbackMatch = texto.match(/(Tipos de Incidentes|frecuente)/i);
-             if (fallbackMatch) {
-                 fragmentoTipos = texto.substring(Math.max(0, fallbackMatch.index - 50), fallbackMatch.index + 1000);
-             }
-        }
+        // 3. TIPOS DE INCIDENTES 
+        const matchP1 = texto.match(/(?:Auto-Moto|Moto-Auto|Auto y Moto)[^\d]*?(\d+(?:,\d+)?)%/i);
+        const p1 = matchP1 ? parseFloat(matchP1[1].replace(',','.')) : 0;
 
-        // Lista de tipos provista, ordenada de más larga a más corta para no pisar resultados
-        const variantesTipos = [
-            "CICLISTA ATROPELLADO POR COLECTIVO", "CICLISTA ATROPELLADO POR CAMIONETA", "MONOPATIN ATROPELLADO POR CAMIONETA",
-            "CICLISTA ATROPELLADO POR MOTO", "CICLISTA ATROPELLADO POR CAMION", "MONOPATIN ATROPELLADO POR MOTO",
-            "MONOPATIN ATROPELLADO POR CAMION", "COLISION COLECTIVO - CAMIONETA", "COLISION COLECTIVO - COLECTIVO",
-            "COLISION CAMIONETA - CAMIONETA", "COLISION CAMION - CAMIONETA", "COLISION TREN - CAMIONETA",
-            "CAIDO DENTRO DE COLECTIVO", "ATROPELLADO POR CAMIONETA", "COLISION CAMIONETA - OBJETO",
-            "COLISION CAMIONETA - MOTO", "COLISION CAMIONETA - AUTO", "COLISION COLECTIVO - OBJETO",
-            "COLISION COLECTIVO - AUTO", "COLISION COLECTIVO - MOTO", "ATROPELLADO POR COLECTIVO",
-            "COLISION CAMION - COLECTIVO", "ATROPELLADO POR MONOPATIN", "COLISION CAMION - CAMION",
-            "COLISION CAMION - OBJETO", "CICLISTA ATROPELLADO", "COLISION AUTO - OBJETO", "COLISION MOTO - OBJETO",
-            "ATROPELLADO POR MOTO", "ATROPELLADO POR TREN", "MONOPATIN ATROPELLADO", "ATROPELLADO POR BICICLETA",
-            "COLISION AUTO - MOTO", "COLISION AUTO - AUTO", "COLISION MOTO - MOTO", "COLISION CAMION - MOTO",
-            "COLISION CAMION - AUTO", "CAIDO DE BICICLETA", "CAIDO DE MONOPATIN", "COLISION VEHICULAR", 
-            "COLISION MULTIPLE", "INCIDENTE MONOPATIN", "INCIDENTE CAMIONETA", "INCIDENTE BICICLETA", 
-            "INCIDENTE COLECTIVO", "CAIDO DE MOTO", "INCIDENTE MOTO", "ATROPELLADO",
-            "AUTO-MOTO", "AUTO-AUTO", "MOTO-AUTO", "MOTO-MOTO", "CAIDA DE MOTO", "MOTO SOLA"
-        ];
+        const matchP2 = texto.match(/(?:auto\s*[-–y]\s*auto|autos?)[^\d]*?(\d+(?:,\d+)?)%/i);
+        const p2 = matchP2 ? parseFloat(matchP2[1].replace(',','.')) : 0;
 
-        // Construimos una Regex tolerante a guiones o espacios extras
-        const variantesRegexStr = variantesTipos.map(v => v.replace(/\s+/g, '\\s*').replace(/-/g, '[-–]?')).join('|');
-        // Busca variante seguida de (hasta 35 char) un numero, que puede o no tener porcentaje
-        const regexTipos = new RegExp(`(${variantesRegexStr})[^\\d]{1,35}?(\\d+(?:,\\d+)?)\\s*(?:%)?`, 'gi');
+        const matchP3 = texto.match(/(?:caíd[ao] de moto|caída|moto sola)[^\d]*?(\d+(?:,\d+)?)%/i);
+        const p3 = matchP3 ? parseFloat(matchP3[1].replace(',','.')) : 0;
 
-        let matchT;
-        while ((matchT = regexTipos.exec(fragmentoTipos)) !== null) {
-            let tipoBruto = matchT[1].toUpperCase().replace(/\s+/g, ' ').replace(/–/g, '-');
-            let valor = parseFloat(matchT[2].replace(',', '.'));
-            
-            // Unificamos variantes comunes para que quede limpio el gráfico
-            if (tipoBruto.includes('AUTO - MOTO') || tipoBruto.includes('AUTO-MOTO') || tipoBruto.includes('MOTO-AUTO')) tipoBruto = 'Auto-Moto';
-            else if (tipoBruto.includes('AUTO - AUTO') || tipoBruto.includes('AUTO-AUTO')) tipoBruto = 'Auto-Auto';
-            else if (tipoBruto.includes('CAIDO DE MOTO') || tipoBruto.includes('CAIDA DE MOTO') || tipoBruto.includes('MOTO SOLA')) tipoBruto = 'Caído Moto';
-            else if (tipoBruto === 'ATROPELLADO') tipoBruto = 'Atropellado';
-            else {
-                // Capitalizamos la primera letra de las palabras para otras variantes
-                tipoBruto = tipoBruto.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
-            }
-
-            // Guardamos el valor si no existe
-            if (!tiposMap[tipoBruto]) {
-                tiposMap[tipoBruto] = valor;
-            }
-        }
-
-        let tiposLabels = Object.keys(tiposMap);
-        let tiposData = Object.values(tiposMap);
-
-        // Si el redactor cambió absolutamente todo, ponemos datos en cero para no romper la web
-        if (tiposLabels.length === 0) {
-            tiposLabels = ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'];
-            tiposData = [0, 0, 0, 0];
-        }
+        const matchP4 = texto.match(/(?:atropellamientos?|atropellos?|peat[óo]n)[^\d]*?(\d+(?:,\d+)?)%/i);
+        const p4 = matchP4 ? parseFloat(matchP4[1].replace(',','.')) : 0;
 
         // 4. SOLICITUDES VS PACIENTES
         const sol = texto.match(/total de (\d+)\s*solicitudes/i) ? parseInt(texto.match(/total de (\d+)\s*solicitudes/i)[1]) : 0;
         const pac = texto.match(/total de (\d+)\s*pacientes/i) ? parseInt(texto.match(/total de (\d+)\s*pacientes/i)[1]) : 0;
 
-        // 5. PICO DE FRECUENCIA
+        // 5. PICO DE FRECUENCIA (LÓGICA SÚPER FLEXIBLE)
         let d = "---";
         let h = "--:-- hs";
 
+        // Extraer Día
         const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?)/i);
         if (matchDia) {
             d = matchDia[1];
         }
 
+        // Extraer Hora (Soporta múltiples formatos: "entre las 18 y las 20", "de 18 a 20", "18:00 a 20:00")
         const matchHora = texto.match(/(?:entre las|de las)\s*(\d{1,2})(?:\s*hs|\s*:\s*00)?\s*(?:y las|a las)\s*(\d{1,2})/i) 
                        || texto.match(/(?:de|entre)\s*(\d{1,2})\s*(?:a|y)\s*(\d{1,2})\s*(?:hs|horas|hrs|:00)/i)
                        || texto.match(/(\d{1,2}):00\s*(?:a|y|-|al?)\s*(\d{1,2}):00/i);
@@ -607,7 +552,7 @@
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-        // 6. ZONAS DE MAYOR IMPACTO
+        // 6. ZONAS DE MAYOR IMPACTO (COMUNAS)
         const matchTituloComunas = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES)/i);
         let comunasExtraidas = [];
         
@@ -641,8 +586,9 @@
             }
         }
 
-        // ENVIAR TODOS LOS DATOS DINÁMICOS A DIBUJAR 
-        dibujar(sol, pac, vehiculosLabels, vehiculosData, tiposLabels, tiposData); 
+        // LLAMADAS PARA DIBUJAR 
+        dibujar(sol, pac, vehiculosLabels, vehiculosData, [p1, p2, p3, p4]);
+        dibujarComunas(dataComunas); 
     }
 
     function dibujarComunas(data) {
@@ -663,7 +609,7 @@
         }, 100);
     }
 
-    function dibujar(sol, pac, vehLabels, vehData, tiposLabels, tiposData) {
+    function dibujar(sol, pac, vehLabels, vehData, tipos) {
         if(charts.c1) Object.values(charts).forEach(c => c.destroy());
         
         Chart.defaults.font.family = "'Inter', sans-serif";
@@ -685,13 +631,12 @@
         const colorPurple = '#9b59b6';
         const colorYellow = '#f1c40f';
 
-        // 1. TIPOS DE INCIDENTES (AHORA CON ETIQUETAS Y DATOS DINÁMICOS)
         charts.c1 = new Chart(document.getElementById('c1'), {
             type: 'bar', 
             data: { 
-                labels: tiposLabels, 
+                labels: ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], 
                 datasets: [{ 
-                    data: tiposData, 
+                    data: tipos, 
                     backgroundColor: colorNavy,
                     borderRadius: 6
                 }] 
@@ -699,7 +644,6 @@
             options: opt
         });
 
-        // 2. PARTICIPACIÓN VEHICULAR
         charts.c2 = new Chart(document.getElementById('c2'), {
             type: 'doughnut', 
             data: { 
@@ -734,7 +678,6 @@
             }
         });
 
-        // 3. SOLICITUDES VS PACIENTES
         charts.c4 = new Chart(document.getElementById('c4'), {
             type: 'bar', 
             data: { 
