@@ -450,19 +450,20 @@
         }
     }
 
-    function procesar(t) {
+   function procesar(t) {
+        // Limpiamos el texto de espacios extra y saltos de línea para facilitar la lectura
         const texto = t.replace(/\s+/g, ' ');
 
         // 1. PÁRRAFO RESUMEN
         const mP = texto.match(/(En el mes de.*?pacientes\.)/i);
         document.getElementById('txt-parrafo').innerText = mP ? mP[1] : "Resumen no disponible.";
 
-        // 2. PARTICIPACIÓN VEHICULAR (Extracción robusta de números)
+        // 2. PARTICIPACIÓN VEHICULAR
         const aut = texto.match(/(?:automóviles|autos).*?(\d+)/i) ? parseInt(texto.match(/(?:automóviles|autos).*?(\d+)/i)[1]) : 0;
         const mot = texto.match(/motovehículos.*?(\d+)/i) ? parseInt(texto.match(/motovehículos.*?(\d+)/i)[1]) : 0;
         const atr = texto.match(/atropellamientos.*?(\d+)/i) ? parseInt(texto.match(/atropellamientos.*?(\d+)/i)[1]) : 0;
 
-        // 3. TIPOS DE INCIDENTES (Extracción de porcentajes %)
+        // 3. TIPOS DE INCIDENTES
         const p1 = texto.match(/Auto-Moto\s*\(?(\d+(?:,\d+)?)%\)?/i) ? parseFloat(texto.match(/Auto-Moto\s*\(?(\d+(?:,\d+)?)%\)?/i)[1].replace(',','.')) : 0;
         const p2 = texto.match(/auto\s*–\s*auto\s*\(?(\d+(?:,\d+)?)%\)?/i) ? parseFloat(texto.match(/auto\s*–\s*auto\s*\(?(\d+(?:,\d+)?)%\)?/i)[1].replace(',','.')) : 0;
         const p3 = texto.match(/(?:caído de )?moto\s*\(?(\d+(?:,\d+)?)%\)?/i) ? parseFloat(texto.match(/(?:caído de )?moto\s*\(?(\d+(?:,\d+)?)%\)?/i)[1].replace(',','.')) : 0;
@@ -479,33 +480,47 @@
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-        // 6. NUEVO: ZONAS DE MAYOR IMPACTO (COMUNAS)
-        // Escanea el texto buscando menciones de "Comuna X (Y%)" o "Comuna X con Y%"
-        const regexComunas = /Comuna\s*(\d+).*?(\d+(?:,\d+)?)\s*%/gi;
-        let match;
+        // 6. ZONAS DE MAYOR IMPACTO (COMUNAS) - NUEVA LÓGICA
+        // Buscamos específicamente dónde empieza la sección en el PDF
+        const indiceComunas = texto.toUpperCase().indexOf("DISTRIBUCIÓN POR COMUNAS");
         let comunasExtraidas = [];
         
-        while ((match = regexComunas.exec(texto)) !== null && comunasExtraidas.length < 4) {
-            comunasExtraidas.push({
-                n: `Comuna ${match[1]}`,
-                v: `${match[2]}%`,
-                p: parseFloat(match[2].replace(',', '.'))
-            });
+        if (indiceComunas !== -1) {
+            // Tomamos un fragmento de texto inmediatamente posterior a ese título (aprox 800 caracteres)
+            const fragmento = texto.substring(indiceComunas, indiceComunas + 800); 
+            
+            // Regex que busca "Comuna X" seguido de un número con o sin decimales y el signo %
+            const regexComunas = /Comuna\s*(\d+)[^\d]*?(\d+(?:,\d+)?)\s*%/gi;
+            let match;
+            
+            while ((match = regexComunas.exec(fragmento)) !== null) {
+                // Filtramos para no duplicar si el PDF menciona la misma comuna dos veces
+                if (!comunasExtraidas.some(c => c.n === `Comuna ${match[1]}`)) {
+                    comunasExtraidas.push({
+                        n: `Comuna ${match[1]}`,
+                        v: `${match[2]}%`,
+                        p: parseFloat(match[2].replace(',', '.'))
+                    });
+                }
+            }
+            
+            // Ordenamos de mayor a menor impacto (porcentaje)
+            comunasExtraidas.sort((a, b) => b.p - a.p);
+            
+            // Recortamos el array para quedarnos solo con el Top 4
+            comunasExtraidas = comunasExtraidas.slice(0, 4);
         }
-        
-        // Si no se logra encontrar el texto exacto, cargamos valores en cero para mantener el diseño
-        if (comunasExtraidas.length === 0) {
-            comunasExtraidas = [
-                {n: "Comuna N/A", v: "0%", p: 0}, {n: "Comuna N/A", v: "0%", p: 0},
-                {n: "Comuna N/A", v: "0%", p: 0}, {n: "Comuna N/A", v: "0%", p: 0}
-            ];
+
+        // Si falló la lectura o hay menos de 4 comunas, rellenamos para que la tarjeta no quede deformada
+        while (comunasExtraidas.length < 4) {
+            comunasExtraidas.push({n: "Comuna N/A", v: "0%", p: 0});
         }
 
         // LLAMADAS PARA DIBUJAR LOS GRÁFICOS
         dibujar(sol, pac, aut, mot, atr, [p1, p2, p3, p4]);
         dibujarComunas(comunasExtraidas); 
     }
-
+    
     // MODIFICADO: Ahora recibe los datos como parámetro desde el lector de PDF
     function dibujarComunas(data) {
         const list = document.getElementById('comuna-list');
