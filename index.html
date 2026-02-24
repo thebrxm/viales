@@ -539,8 +539,8 @@
         }
 
         // Extraer Hora (Soporta "entre las X y las Y", "de X a Y", "desde las X hasta las Y", "X a Y hs", "X:00 - Y:00", etc.)
-        const matchHora = texto.match(/(?:entre|de|desde)(?:\s+las)?\s+(\d{1,2})(?:\s*(?:hs|hrs|horas|:00))?\s+(?:y|a|hasta|-)(?:\s+las)?\s+(\d{1,2})/i) 
-                       || texto.match(/(\d{1,2})(?:\s*(?:hs|hrs|horas|:00))?\s*(?:a|y|-|hasta)\s*(\d{1,2})\s*(?:hs|hrs|horas|:00)/i)
+        const matchHora = texto.match(/(?:entre|de|desde)\s*(?:las\s*)?(\d{1,2})\s*(?:hs|hrs|horas|:00)?\s*(?:y|a|hasta|-)\s*(?:las\s*)?(\d{1,2})/i) 
+                       || texto.match(/(\d{1,2})\s*(?:hs|hrs|horas|:00)?\s*(?:a|y|-|hasta)\s*(\d{1,2})\s*(?:hs|hrs|horas|:00)/i)
                        || texto.match(/(\d{1,2}):00\s*(?:a|y|-|hasta|al?)\s*(\d{1,2}):00/i);
 
         if (matchHora) {
