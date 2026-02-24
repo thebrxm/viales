@@ -525,46 +525,106 @@ footer {
 </footer>
 
 <script>
-/* TU JS ORIGINAL — NO MODIFICADO */
-const periodos = ["2026-01", "2025-12", "2025-11", "2025-10"];
-const mesesNombres = {"01": "Enero", "02": "Febrero", "03": "Marzo", "04": "Abril", "05": "Mayo", "06": "Junio", "07": "Julio", "08": "Agosto", "09": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre"};
+// --- CONFIGURACIÓN DE PERIODOS (Añade aquí tus PDFs) ---
+    const periodos = ["2026-01", "2025-12", "2025-11", "2025-10"];
+	const mesesNombres = {"01": "Enero", "02": "Febrero", "03": "Marzo", "04": "Abril", "05": "Mayo", "06": "Junio", "07": "Julio", "08": "Agosto", "09": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre"};
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-let charts = {};
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        let charts = {};
 
-function init() {
-    const sel = document.getElementById('sel-periodo');
-    periodos.sort().reverse().forEach(p => {
-        const o = document.createElement('option');
-        o.value = p; o.innerHTML = p; sel.appendChild(o);
-    });
-    cargarPDF(periodos[0]);
-}
-
-async function cargarPDF(mesRaw) {
-    const url = `reportes/${mesRaw}.pdf`;
-    const [anio, mesNum] = mesRaw.split("-");
-    document.getElementById('mes-header').innerText = `${mesesNombres[mesNum]} ${anio}`;
-    document.getElementById('btn-descarga').href = url;
-
-    try {
-        const res = await fetch(url);
-        const data = await res.arrayBuffer();
-        const pdf = await pdfjsLib.getDocument({data}).promise;
-        let fullText = "";
-        for(let i=1; i<=pdf.numPages; i++){
-            const page = await pdf.getPage(i);
-            const content = await page.getTextContent();
-            fullText += content.items.map(item => item.str).join(" ");
+        function init() {
+            const sel = document.getElementById('sel-periodo');
+            periodos.sort().reverse().forEach(p => {
+                const o = document.createElement('option');
+                o.value = p; o.innerHTML = p; sel.appendChild(o);
+            });
+            cargarPDF(periodos[0]);
         }
-        procesar(fullText, mesRaw);
-    } catch (e) {
-        document.getElementById('txt-parrafo').innerText = "Reporte no encontrado.";
-    }
-}
 
-window.onload = init;
-</script>
+        async function cargarPDF(mes) {
+            const url = `reportes/${mes}.pdf`;
+            document.getElementById('lnk-pdf').href = url;
+            try {
+                const res = await fetch(url);
+                const data = await res.arrayBuffer();
+                const pdf = await pdfjsLib.getDocument({data}).promise;
+                let fullText = "";
+                for(let i=1; i<=pdf.numPages; i++){
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    fullText += content.items.map(item => item.str).join(" ");
+                }
+                procesar(fullText);
+            } catch (e) { document.getElementById('txt-parrafo').innerText = "Archivo reportes/" + mes + ".pdf no encontrado."; }
+        }
 
-</body>
-</html>
+        function procesar(t) {
+            const texto = t.replace(/\s+/g, ' ');
+
+            // 1. Extraer primer párrafo (En el mes de... pacientes.)
+            const mP = texto.match(/(En el mes de.*?pacientes\.)/i);
+            document.getElementById('txt-parrafo').innerText = mP ? mP[1] : "Resumen no disponible.";
+
+            // 2. Extraer Vehículos desde "Del total de incidentes registrados..."
+            const sVehicular = texto.match(/Del total de incidentes registrados.*?(automóviles corresponden a (\d+)).*?(motovehículos, (\d+)).*?(representan (\d+) casos)/i);
+            const aut = sVehicular ? sVehicular[2] : 0;
+            const mot = sVehicular ? sVehicular[4] : 0;
+            const atr = sVehicular ? sVehicular[6] : 0;
+
+            // 3. Extraer Tipos desde "El tipo de incidente más frecuente..."
+            const sTipos = texto.match(/El tipo de incidente más frecuente.*?(Auto-Moto \((\d+,\d+)%\)).*?(auto – auto \((\d+,\d+)%\)).*?(moto \((\d+,\d+)%\)).*?(atropellamientos \((\d+,\d+)%\))/i);
+            const p1 = sTipos ? parseFloat(sTipos[3].replace(',','.')) : 0;
+            const p2 = sTipos ? parseFloat(sTipos[5].replace(',','.')) : 0;
+            const p3 = sTipos ? parseFloat(sTipos[7].replace(',','.')) : 0;
+            const p4 = sTipos ? parseFloat(sTipos[9].replace(',','.')) : 0;
+
+            // Solicitudes vs Pacientes
+            const sol = texto.match(/total de (\d+) solicitudes/i) ? texto.match(/total de (\d+) solicitudes/i)[1] : 0;
+            const pac = texto.match(/total de (\d+) pacientes/i) ? texto.match(/total de (\d+) pacientes/i)[1] : 0;
+
+            // Pico
+            const d = texto.match(/los (\w+) entre/i) ? texto.match(/los (\w+) entre/i)[1] : "---";
+            const h = texto.match(/entre las (\d+) y las (\d+)/i) ? `${texto.match(/entre las (\d+) y las (\d+)/i)[1]}:00 — ${texto.match(/entre las (\d+) y las (\d+)/i)[2]}:00 hs` : "--:--";
+            document.getElementById('p-dia').innerText = d;
+            document.getElementById('p-hora').innerText = h;
+
+            dibujar(sol, pac, aut, mot, atr, [p1, p2, p3, p4]);
+            dibujarComunas(); // Renderiza la lista visual
+        }
+
+        function dibujarComunas() {
+            const list = document.getElementById('comuna-list');
+            const data = [
+                {n: "Comuna 1", v: "100%", p: 100},
+                {n: "Comuna 9", v: "85%", p: 85},
+                {n: "Comuna 14", v: "75%", p: 75},
+                {n: "Comuna 4", v: "65%", p: 65}
+            ];
+            
+            list.innerHTML = data.map(c => `
+                <div class="comuna-row">
+                    <div class="comuna-info"><span>${c.n}</span><span>${c.v}</span></div>
+                    <div class="progress-bg"><div class="progress-fill" style="width:${c.p}%"></div></div>
+                </div>
+            `).join('');
+        }
+
+        function dibujar(sol, pac, aut, mot, atr, tipos) {
+            if(charts.c1) Object.values(charts).forEach(c => c.destroy());
+            const opt = { maintainAspectRatio: false, plugins: { legend: { display: false } } };
+
+            charts.c1 = new Chart(document.getElementById('c1'), {
+                type: 'bar', data: { labels: ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], datasets: [{ data: tipos, backgroundColor: '#242f48' }] }, options: opt
+            });
+
+            charts.c2 = new Chart(document.getElementById('c2'), {
+                type: 'doughnut', data: { labels: ['Autos', 'Motos', 'Atropellos'], datasets: [{ data: [aut, mot, atr], backgroundColor: ['#e74c3c', '#f5a65b', '#27ae60'] }] }, options: { maintainAspectRatio: false }
+            });
+
+            charts.c4 = new Chart(document.getElementById('c4'), {
+                type: 'bar', data: { labels: ['Solicitudes', 'Pacientes'], datasets: [{ data: [sol, pac], backgroundColor: '#27ae60' }] }, options: opt
+            });
+        }
+
+        window.onload = init;
+    </script>
