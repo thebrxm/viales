@@ -227,14 +227,14 @@
         }
     };
 
-    function cambiarIdioma(lang, btnElement) {
+    function cambiarIdioma(lang) {
         idiomaActual = lang;
         
         // Cambiar estilo de botones
         document.querySelectorAll('.btn-lang').forEach(btn => btn.classList.remove('active'));
-        if(btnElement) btnElement.classList.add('active');
+        event.target.classList.add('active');
 
-// Traducir textos estáticos
+        // Traducir textos estáticos
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if(diccionario[lang][key]) {
@@ -242,11 +242,7 @@
             }
         });
 
-// Recargamos el panel. Esto actualizará el enlace del PDF, la imagen del gráfico
-        // y ejecutará el doble-escaneo para traer el resumen en el nuevo idioma.
         const periodoSeleccionado = document.getElementById('sel-periodo').value;
-        cargarPDF(periodoSeleccionado);
-    }
         const anio = periodoSeleccionado.split("-")[0];
         const timeStamp = new Date().getTime();
 
@@ -267,7 +263,7 @@
     // --- LÓGICA ORIGINAL DEL PANEL ---
     const periodos = ["2026-01", "2025-12", "2025-11", "2025-10"];
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
-    let charts = {}
+    let charts = {};
 
     function init() {
         const sel = document.getElementById('sel-periodo');
@@ -291,54 +287,30 @@
         errEl.innerText = diccionario[idiomaActual].loading_chart;
         
         const imgPath = `graficos/${idiomaActual}/${anio}/${mes}.png?v=${timeStamp}`;
+        
         imgEl.onload = () => { imgEl.style.display = 'block'; errEl.style.display = 'none'; };
         imgEl.onerror = () => { imgEl.style.display = 'none'; errEl.style.display = 'block'; errEl.innerText = diccionario[idiomaActual].no_chart; };
         imgEl.src = imgPath;
 
-// 2. ACTUALIZAR ENLACE VISUAL DEL REPORTE (Apunta a la carpeta del idioma)
+        // 2. CARGA DEL PDF EN ESPAÑOL PARA EXTRAER LOS NÚMEROS (SIEMPRE LEE LA CARPETA /es/ PARA NO ROMPER EL ESCÁNER)
+        const urlFetch = `reportes/es/${anio}/${mes}.pdf?v=${timeStamp}`; 
+        
+        // Actualizamos el enlace visual para que el usuario descargue el idioma que tenga seleccionado
         document.getElementById('lnk-pdf').href = `reportes/${idiomaActual}/${anio}/${mes}.pdf`;
-
+        
         try {
-            // ====================================================================
-            // PASO A: EXTRAER DATOS DUROS DEL PDF EN ESPAÑOL (Para no romper gráficos)
-            // ====================================================================
-            const urlFetchES = `reportes/es/${anio}/${mes}.pdf?v=${timeStamp}`; 
-            const resES = await fetch(urlFetchES);
-            if (!resES.ok) throw new Error("PDF ES no encontrado");
+            const res = await fetch(urlFetch);
+            if (!res.ok) throw new Error("PDF no encontrado");
             
-            const dataES = await resES.arrayBuffer();
-            const pdfES = await pdfjsLib.getDocument({data: dataES}).promise;
-            let fullTextES = "";
-            for(let i=1; i<=pdfES.numPages; i++){
-                const page = await pdfES.getPage(i);
+            const data = await res.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({data}).promise;
+            let fullText = "";
+            for(let i=1; i<=pdf.numPages; i++){
+                const page = await pdf.getPage(i);
                 const content = await page.getTextContent();
-                fullTextES += content.items.map(item => item.str).join(" ");
+                fullText += content.items.map(item => item.str).join(" ");
             }
-            // Armamos los gráficos con el motor en español
-            procesar(fullTextES);
-
-            // ====================================================================
-            // PASO B: EXTRAER RESUMEN TRADUCIDO DEL PDF LOCALIZADO
-            // ====================================================================
-            if (idiomaActual === 'es') {
-                extraerResumen(fullTextES); // Ya lo tenemos descargado
-            } else {
-                const urlFetchLocal = `reportes/${idiomaActual}/${anio}/${mes}.pdf?v=${timeStamp}`;
-                const resLocal = await fetch(urlFetchLocal);
-                if (resLocal.ok) {
-                    const dataLocal = await resLocal.arrayBuffer();
-                    const pdfLocal = await pdfjsLib.getDocument({data: dataLocal}).promise;
-                    let fullTextLocal = "";
-                    for(let i=1; i<=pdfLocal.numPages; i++){
-                        const page = await pdfLocal.getPage(i);
-                        const content = await page.getTextContent();
-                        fullTextLocal += content.items.map(item => item.str).join(" ");
-                    }
-                    extraerResumen(fullTextLocal);
-                } else {
-                    document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary;
-                }
-            }
+            procesar(fullText);
         } catch (e) { 
             console.error(e);
             document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
@@ -349,25 +321,17 @@
         }
     }
 
-    // NUEVA FUNCIÓN MULTILINGÜE SÓLO PARA EL RESUMEN
-    function extraerResumen(texto) {
-        let textoResumen = diccionario[idiomaActual].no_summary;
-        const textoLimpio = texto.replace(/\s+/g, ' ');
-
-        // Atrapa variaciones en ES, EN y PT
-        const matchResumen = textoLimpio.match(/((?:En el mes|Durante|In the month|During|No m[êe]s|Em [a-zA-Z]+).{10,250}?(?:pacientes|patients|atenciones|atendimentos)\.?)/i) 
-                          || textoLimpio.match(/([A-Z][^\.]{10,150}(?:solicitudes|requests|solicita[çc][õo]es)[^\.]{5,150}(?:pacientes|patients)\.)/i);
-        
-        if (matchResumen) { 
-            textoResumen = matchResumen[1]; 
-        }
-        document.getElementById('txt-parrafo').innerText = textoResumen;
-
-    // MOTOR DE EXTRACCIÓN (Ahora sólo procesa gráficos usando el PDF en ES)
     function procesar(t) {
         const texto = t.replace(/\s+/g, ' ');
 
-        // 1. PARTICIPACIÓN VEHICULAR
+        // 1. PÁRRAFO RESUMEN
+        let textoResumen = diccionario[idiomaActual].no_summary;
+        const matchResumen = texto.match(/((?:En el mes|Durante el mes|En [a-záéíóú]+ de).{10,250}?(?:pacientes|atenciones)\.?)/i) 
+                          || texto.match(/([A-Z][^\.]{10,150}solicitudes[^\.]{5,150}pacientes\.)/i);
+        if (matchResumen) { textoResumen = matchResumen[1]; }
+        document.getElementById('txt-parrafo').innerText = textoResumen;
+
+        // 2. PARTICIPACIÓN VEHICULAR
         let vehiculosMap = {};
         const fragmentoVehicular = texto.substring(0, 1500); 
         
@@ -397,11 +361,11 @@
         let vehiculosLabels = Object.keys(vehiculosMap);
         let vehiculosData = Object.values(vehiculosMap);
 
-        // 2. SOLICITUDES VS PACIENTES
+        // 3. SOLICITUDES VS PACIENTES
         const sol = texto.match(/total de (\d+)\s*solicitudes/i) ? parseInt(texto.match(/total de (\d+)\s*solicitudes/i)[1]) : 0;
         const pac = texto.match(/total de (\d+)\s*pacientes/i) ? parseInt(texto.match(/total de (\d+)\s*pacientes/i)[1]) : 0;
 
-        // 3. PICO DE FRECUENCIA
+        // 4. PICO DE FRECUENCIA
         let d = "---"; let h = "--:-- hs";
         const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?)/i);
         if (matchDia) d = matchDia[1];
@@ -418,7 +382,7 @@
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-        // 4. ZONAS DE MAYOR IMPACTO
+        // 5. ZONAS DE MAYOR IMPACTO
         const matchTituloComunas = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES)/i);
         let comunasExtraidas = [];
         if (matchTituloComunas) {
@@ -435,6 +399,9 @@
             if (comunasExtraidas[i]) dataComunas.push({ n: comunasExtraidas[i], v: "", p: barrasVisuales[i] });
             else dataComunas.push({n: "", v: "", p: 0});
         }
+
+        // Guardar para redibujado por idioma
+        datosGlobales = { sol: sol, pac: pac, vehLabels: vehiculosLabels, vehData: vehiculosData };
 
         dibujar(sol, pac, vehiculosLabels, vehiculosData); 
         dibujarComunas(dataComunas); 
