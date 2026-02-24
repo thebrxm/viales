@@ -538,10 +538,10 @@
             d = matchDia[1];
         }
 
-        // Extraer Hora (Soporta múltiples formatos: "entre las 18 y las 20", "de 18 a 20", "18:00 a 20:00")
-        const matchHora = texto.match(/(?:entre las|de las)\s*(\d{1,2})(?:\s*hs|\s*:\s*00)?\s*(?:y las|a las)\s*(\d{1,2})/i) 
-                       || texto.match(/(?:de|entre)\s*(\d{1,2})\s*(?:a|y)\s*(\d{1,2})\s*(?:hs|horas|hrs|:00)/i)
-                       || texto.match(/(\d{1,2}):00\s*(?:a|y|-|al?)\s*(\d{1,2}):00/i);
+        // Extraer Hora (Soporta "entre las X y las Y", "de X a Y", "desde las X hasta las Y", "X a Y hs", "X:00 - Y:00", etc.)
+        const matchHora = texto.match(/(?:entre|de|desde)(?:\s+las)?\s+(\d{1,2})(?:\s*(?:hs|hrs|horas|:00))?\s+(?:y|a|hasta|-)(?:\s+las)?\s+(\d{1,2})/i) 
+                       || texto.match(/(\d{1,2})(?:\s*(?:hs|hrs|horas|:00))?\s*(?:a|y|-|hasta)\s*(\d{1,2})\s*(?:hs|hrs|horas|:00)/i)
+                       || texto.match(/(\d{1,2}):00\s*(?:a|y|-|hasta|al?)\s*(\d{1,2}):00/i);
 
         if (matchHora) {
             let hora1 = matchHora[1].padStart(2, '0');
