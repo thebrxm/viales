@@ -159,7 +159,7 @@
         transition: 0.3s ease;
         appearance: none;
     }
-     
+    
     select:hover, select:focus { 
         background: rgba(255, 255, 255, 0.15);
         border-color: var(--primary-light);
@@ -220,7 +220,7 @@
 
     /* BARRAS DE COMUNAS */
     #comuna-list { display: flex; flex-direction: column; gap: 15px; }
-     
+    
     .comuna-row { width: 100%; }
 
     .comuna-info {
@@ -262,7 +262,7 @@
         line-height: 1;
         margin-bottom: 10px;
     }
-     
+    
     .pico-hora {
         color: var(--text-muted);
         font-size: 1.2rem;
@@ -309,7 +309,7 @@
     }
 
     .lang-controls { display: flex; gap: 10px; }
-     
+    
     .btn-lang {
         background: rgba(255,255,255,0.1);
         border: none;
@@ -375,7 +375,7 @@
             <div class="card">
                 <h3>Pico de Frecuencia</h3>
                 <div class="pico-val">
-                    <div class.pico-dia" id="p-dia">---</div>
+                    <div class="pico-dia" id="p-dia">---</div>
                     <div class="pico-hora" id="p-hora">--:-- hs</div>
                 </div>
             </div>
@@ -447,8 +447,7 @@
             document.getElementById('p-dia').innerText = "---";
             document.getElementById('p-hora').innerText = "--:-- hs";
             
-            // Datos de prueba si falla el PDF
-            dibujar(150, 120, ['Autos', 'Motos', 'Atropellos'], [80, 45, 25], [26.12, 13.49, 8.23, 8.63]);
+            dibujar(150, 120, ['Autos', 'Motos', 'Atropellos'], [80, 45, 25], [40, 30, 20, 10]);
             
             dibujarComunas([
                 {n: "Comuna 1", v: "", p: 100},
@@ -465,7 +464,7 @@
         // 1. PÁRRAFO RESUMEN 
         let textoResumen = "Resumen no disponible.";
         const matchResumen = texto.match(/((?:En el mes|Durante el mes|En [a-záéíóú]+ de).{10,250}?(?:pacientes|atenciones)\.?)/i) 
-                           || texto.match(/([A-Z][^\.]{10,150}solicitudes[^\.]{5,150}pacientes\.)/i);
+                          || texto.match(/([A-Z][^\.]{10,150}solicitudes[^\.]{5,150}pacientes\.)/i);
         if (matchResumen) {
             textoResumen = matchResumen[1];
         }
@@ -512,51 +511,24 @@
             vehiculosData = [0, 0, 0];
         }
 
-        // ==================================================================
-        // 3. TIPOS DE INCIDENTES (SECCIÓN ACTUALIZADA)
-        // ==================================================================
-        // Esta sección ahora busca específicamente las frases mencionadas por el usuario.
-        
-        let pAutoMoto = 0;
-        let pAutoAuto = 0;
-        let pCaidoMoto = 0;
-        let pAtropellado = 0;
+        // 3. TIPOS DE INCIDENTES 
+        const matchP1 = texto.match(/(?:Auto-Moto|Moto-Auto|Auto y Moto)[^\d]*?(\d+(?:,\d+)?)%/i);
+        const p1 = matchP1 ? parseFloat(matchP1[1].replace(',','.')) : 0;
 
-        // Regex para "colisiones auto - moto (26,12%)" (acepta guión corto o largo y espacios)
-        const mAutoMoto = texto.match(/colisiones\s+auto\s*[-–]\s*moto\s*\(\s*(\d+(?:,\d+)?)\s*%\s*\)/i);
-        if (mAutoMoto) {
-            pAutoMoto = parseFloat(mAutoMoto[1].replace(',', '.'));
-        }
+        const matchP2 = texto.match(/(?:auto\s*[-–y]\s*auto|autos?)[^\d]*?(\d+(?:,\d+)?)%/i);
+        const p2 = matchP2 ? parseFloat(matchP2[1].replace(',','.')) : 0;
 
-        // Regex para "colisiones auto – auto (13,49%)"
-        const mAutoAuto = texto.match(/colisiones\s+auto\s*[-–]\s*auto\s*\(\s*(\d+(?:,\d+)?)\s*%\s*\)/i);
-        if (mAutoAuto) {
-            pAutoAuto = parseFloat(mAutoAuto[1].replace(',', '.'));
-        }
+        const matchP3 = texto.match(/(?:caíd[ao] de moto|caída|moto sola)[^\d]*?(\d+(?:,\d+)?)%/i);
+        const p3 = matchP3 ? parseFloat(matchP3[1].replace(',','.')) : 0;
 
-         // Regex para "atropellamientos (8,63%)"
-         const mAtropellado = texto.match(/atropellamientos\s*\(\s*(\d+(?:,\d+)?)\s*%\s*\)/i);
-        if (mAtropellado) {
-            pAtropellado = parseFloat(mAtropellado[1].replace(',', '.'));
-        }
-
-        // Regex para "caídos de moto (8,23%)"
-        const mCaidoMoto = texto.match(/caídos\s+de\s+moto\s*\(\s*(\d+(?:,\d+)?)\s*%\s*\)/i);
-        if (mCaidoMoto) {
-            pCaidoMoto = parseFloat(mCaidoMoto[1].replace(',', '.'));
-        }
-
-        // IMPORTANTE: El gráfico 'c1' espera los datos en este orden específico:
-        // ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado']
-        const tiposDataFinal = [pAutoMoto, pAutoAuto, pCaidoMoto, pAtropellado];
-        // ==================================================================
-
+        const matchP4 = texto.match(/(?:atropellamientos?|atropellos?|peat[óo]n)[^\d]*?(\d+(?:,\d+)?)%/i);
+        const p4 = matchP4 ? parseFloat(matchP4[1].replace(',','.')) : 0;
 
         // 4. SOLICITUDES VS PACIENTES
         const sol = texto.match(/total de (\d+)\s*solicitudes/i) ? parseInt(texto.match(/total de (\d+)\s*solicitudes/i)[1]) : 0;
         const pac = texto.match(/total de (\d+)\s*pacientes/i) ? parseInt(texto.match(/total de (\d+)\s*pacientes/i)[1]) : 0;
 
-        // 5. PICO DE FRECUENCIA
+        // 5. PICO DE FRECUENCIA (LÓGICA SÚPER FLEXIBLE)
         let d = "---";
         let h = "--:-- hs";
 
@@ -566,7 +538,7 @@
             d = matchDia[1];
         }
 
-        // Extraer Hora
+        // Extraer Hora (Soporta múltiples formatos: "entre las 18 y las 20", "de 18 a 20", "18:00 a 20:00")
         const matchHora = texto.match(/(?:entre las|de las)\s*(\d{1,2})(?:\s*hs|\s*:\s*00)?\s*(?:y las|a las)\s*(\d{1,2})/i) 
                        || texto.match(/(?:de|entre)\s*(\d{1,2})\s*(?:a|y)\s*(\d{1,2})\s*(?:hs|horas|hrs|:00)/i)
                        || texto.match(/(\d{1,2}):00\s*(?:a|y|-|al?)\s*(\d{1,2}):00/i);
@@ -615,8 +587,7 @@
         }
 
         // LLAMADAS PARA DIBUJAR 
-        // Se usa 'tiposDataFinal' que contiene los datos extraídos con la nueva lógica
-        dibujar(sol, pac, vehiculosLabels, vehiculosData, tiposDataFinal);
+        dibujar(sol, pac, vehiculosLabels, vehiculosData, [p1, p2, p3, p4]);
         dibujarComunas(dataComunas); 
     }
 
@@ -638,7 +609,7 @@
         }, 100);
     }
 
-    function dibujar(sol, pac, vehLabels, vehData, tiposDataFinal) {
+    function dibujar(sol, pac, vehLabels, vehData, tipos) {
         if(charts.c1) Object.values(charts).forEach(c => c.destroy());
         
         Chart.defaults.font.family = "'Inter', sans-serif";
@@ -648,13 +619,7 @@
             maintainAspectRatio: false, 
             plugins: { legend: { display: false } },
             scales: {
-                y: { 
-                    beginAtZero: true, 
-                    grid: { color: '#f1f5f9' },
-                    ticks: {
-                        callback: function(value) { return value + "%" } // Añadir % al eje Y
-                    }
-                },
+                y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
                 x: { grid: { display: false } }
             }
         };
@@ -666,30 +631,17 @@
         const colorPurple = '#9b59b6';
         const colorYellow = '#f1c40f';
 
-        // GRÁFICO DE COLUMNAS (Tipos de Incidentes)
         charts.c1 = new Chart(document.getElementById('c1'), {
             type: 'bar', 
             data: { 
-                // Las etiquetas deben coincidir con el orden del array 'tiposDataFinal'
                 labels: ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], 
                 datasets: [{ 
-                    data: tiposDataFinal, // Usamos los datos extraídos con la nueva lógica
+                    data: tipos, 
                     backgroundColor: colorNavy,
                     borderRadius: 6
                 }] 
             }, 
-            options: {
-                ...opt,
-                plugins: {
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.parsed.y + '%'; // Mostrar % en el tooltip
-                            }
-                        }
-                    }
-                }
-            }
+            options: opt
         });
 
         charts.c2 = new Chart(document.getElementById('c2'), {
