@@ -3,30 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Incidentes de Transito Viales</title>
+<title>Incidentes de Tránsito | SAME / ECUES</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
 <style>
-* { box-sizing: border-box; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-    --bg1: #1f2a40;
-    --bg2: #2b3a51;
-    --bg3: #32445f;
-    --orange: #f5a65b;
-    --orange2: #f39c12;
-    --white: #ffffff;
-    --navy: #242f48;
+    --gov-blue-dark: #1e2a3a;
+    --gov-blue: #24364d;
+    --gov-blue-soft: #2f435f;
+    --gov-accent: #f5a65b;
+    --gov-accent-soft: #ffd9b3;
+    --card-bg: #ffffff;
+    --text-dark: #2c3e50;
 }
 
-html { scroll-behavior: smooth; }
-
 body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 60%, var(--bg3) 100%);
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, var(--gov-blue-dark), var(--gov-blue));
     color: white;
     min-height: 100vh;
 }
@@ -34,223 +31,185 @@ body {
 /* HEADER */
 
 header {
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(6px);
-    padding: 12px 60px;
+    background: rgba(255,255,255,0.97);
+    padding: 15px 5%;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
 .logo {
-    height: 55px;
+    height: 48px;
     transition: transform 0.3s ease;
 }
+.logo:hover { transform: scale(1.05); }
 
-.logo:hover {
-    transform: scale(1.05);
-}
+/* MAIN */
 
-main { padding: 50px; }
+main { padding: 40px 5%; }
 
 /* HERO */
 
 .hero {
     display: flex;
-    gap: 60px;
-    margin-bottom: 60px;
-    align-items: flex-start;
+    gap: 50px;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+    animation: fadeUp 0.8s ease;
 }
 
-/* ORANGE BOX */
-
 .orange-box {
-    background: linear-gradient(135deg, var(--orange), var(--orange2));
-    color: white;
+    background: linear-gradient(135deg, var(--gov-accent), #f39c12);
     padding: 30px;
-    border-radius: 20px;
-    width: 440px;
+    border-radius: 18px;
+    width: 420px;
+    color: white;
     box-shadow: 0 20px 40px rgba(0,0,0,0.25);
 }
 
 .orange-box h2 {
-    margin: 0 0 15px;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
     letter-spacing: 1px;
 }
 
 .orange-box p {
     font-size: 0.95rem;
     line-height: 1.6;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .btn-download {
-    display: inline-block;
-    background: var(--navy);
-    color: white;
-    padding: 12px 22px;
+    background: var(--gov-blue-dark);
+    padding: 12px 20px;
     border-radius: 10px;
-    text-decoration: none;
+    color: white;
     font-weight: bold;
-    font-size: 0.85rem;
+    text-decoration: none;
     transition: 0.3s ease;
 }
-
 .btn-download:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
 }
 
 /* TITLES */
 
+.title-section {
+    flex: 1;
+    min-width: 280px;
+}
+
 .title-section h1 {
-    font-size: 3.2rem;
-    margin: 0;
+    font-size: 2.8rem;
     font-weight: 800;
-    letter-spacing: 1px;
+    margin-bottom: 15px;
 }
 
 .subtitle {
-    font-size: 1.1rem;
     opacity: 0.75;
-    margin: 15px 0 25px;
+    margin-bottom: 25px;
 }
-
-/* SELECT */
 
 select {
-    padding: 14px;
-    border-radius: 10px;
-    background: #1a2436;
+    padding: 12px;
+    border-radius: 8px;
+    background: var(--gov-blue-soft);
     color: white;
-    border: 1px solid rgba(255,255,255,0.15);
-    font-weight: 600;
-    width: 260px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    border: none;
+    width: 240px;
+    transition: 0.3s ease;
 }
-
-select:hover {
-    border-color: var(--orange);
-}
+select:hover { background: var(--gov-blue); }
 
 /* GRID */
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 35px;
-    max-width: 1300px;
-    margin: 0 auto;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    animation: fadeUp 1s ease;
 }
 
-/* CARDS */
-
 .card {
-    background: white;
+    background: var(--card-bg);
     border-radius: 18px;
     padding: 25px;
-    color: #333;
-    min-height: 280px;
+    color: var(--text-dark);
     box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: 0.3s ease;
 }
 
 .card:hover {
-    transform: translateY(-6px);
+    transform: translateY(-5px);
     box-shadow: 0 20px 45px rgba(0,0,0,0.25);
 }
 
 .card h3 {
-    margin: 0 0 18px;
     font-size: 0.8rem;
-    color: #777;
     text-transform: uppercase;
-    border-left: 4px solid var(--orange);
+    margin-bottom: 18px;
+    border-left: 4px solid var(--gov-accent);
     padding-left: 10px;
+    color: #6c7a89;
 }
 
-/* CHARTS */
-
-.chart-wrap {
-    height: 220px;
-    position: relative;
-}
-
-/* COMUNAS */
-
-.comuna-row { margin-bottom: 14px; }
-
-.comuna-info {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    font-size: 0.85rem;
-    margin-bottom: 6px;
-    color: var(--navy);
-}
-
-.progress-bg {
-    background: #eee;
-    height: 8px;
-    border-radius: 4px;
-    overflow: hidden;
-}
-
-.progress-fill {
-    background: var(--orange);
-    height: 100%;
-    border-radius: 4px;
-    width: 0%;
-    transition: width 1s;
-}
-
-/* PICO */
-
-.pico-val { text-align: center; margin-top: 30px; }
-
-.pico-dia {
-    font-size: 2.8rem;
-    color: #e74c3c;
-    font-weight: bold;
-    text-transform: capitalize;
-}
+.chart-wrap { height: 220px; }
 
 /* MAP BUTTON */
 
 .btn-mapa {
-    background: linear-gradient(135deg, #242f48, #1a2436);
+    background: var(--gov-blue-dark);
     color: white;
-    padding: 18px 25px;
+    padding: 16px;
     border: none;
-    border-radius: 14px;
+    border-radius: 12px;
     font-weight: bold;
+    width: 100%;
     cursor: pointer;
-    font-size: 0.95rem;
     transition: 0.3s ease;
 }
-
 .btn-mapa:hover {
+    background: var(--gov-blue);
     transform: translateY(-4px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
 }
 
 /* FOOTER */
 
 footer {
-    padding: 40px 60px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    margin-top: 60px;
+    padding: 30px 5%;
     border-top: 1px solid rgba(255,255,255,0.1);
     font-size: 0.85rem;
     opacity: 0.7;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+/* ANIMATIONS */
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+    .hero { flex-direction: column; }
+    .orange-box { width: 100%; }
+    .title-section h1 { font-size: 2.2rem; }
+}
+
+@media (max-width: 600px) {
+    header { flex-direction: column; gap: 10px; }
+    .title-section h1 { font-size: 1.8rem; }
+    select { width: 100%; }
 }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -259,71 +218,33 @@ footer {
 </header>
 
 <main>
-    <div class="hero">
-        <div class="orange-box">
-            <h2 id="mes-header">INFORME MENSUAL</h2>
-            <p id="txt-parrafo">Cargando reporte...</p>
-            <a id="btn-descarga" href="#" target="_blank" class="btn-download">
-                📄 DESCARGAR REPORTE PDF
-            </a>
-        </div>
-
-        <div class="title-section">
-            <h1>INCIDENTES DE TRÁNSITO</h1>
-            <p class="subtitle">
-                Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.
-            </p>
-
-            <div style="display:flex; flex-direction:column; gap:5px;">
-                <label style="font-size:0.75rem; font-weight:bold; opacity:0.6;">
-                    SELECCIONAR PERIODO
-                </label>
-                <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
-            </div>
-        </div>
+<div class="hero">
+    <div class="orange-box">
+        <h2 id="mes-header">INFORME MENSUAL</h2>
+        <p id="txt-parrafo">Cargando reporte...</p>
+        <a id="btn-descarga" class="btn-download" target="_blank">📄 DESCARGAR REPORTE PDF</a>
     </div>
 
-    <div class="grid">
-        <div class="card">
-            <h3>Tipos de Incidentes (%)</h3>
-            <div class="chart-wrap"><canvas id="c1"></canvas></div>
-        </div>
-
-        <div class="card">
-            <h3>Participación Vehicular (Casos)</h3>
-            <div class="chart-wrap"><canvas id="c2"></canvas></div>
-        </div>
-
-        <div class="card">
-            <h3>Distribución por Comuna</h3>
-            <div id="comuna-list" style="margin-top:10px;"></div>
-        </div>
-
-        <div class="card">
-            <h3>Pico de Frecuencia</h3>
-            <div class="pico-val">
-                <div class="pico-dia" id="p-dia">---</div>
-                <div id="p-hora" style="color:#666">--:-- hs</div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h3>Solicitudes vs Pacientes</h3>
-            <div class="chart-wrap"><canvas id="c4"></canvas></div>
-        </div>
-
-        <div class="card" style="display:flex; justify-content:center; align-items:center;">
-            <button class="btn-mapa"
-                onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">
-                🌐 VER MAPA INTERACTIVO
-            </button>
-        </div>
+    <div class="title-section">
+        <h1>INCIDENTES DE TRÁNSITO</h1>
+        <p class="subtitle">Monitoreo estadístico oficial de incidentes viales atendidos por SAME / ECUES.</p>
+        <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
     </div>
+</div>
+
+<div class="grid">
+    <div class="card"><h3>Tipos de Incidentes (%)</h3><div class="chart-wrap"><canvas id="c1"></canvas></div></div>
+    <div class="card"><h3>Participación Vehicular</h3><div class="chart-wrap"><canvas id="c2"></canvas></div></div>
+    <div class="card"><h3>Distribución por Comuna</h3><div id="comuna-list"></div></div>
+    <div class="card"><h3>Pico de Frecuencia</h3><div id="p-dia"></div><div id="p-hora"></div></div>
+    <div class="card"><h3>Solicitudes vs Pacientes</h3><div class="chart-wrap"><canvas id="c4"></canvas></div></div>
+    <div class="card"><button class="btn-mapa" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">🌐 VER MAPA INTERACTIVO</button></div>
+</div>
 </main>
 
 <footer>
-    <div>SAME / ECUES (Equipo de Comunicación Unificada en Emergencias Sanitarias)</div>
-    <div>ES | EN | PT</div>
+<div>SAME / ECUES (Equipo de Comunicación Unificada de Emergencias Sanitarias)</div>
+<div>ES | EN | PT</div>
 </footer>
 
 <script>
@@ -366,6 +287,11 @@ async function cargarPDF(mesRaw) {
 }
 
 window.onload = init;
+    /* CONFIGURACIÓN VISUAL DE GRÁFICOS */
+Chart.defaults.color = "#5d6d7e";
+Chart.defaults.font.family = "Segoe UI";
+
+/* TU LÓGICA ORIGINAL PUEDE IR AQUÍ SIN MODIFICAR */
 </script>
 
 </body>
