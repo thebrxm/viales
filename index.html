@@ -482,12 +482,12 @@
         document.getElementById('p-hora').innerText = h;
 
 // 6. ZONAS DE MAYOR IMPACTO (COMUNAS) - LÓGICA FINAL SOLICITADA
-        // Buscamos el título ignorando posibles tildes (O u Ó) para evitar fallos
-        const matchTitulo = texto.match(/DISTRIBUCI[OÓ]N POR COMUNAS/i);
+        // Buscamos "DISTRIBUCIÓN POR COMUNAS" o "MAPA DE INCIDENTES"
+        const matchTitulo = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES)/i);
         let comunasExtraidas = [];
         
         if (matchTitulo) {
-            // Tomamos un fragmento de texto a partir de ese título
+            // Tomamos un fragmento de texto a partir de donde encontró cualquiera de los dos títulos
             const indiceComunas = matchTitulo.index;
             const fragmento = texto.substring(indiceComunas, indiceComunas + 500); 
             
@@ -505,7 +505,7 @@
             }
         }
 
-        // Preparamos los datos visuales para las barras (¡AQUÍ AGREGAMOS EL 5TO VALOR!)
+        // Preparamos los datos visuales para las barras
         const barrasVisuales = [100, 80, 60, 40, 20]; 
         let dataComunas = [];
 
@@ -517,7 +517,7 @@
                     p: barrasVisuales[i] // Largo estético de la barra
                 });
             } else {
-                dataComunas.push({n: "Comuna N/A", v: "", p: 0});
+                dataComunas.push({n: "", v: "", p: 0});
             }
         }
 
