@@ -530,4 +530,153 @@
         const pac = texto.match(/total de (\d+)\s*pacientes/i) ? parseInt(texto.match(/total de (\d+)\s*pacientes/i)[1]) : 0;
 
         // 5. PICO DE FRECUENCIA
-        const d = texto.match(/los\s+([a-záéíóú]+)\s+
+        const d = texto.match(/los\s+([a-záéíóú]+)\s+entre/i) ? texto.match(/los\s+([a-záéíóú]+)\s+entre/i)[1] : "---";
+        const h = texto.match(/entre las (\d+)\s*y las\s*(\d+)/i) ? `${texto.match(/entre las (\d+)\s*y las\s*(\d+)/i)[1]}:00 — ${texto.match(/entre las (\d+)\s*y las\s*(\d+)/i)[2]}:00 hs` : "--:--";
+        
+        document.getElementById('p-dia').innerText = d;
+        document.getElementById('p-hora').innerText = h;
+
+        // 6. ZONAS DE MAYOR IMPACTO (COMUNAS)
+        const matchTitulo = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES)/i);
+        let comunasExtraidas = [];
+        
+        if (matchTitulo) {
+            const indiceComunas = matchTitulo.index;
+            const fragmento = texto.substring(indiceComunas, indiceComunas + 500); 
+            
+            const regexComunas = /Comuna\s+(\d+)/gi;
+            let matchC;
+            
+            while ((matchC = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 5) {
+                let nombreComuna = `Comuna ${matchC[1]}`;
+                if (!comunasExtraidas.includes(nombreComuna)) {
+                    comunasExtraidas.push(nombreComuna);
+                }
+            }
+        }
+
+        const barrasVisuales = [100, 80, 60, 40, 20]; 
+        let dataComunas = [];
+
+        for (let i = 0; i < 5; i++) {
+            if (comunasExtraidas[i]) {
+                dataComunas.push({
+                    n: comunasExtraidas[i],
+                    v: "",
+                    p: barrasVisuales[i]
+                });
+            } else {
+                dataComunas.push({n: "", v: "", p: 0});
+            }
+        }
+
+        // LLAMADAS PARA DIBUJAR 
+        dibujar(sol, pac, vehiculosLabels, vehiculosData, [p1, p2, p3, p4]);
+        dibujarComunas(dataComunas); 
+    }
+
+    function dibujarComunas(data) {
+        const list = document.getElementById('comuna-list');
+        
+        list.innerHTML = data.map(c => `
+            <div class="comuna-row">
+                <div class="comuna-info"><span>${c.n}</span><span>${c.v}</span></div>
+                <div class="progress-bg"><div class="progress-fill" style="width: 0%"></div></div>
+            </div>
+        `).join('');
+
+        setTimeout(() => {
+            const fills = document.querySelectorAll('.progress-fill');
+            fills.forEach((fill, index) => {
+                fill.style.width = data[index].p + "%";
+            });
+        }, 100);
+    }
+
+    function dibujar(sol, pac, vehLabels, vehData, tipos) {
+        if(charts.c1) Object.values(charts).forEach(c => c.destroy());
+        
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        const opt = { 
+            maintainAspectRatio: false, 
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false } }
+            }
+        };
+
+        const colorNavy = '#1e293b';
+        const colorOrange = '#ea580c';
+        const colorBlue = '#3b82f6';
+        const colorTeal = '#14b8a6';
+        const colorPurple = '#9b59b6';
+        const colorYellow = '#f1c40f';
+
+        charts.c1 = new Chart(document.getElementById('c1'), {
+            type: 'bar', 
+            data: { 
+                labels: ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], 
+                datasets: [{ 
+                    data: tipos, 
+                    backgroundColor: colorNavy,
+                    borderRadius: 6
+                }] 
+            }, 
+            options: opt
+        });
+
+        charts.c2 = new Chart(document.getElementById('c2'), {
+            type: 'doughnut', 
+            data: { 
+                labels: vehLabels, 
+                datasets: [{ 
+                    data: vehData, 
+                    backgroundColor: [colorBlue, colorOrange, colorTeal, colorPurple, colorYellow, '#e74c3c'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }] 
+            }, 
+            options: { 
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                let value = context.raw;
+                                let total = context.chart._metasets[context.datasetIndex].total;
+                                let percentage = total > 0 ? ((value / total) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
+                                return label + value + ' casos (' + percentage + ')';
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+
+        charts.c4 = new Chart(document.getElementById('c4'), {
+            type: 'bar', 
+            data: { 
+                labels: ['Solicitudes', 'Pacientes'], 
+                datasets: [{ 
+                    data: [sol, pac], 
+                    backgroundColor: colorTeal,
+                    borderRadius: 6
+                }] 
+            }, 
+            options: opt
+        });
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
