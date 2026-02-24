@@ -437,21 +437,22 @@
         } catch (e) { 
             document.getElementById('txt-parrafo').innerText = "Esperando la carga de datos locales para el periodo seleccionado."; 
             
-            // SIMULACIÓN VISUAL (Fallback)
+            // SIMULACIÓN VISUAL (Fallback si no encuentra el PDF)
             document.getElementById('p-dia').innerText = "Viernes";
             document.getElementById('p-hora').innerText = "18:00 — 20:00 hs";
             dibujar(150, 120, 80, 45, 25, [40, 30, 20, 10]);
+            
+            // Fallback con la nueva estructura requerida (solo nombres, sin porcentajes)
             dibujarComunas([
-                {n: "Comuna 1", v: "25%", p: 25},
-                {n: "Comuna 9", v: "15%", p: 15},
-                {n: "Comuna 14", v: "12%", p: 12},
-                {n: "Comuna 4", v: "8%", p: 8}
+                {n: "Comuna 1", v: "", p: 100},
+                {n: "Comuna 9", v: "", p: 75},
+                {n: "Comuna 14", v: "", p: 50},
+                {n: "Comuna 4", v: "", p: 25}
             ]);
         }
     }
 
-   function procesar(t) {
-        // Limpiamos el texto de espacios extra y saltos de línea para facilitar la lectura
+    function procesar(t) {
         const texto = t.replace(/\s+/g, ' ');
 
         // 1. PÁRRAFO RESUMEN
@@ -480,48 +481,51 @@
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-        // 6. ZONAS DE MAYOR IMPACTO (COMUNAS) - NUEVA LÓGICA
-        // Buscamos específicamente dónde empieza la sección en el PDF
-        const indiceComunas = texto.toUpperCase().indexOf("DISTRIBUCIÓN POR COMUNAS");
+        // 6. ZONAS DE MAYOR IMPACTO (COMUNAS) - LÓGICA FINAL SOLICITADA
+        // Buscamos el título ignorando posibles tildes (O u Ó) para evitar fallos
+        const matchTitulo = texto.match(/DISTRIBUCI[OÓ]N POR COMUNAS/i);
         let comunasExtraidas = [];
         
-        if (indiceComunas !== -1) {
-            // Tomamos un fragmento de texto inmediatamente posterior a ese título (aprox 800 caracteres)
-            const fragmento = texto.substring(indiceComunas, indiceComunas + 800); 
+        if (matchTitulo) {
+            // Tomamos un fragmento de texto a partir de ese título
+            const indiceComunas = matchTitulo.index;
+            const fragmento = texto.substring(indiceComunas, indiceComunas + 500); 
             
-            // Regex que busca "Comuna X" seguido de un número con o sin decimales y el signo %
-            const regexComunas = /Comuna\s*(\d+)[^\d]*?(\d+(?:,\d+)?)\s*%/gi;
+            // Expresión regular que busca exactamente "Comuna X" (con un número)
+            const regexComunas = /Comuna\s+(\d+)/gi;
             let match;
             
-            while ((match = regexComunas.exec(fragmento)) !== null) {
-                // Filtramos para no duplicar si el PDF menciona la misma comuna dos veces
-                if (!comunasExtraidas.some(c => c.n === `Comuna ${match[1]}`)) {
-                    comunasExtraidas.push({
-                        n: `Comuna ${match[1]}`,
-                        v: `${match[2]}%`,
-                        p: parseFloat(match[2].replace(',', '.'))
-                    });
+            // Extraemos hasta un máximo de 4 comunas en el orden de aparición
+            while ((match = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 4) {
+                let nombreComuna = `Comuna ${match[1]}`;
+                // Agregamos a la lista solo si no está repetida
+                if (!comunasExtraidas.includes(nombreComuna)) {
+                    comunasExtraidas.push(nombreComuna);
                 }
             }
-            
-            // Ordenamos de mayor a menor impacto (porcentaje)
-            comunasExtraidas.sort((a, b) => b.p - a.p);
-            
-            // Recortamos el array para quedarnos solo con el Top 4
-            comunasExtraidas = comunasExtraidas.slice(0, 4);
         }
 
-        // Si falló la lectura o hay menos de 4 comunas, rellenamos para que la tarjeta no quede deformada
-        while (comunasExtraidas.length < 4) {
-            comunasExtraidas.push({n: "Comuna N/A", v: "0%", p: 0});
+        // Preparamos los datos visuales para las barras
+        const barrasVisuales = [100, 75, 50, 25]; 
+        let dataComunas = [];
+
+        for (let i = 0; i < 4; i++) {
+            if (comunasExtraidas[i]) {
+                dataComunas.push({
+                    n: comunasExtraidas[i],
+                    v: "", // Sin porcentaje en el texto
+                    p: barrasVisuales[i] // Largo estético de la barra
+                });
+            } else {
+                dataComunas.push({n: "Comuna N/A", v: "", p: 0});
+            }
         }
 
         // LLAMADAS PARA DIBUJAR LOS GRÁFICOS
         dibujar(sol, pac, aut, mot, atr, [p1, p2, p3, p4]);
-        dibujarComunas(comunasExtraidas); 
+        dibujarComunas(dataComunas); 
     }
-    
-    // MODIFICADO: Ahora recibe los datos como parámetro desde el lector de PDF
+
     function dibujarComunas(data) {
         const list = document.getElementById('comuna-list');
         
@@ -536,8 +540,7 @@
         setTimeout(() => {
             const fills = document.querySelectorAll('.progress-fill');
             fills.forEach((fill, index) => {
-                // Limitamos a 100% por si hay un error de lectura en el PDF
-                fill.style.width = Math.min(data[index].p, 100) + "%";
+                fill.style.width = data[index].p + "%";
             });
         }, 100);
     }
