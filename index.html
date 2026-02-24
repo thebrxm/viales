@@ -222,15 +222,23 @@ footer {
     <div class="orange-box">
         <h2 id="mes-header">INFORME MENSUAL</h2>
         <p id="txt-parrafo">Cargando reporte...</p>
-        <a id="btn-descarga" class="btn-download" target="_blank">📄 DESCARGAR REPORTE PDF</a>
+        <a id="btn-descarga" class="btn-download" target="_blank">📄 VISUALIZAR REPORTE PDF</a>
     </div>
 
     <div class="title-section">
-        <h1>INCIDENTES DE TRÁNSITO</h1>
-        <p class="subtitle">Monitoreo estadístico oficial de incidentes viales atendidos por SAME / ECUES.</p>
-        <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
+            <h1>INCIDENTES DE TRÁNSITO</h1>
+            <p class="subtitle">
+                Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:5px;">
+                <label style="font-size:0.75rem; font-weight:bold; opacity:0.6;">
+                    SELECCIONAR PERIODO
+                </label>
+                <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
+            </div>
+        </div>
     </div>
-</div>
 
 <div class="grid">
     <div class="card"><h3>Tipos de Incidentes (%)</h3><div class="chart-wrap"><canvas id="c1"></canvas></div></div>
@@ -238,7 +246,11 @@ footer {
     <div class="card"><h3>Distribución por Comuna</h3><div id="comuna-list"></div></div>
     <div class="card"><h3>Pico de Frecuencia</h3><div id="p-dia"></div><div id="p-hora"></div></div>
     <div class="card"><h3>Solicitudes vs Pacientes</h3><div class="chart-wrap"><canvas id="c4"></canvas></div></div>
-    <div class="card"><button class="btn-mapa" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.enero.2026.html')">🌐 VER MAPA INTERACTIVO</button></div>
+    <div class="card" style="display:flex; justify-content:center; align-items:center;">
+            <button class="btn-mapa"
+                onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.incidentesenero2026.html')">
+                🌐 VER MAPA INTERACTIVO
+            </button></div>
 </div>
 </main>
 
@@ -287,11 +299,6 @@ async function cargarPDF(mesRaw) {
 }
 
 window.onload = init;
-    /* CONFIGURACIÓN VISUAL DE GRÁFICOS */
-Chart.defaults.color = "#5d6d7e";
-Chart.defaults.font.family = "Segoe UI";
-
-/* TU LÓGICA ORIGINAL PUEDE IR AQUÍ SIN MODIFICAR */
 </script>
 
 </body>
