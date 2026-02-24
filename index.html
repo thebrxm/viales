@@ -437,12 +437,13 @@
         } catch (e) { 
             document.getElementById('txt-parrafo').innerText = "Esperando la carga de datos locales para el periodo seleccionado."; 
             
-            // SIMULACIÓN VISUAL (Fallback si no encuentra el PDF)
+            // SIMULACIÓN VISUAL (Fallback)
             document.getElementById('p-dia').innerText = "Viernes";
             document.getElementById('p-hora').innerText = "18:00 — 20:00 hs";
-            dibujar(150, 120, 80, 45, 25, [40, 30, 20, 10]);
             
-            // Fallback con la nueva estructura requerida (solo nombres, sin porcentajes)
+            // Simulación llamadas con arrays dinámicos
+            dibujar(150, 120, ['Autos', 'Motos', 'Atropellos'], [80, 45, 25], [40, 30, 20, 10]);
+            
             dibujarComunas([
                 {n: "Comuna 1", v: "", p: 100},
                 {n: "Comuna 9", v: "", p: 75},
@@ -459,10 +460,44 @@
         const mP = texto.match(/(En el mes de.*?pacientes\.)/i);
         document.getElementById('txt-parrafo').innerText = mP ? mP[1] : "Resumen no disponible.";
 
-        // 2. PARTICIPACIÓN VEHICULAR
-        const aut = texto.match(/(?:automóviles|autos).*?(\d+)/i) ? parseInt(texto.match(/(?:automóviles|autos).*?(\d+)/i)[1]) : 0;
-        const mot = texto.match(/motovehículos.*?(\d+)/i) ? parseInt(texto.match(/motovehículos.*?(\d+)/i)[1]) : 0;
-        const atr = texto.match(/atropellamientos.*?(\d+)/i) ? parseInt(texto.match(/atropellamientos.*?(\d+)/i)[1]) : 0;
+        // 2. PARTICIPACIÓN VEHICULAR DINÁMICA (NUEVA LÓGICA)
+        let vehiculosLabels = [];
+        let vehiculosData = [];
+        
+        const indiceVehicular = texto.toUpperCase().indexOf("DEL TOTAL DE INCIDENTES REGISTRADOS");
+        if (indiceVehicular !== -1) {
+            // Extraemos un bloque de texto donde están los valores
+            const fragmentoVehicular = texto.substring(indiceVehicular, indiceVehicular + 400);
+            
+            // Busca (Variantes de palabras) ... (número) casos
+            const regexVehicular = /(autom[óo]vil(?:es)?|autos?|motoveh[íi]culos?|motocicletas?|motos?|atropellamientos?|peat[óo]n|peatones|bicicletas?|camiones?|transporte p[úu]blico)[^\d]*?(\d+)\s*casos?/gi;
+            
+            let match;
+            while ((match = regexVehicular.exec(fragmentoVehicular)) !== null) {
+                let tipoBruto = match[1].toLowerCase();
+                let cantidad = parseInt(match[2]);
+                let tipoFinal = "";
+                
+                // Normalizar nombres
+                if (tipoBruto.includes('auto')) tipoFinal = 'Autos';
+                else if (tipoBruto.includes('moto') || tipoBruto.includes('motoveh')) tipoFinal = 'Motos';
+                else if (tipoBruto.includes('atropellamiento') || tipoBruto.includes('peat')) tipoFinal = 'Atropellos';
+                else if (tipoBruto.includes('bici')) tipoFinal = 'Bicicletas';
+                else tipoFinal = tipoBruto.charAt(0).toUpperCase() + tipoBruto.slice(1);
+                
+                // Evitamos duplicar si el PDF dice "motos o motocicleta"
+                if (!vehiculosLabels.includes(tipoFinal)) {
+                    vehiculosLabels.push(tipoFinal);
+                    vehiculosData.push(cantidad);
+                }
+            }
+        }
+
+        // Si falla la extracción, ponemos valores por defecto para no romper el gráfico
+        if (vehiculosLabels.length === 0) {
+            vehiculosLabels = ['Autos', 'Motos', 'Atropellos'];
+            vehiculosData = [0, 0, 0];
+        }
 
         // 3. TIPOS DE INCIDENTES
         const p1 = texto.match(/Auto-Moto\s*\(?(\d+(?:,\d+)?)%\)?/i) ? parseFloat(texto.match(/Auto-Moto\s*\(?(\d+(?:,\d+)?)%\)?/i)[1].replace(',','.')) : 0;
@@ -481,31 +516,25 @@
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-// 6. ZONAS DE MAYOR IMPACTO (COMUNAS) - LÓGICA FINAL SOLICITADA
-        // Buscamos "DISTRIBUCIÓN POR COMUNAS" o "MAPA DE INCIDENTES"
+        // 6. ZONAS DE MAYOR IMPACTO (COMUNAS)
         const matchTitulo = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES)/i);
         let comunasExtraidas = [];
         
         if (matchTitulo) {
-            // Tomamos un fragmento de texto a partir de donde encontró cualquiera de los dos títulos
             const indiceComunas = matchTitulo.index;
             const fragmento = texto.substring(indiceComunas, indiceComunas + 500); 
             
-            // Expresión regular que busca exactamente "Comuna X" (con un número)
             const regexComunas = /Comuna\s+(\d+)/gi;
             let match;
             
-            // Extraemos hasta un máximo de 5 comunas en el orden de aparición
             while ((match = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 5) {
                 let nombreComuna = `Comuna ${match[1]}`;
-                // Agregamos a la lista solo si no está repetida
                 if (!comunasExtraidas.includes(nombreComuna)) {
                     comunasExtraidas.push(nombreComuna);
                 }
             }
         }
 
-        // Preparamos los datos visuales para las barras
         const barrasVisuales = [100, 80, 60, 40, 20]; 
         let dataComunas = [];
 
@@ -513,17 +542,16 @@
             if (comunasExtraidas[i]) {
                 dataComunas.push({
                     n: comunasExtraidas[i],
-                    v: "", // Sin porcentaje en el texto
-                    p: barrasVisuales[i] // Largo estético de la barra
+                    v: "",
+                    p: barrasVisuales[i]
                 });
             } else {
-                dataComunas.push({n: "", v: "", p: 0});
+                dataComunas.push({n: "Comuna N/A", v: "", p: 0});
             }
         }
 
-        // LLAMADAS PARA DIBUJAR LOS GRÁFICOS
-        // (Dejamos hasta p4 a menos que hayas creado una variable p5 más arriba)
-        dibujar(sol, pac, aut, mot, atr, [p1, p2, p3, p4]);
+        // LLAMADAS PARA DIBUJAR (Pasamos los arrays dinámicos vehiculosLabels y vehiculosData)
+        dibujar(sol, pac, vehiculosLabels, vehiculosData, [p1, p2, p3, p4]);
         dibujarComunas(dataComunas); 
     }
 
@@ -537,7 +565,6 @@
             </div>
         `).join('');
 
-        // Animación de las barras
         setTimeout(() => {
             const fills = document.querySelectorAll('.progress-fill');
             fills.forEach((fill, index) => {
@@ -545,8 +572,9 @@
             });
         }, 100);
     }
-    
-    function dibujar(sol, pac, aut, mot, atr, tipos) {
+
+    // MODIFICADO: Recibe vehLabels y vehData dinámicos
+    function dibujar(sol, pac, vehLabels, vehData, tipos) {
         if(charts.c1) Object.values(charts).forEach(c => c.destroy());
         
         Chart.defaults.font.family = "'Inter', sans-serif";
@@ -565,6 +593,8 @@
         const colorOrange = '#ea580c';
         const colorBlue = '#3b82f6';
         const colorTeal = '#14b8a6';
+        const colorPurple = '#9b59b6';
+        const colorYellow = '#f1c40f';
 
         charts.c1 = new Chart(document.getElementById('c1'), {
             type: 'bar', 
@@ -582,17 +612,35 @@
         charts.c2 = new Chart(document.getElementById('c2'), {
             type: 'doughnut', 
             data: { 
-                labels: ['Autos', 'Motos', 'Atropellos'], 
+                labels: vehLabels, 
                 datasets: [{ 
-                    data: [aut, mot, atr], 
-                    backgroundColor: [colorBlue, colorOrange, colorTeal],
+                    data: vehData, 
+                    // Agregamos más colores por si detecta 4, 5 o más tipos de vehículos
+                    backgroundColor: [colorBlue, colorOrange, colorTeal, colorPurple, colorYellow, '#e74c3c'],
                     borderWidth: 0,
                     hoverOffset: 4
                 }] 
             }, 
             options: { 
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } },
+                plugins: { 
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            // FORMATEO DEL TEXTO AL PASAR EL MOUSE: "Autos: 902 casos (50,8%)"
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                let value = context.raw;
+                                let total = context.chart._metasets[context.datasetIndex].total;
+                                let percentage = ((value / total) * 100).toFixed(1).replace('.', ',') + '%';
+                                return label + value + ' casos (' + percentage + ')';
+                            }
+                        }
+                    }
+                },
                 cutout: '70%'
             }
         });
