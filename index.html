@@ -14,320 +14,100 @@
 
 <style>
     /* RESET Y VARIABLES */
-    * { 
-        box-sizing: border-box; 
-        margin: 0; 
-        padding: 0; 
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-        --bg-dark: #0f172a;
-        --bg-gradient: #1e293b;
-        --card-bg: #ffffff;
-        --primary: #ea580c;
-        --primary-light: #f97316;
-        --text-dark: #334155;
-        --text-muted: #64748b;
-        --navy: #1e293b;
+        --bg-dark: #0f172a; --bg-gradient: #1e293b; --card-bg: #ffffff;
+        --primary: #ea580c; --primary-light: #f97316; --text-dark: #334155;
+        --text-muted: #64748b; --navy: #1e293b;
     }
-
     html { scroll-behavior: smooth; }
-
     body {
         font-family: 'Inter', sans-serif;
         background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-gradient) 100%);
-        color: white;
-        min-height: 100vh;
+        color: white; min-height: 100vh;
     }
-
-    /* HEADER */
     header {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        padding: 15px 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        position: sticky;
-        top: 0;
-        z-index: 100;
+        background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+        padding: 15px 5%; display: flex; justify-content: space-between;
+        align-items: center; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        position: sticky; top: 0; z-index: 100;
     }
-
-    .logo {
-        height: 48px;
-        transition: transform 0.3s ease;
-    }
+    .logo { height: 48px; transition: transform 0.3s ease; }
     .logo:hover { transform: scale(1.05); }
-
     main { padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
-
-    /* HERO SECTION */
-    .hero {
-        display: flex;
-        gap: 40px;
-        flex-wrap: wrap;
-        margin-bottom: 50px;
-        align-items: center;
-        animation: fadeUp 0.8s ease;
-    }
-
+    
+    .hero { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 50px; align-items: center; animation: fadeUp 0.8s ease; }
     .orange-box {
         background: linear-gradient(135deg, var(--primary-light), var(--primary));
-        padding: 30px 35px;
-        border-radius: 20px;
-        width: 100%;
-        max-width: 450px;
-        color: white;
-        box-shadow: 0 15px 35px rgba(234, 88, 12, 0.25);
-        position: relative;
-        overflow: hidden;
+        padding: 30px 35px; border-radius: 20px; width: 100%; max-width: 450px;
+        color: white; box-shadow: 0 15px 35px rgba(234, 88, 12, 0.25); position: relative; overflow: hidden;
     }
-
     .orange-box::after {
-        content: '';
-        position: absolute;
-        top: -50%; right: -20%;
-        width: 200px; height: 200px;
-        background: rgba(255,255,255,0.1);
-        border-radius: 50%;
+        content: ''; position: absolute; top: -50%; right: -20%;
+        width: 200px; height: 200px; background: rgba(255,255,255,0.1); border-radius: 50%;
     }
-
-    .orange-box h2 {
-        font-size: 1.4rem;
-        margin-bottom: 12px;
-        font-weight: 800;
-        letter-spacing: 0.5px;
-    }
-
-    .orange-box p {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        margin-bottom: 20px;
-        opacity: 0.95;
-    }
-
+    .orange-box h2 { font-size: 1.4rem; margin-bottom: 12px; font-weight: 800; letter-spacing: 0.5px; }
+    .orange-box p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; opacity: 0.95; }
     #lnk-pdf {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: rgba(255, 255, 255, 0.2);
-        padding: 10px 16px;
-        border-radius: 8px;
-        color: white;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.85rem;
-        transition: all 0.3s ease;
+        display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.2);
+        padding: 10px 16px; border-radius: 8px; color: white; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease;
     }
-
-    #lnk-pdf:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateX(5px);
-    }
-
-    .title-section {
-        flex: 1;
-        min-width: 300px;
-    }
-
-    .title-section h1 {
-        font-size: clamp(2.2rem, 4vw, 3.2rem);
-        font-weight: 800;
-        margin-bottom: 10px;
-        line-height: 1.1;
-    }
-
-    .subtitle {
-        color: #94a3b8;
-        font-size: 1.1rem;
-        margin-bottom: 25px;
-    }
-
-    select {
-        padding: 12px 16px;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.1);
-        color: white;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        width: 100%;
-        max-width: 280px;
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-        cursor: pointer;
-        outline: none;
-        transition: 0.3s ease;
-        appearance: none;
-    }
+    #lnk-pdf:hover { background: rgba(255, 255, 255, 0.3); transform: translateX(5px); }
     
-    select:hover, select:focus { 
-        background: rgba(255, 255, 255, 0.15);
-        border-color: var(--primary-light);
+    .title-section { flex: 1; min-width: 300px; }
+    .title-section h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
+    .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 25px; }
+    
+    select {
+        padding: 12px 16px; border-radius: 10px; background: rgba(255, 255, 255, 0.1);
+        color: white; border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; max-width: 280px;
+        font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; outline: none; transition: 0.3s ease; appearance: none;
     }
-
+    select:hover, select:focus { background: rgba(255, 255, 255, 0.15); border-color: var(--primary-light); }
     select option { background: var(--navy); color: white; }
 
-    /* DASHBOARD GRID */
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 25px;
-        animation: fadeUp 1s ease;
-    }
-
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; animation: fadeUp 1s ease; }
     .card {
-        background: var(--card-bg);
-        border-radius: 20px;
-        padding: 25px;
-        color: var(--text-dark);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        transition: all 0.3s ease;
-        display: flex;
-        flex-direction: column;
+        background: var(--card-bg); border-radius: 20px; padding: 25px; color: var(--text-dark);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s ease; display: flex; flex-direction: column;
     }
-
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-
+    .card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
     .card h3 {
-        font-size: 0.85rem;
-        text-transform: uppercase;
-        margin-bottom: 20px;
-        color: var(--text-muted);
-        font-weight: 800;
-        letter-spacing: 1px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
+        font-size: 0.85rem; text-transform: uppercase; margin-bottom: 20px; color: var(--text-muted);
+        font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;
     }
+    .card h3::before { content: ''; display: inline-block; width: 12px; height: 12px; background: var(--primary); border-radius: 4px; }
+    .chart-wrap { flex-grow: 1; min-height: 220px; position: relative; }
 
-    .card h3::before {
-        content: '';
-        display: inline-block;
-        width: 12px;
-        height: 12px;
-        background: var(--primary);
-        border-radius: 4px;
-    }
-
-    .chart-wrap { 
-        flex-grow: 1;
-        min-height: 220px; 
-        position: relative;
-    }
-
-    /* BARRAS DE COMUNAS */
     #comuna-list { display: flex; flex-direction: column; gap: 15px; }
-    
     .comuna-row { width: 100%; }
+    .comuna-info { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; color: var(--text-dark); }
+    .progress-bg { background: #f1f5f9; height: 10px; border-radius: 10px; overflow: hidden; }
+    .progress-fill { background: linear-gradient(90deg, var(--primary), var(--primary-light)); height: 100%; border-radius: 10px; width: 0%; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
 
-    .comuna-info {
-        display: flex;
-        justify-content: space-between;
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 8px;
-        color: var(--text-dark);
-    }
+    .pico-val { text-align: center; margin: auto; padding: 20px 0; }
+    .pico-dia { font-size: 3rem; color: var(--primary); font-weight: 800; text-transform: capitalize; line-height: 1; margin-bottom: 10px; }
+    .pico-hora { color: var(--text-muted); font-size: 1.2rem; font-weight: 600; }
 
-    .progress-bg {
-        background: #f1f5f9;
-        height: 10px;
-        border-radius: 10px;
-        overflow: hidden;
-    }
-
-    .progress-fill {
-        background: linear-gradient(90deg, var(--primary), var(--primary-light));
-        height: 100%;
-        border-radius: 10px;
-        width: 0%;
-        transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    /* PICO DE FRECUENCIA */
-    .pico-val { 
-        text-align: center; 
-        margin: auto;
-        padding: 20px 0;
-    }
-
-    .pico-dia {
-        font-size: 3rem;
-        color: var(--primary);
-        font-weight: 800;
-        text-transform: capitalize;
-        line-height: 1;
-        margin-bottom: 10px;
-    }
-    
-    .pico-hora {
-        color: var(--text-muted);
-        font-size: 1.2rem;
-        font-weight: 600;
-    }
-
-    /* BOTÓN MAPA */
     .btn-mapa {
-        background: var(--navy);
-        color: white;
-        padding: 16px;
-        border: none;
-        border-radius: 12px;
-        font-weight: 600;
-        font-size: 1rem;
-        width: 100%;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        font-family: 'Inter', sans-serif;
+        background: var(--navy); color: white; padding: 16px; border: none; border-radius: 12px;
+        font-weight: 600; font-size: 1rem; width: 100%; cursor: pointer; transition: all 0.3s ease;
+        display: flex; justify-content: center; align-items: center; gap: 10px; font-family: 'Inter', sans-serif;
     }
+    .btn-mapa:hover { background: var(--primary); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3); }
 
-    .btn-mapa:hover {
-        background: var(--primary);
-        transform: translateY(-2px);
-        box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3);
-    }
-
-    /* FOOTER */
     footer {
-        margin-top: 60px;
-        padding: 30px 5%;
-        border-top: 1px solid rgba(255,255,255,0.1);
-        font-size: 0.9rem;
-        color: #94a3b8;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 20px;
+        margin-top: 60px; padding: 30px 5%; border-top: 1px solid rgba(255,255,255,0.1);
+        font-size: 0.9rem; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
     }
-
     .lang-controls { display: flex; gap: 10px; }
-    
     .btn-lang {
-        background: rgba(255,255,255,0.1);
-        border: none;
-        color: white;
-        padding: 5px 12px;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: 0.3s;
+        background: rgba(255,255,255,0.1); border: none; color: white; padding: 5px 12px;
+        border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s;
     }
+    .btn-lang:hover, .btn-lang.active { background: var(--primary); }
 
-    .btn-lang:hover { background: var(--primary); }
-
-    /* ANIMACIONES */
-    @keyframes fadeUp {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 </style>
 </head>
 <body>
@@ -340,16 +120,16 @@
     <main>
         <div class="hero">
             <div class="orange-box">
-                <h2>Informe Mensual</h2>
-                <p id="txt-parrafo">Cargando...</p>
-                <a id="lnk-pdf" href="#" target="_blank">📄 Ver informe</a>
+                <h2 data-i18n="box_title">Informe Mensual</h2>
+                <p id="txt-parrafo" data-i18n="box_desc">Cargando...</p>
+                <a id="lnk-pdf" href="#" target="_blank"><span data-i18n="box_btn">📄 Ver informe</span></a>
             </div>
 
             <div class="title-section">
-                <h1>Incidentes de Tránsito</h1>
-                <p class="subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
+                <h1 data-i18n="main_title">Incidentes de Tránsito</h1>
+                <p class="subtitle" data-i18n="main_subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
                 <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.8rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;">Seleccionar Periodo</label>
+                    <label style="font-size:0.8rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;" data-i18n="select_label">Seleccionar Periodo</label>
                     <select id="sel-periodo" onchange="cargarPDF(this.value)"></select>
                 </div>
             </div>
@@ -357,23 +137,25 @@
 
         <div class="grid">
             <div class="card">
-                <h3>Tipos de Incidentes</h3>
-                <div class="chart-wrap"><canvas id="c1"></canvas></div>
+                <h3 data-i18n="card1_title">Tipos de Incidentes</h3>
+                <div class="chart-wrap" style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
+                    <img id="img-tipos" src="" alt="Gráfico" style="max-width:100%; max-height:220px; border-radius:8px; display:none; object-fit:contain; cursor:pointer;" onclick="if(this.src) window.open(this.src, '_blank')">
+                    <p id="img-fallback" style="color:var(--text-muted); font-size:0.9rem; text-align:center;" data-i18n="loading_chart">Cargando gráfico...</p>
+                </div>
             </div>
 
             <div class="card">
-                <h3>Participación Vehicular</h3>
+                <h3 data-i18n="card2_title">Participación Vehicular</h3>
                 <div class="chart-wrap"><canvas id="c2"></canvas></div>
             </div>
 
             <div class="card">
-                <h3>Zonas de Mayor Impacto</h3>
-                <div id="comuna-list">
-                    </div>
+                <h3 data-i18n="card3_title">Zonas de Mayor Impacto</h3>
+                <div id="comuna-list"></div>
             </div>
 
             <div class="card">
-                <h3>Pico de Frecuencia</h3>
+                <h3 data-i18n="card4_title">Pico de Frecuencia</h3>
                 <div class="pico-val">
                     <div class="pico-dia" id="p-dia">---</div>
                     <div class="pico-hora" id="p-hora">--:-- hs</div>
@@ -381,33 +163,132 @@
             </div>
 
             <div class="card">
-                <h3>Solicitudes vs Pacientes</h3>
+                <h3 data-i18n="card5_title">Solicitudes vs Pacientes</h3>
                 <div class="chart-wrap"><canvas id="c4"></canvas></div>
             </div>
 
             <div class="card" style="justify-content:center; align-items:center; text-align:center; background:var(--navy);">
-                <h3 style="color:white; border:none; width:100%; justify-content:center;">Geolocalización</h3>
-                <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:20px;">Visualiza los puntos críticos de incidentes en el mapa de la Ciudad.</p>
+                <h3 style="color:white; border:none; width:100%; justify-content:center;" data-i18n="card6_title">Geolocalización</h3>
+                <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:20px;" data-i18n="card6_desc">Visualiza los puntos críticos de incidentes en el mapa de la Ciudad.</p>
                 <button class="btn-mapa" onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.incidentesenero2026.html')">
-                    🌐 Abrir Mapa Interactivo
+                    <span data-i18n="card6_btn">🌐 Abrir Mapa Interactivo</span>
                 </button>
             </div>
         </div>
     </main>
 
     <footer>
-        <div>&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias</div>
+        <div data-i18n="footer_text">&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias</div>
         <div class="lang-controls">
-            <button class="btn-lang">ES</button>
-            <button class="btn-lang">EN</button>
-            <button class="btn-lang">PT</button>
+            <button class="btn-lang active" onclick="cambiarIdioma('es')">ES</button>
+            <button class="btn-lang" onclick="cambiarIdioma('en')">EN</button>
+            <button class="btn-lang" onclick="cambiarIdioma('pt')">PT</button>
         </div>
     </footer>
 
 <script>
-    const periodos = ["2026-01", "2025-12", "2025-11", "2025-10"];
-    const mesesNombres = {"01": "Enero", "02": "Febrero", "03": "Marzo", "04": "Abril", "05": "Mayo", "06": "Junio", "07": "Julio", "08": "Agosto", "09": "Septiembre", "10": "Octubre", "11": "Noviembre", "12": "Diciembre"};
+    // --- SISTEMA DE IDIOMAS ---
+    let idiomaActual = 'es';
+    let datosGlobales = { sol: 0, pac: 0, vehLabels: [], vehData: [] }; // Guarda datos para redibujar gráficos al cambiar idioma
 
+    const diccionario = {
+        es: {
+            box_title: "Informe Mensual",
+            box_btn: "📄 Ver informe",
+            main_title: "Incidentes de Tránsito",
+            main_subtitle: "Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.",
+            select_label: "Seleccionar Periodo",
+            card1_title: "Tipos de Incidentes",
+            card2_title: "Participación Vehicular",
+            card3_title: "Zonas de Mayor Impacto",
+            card4_title: "Pico de Frecuencia",
+            card5_title: "Solicitudes vs Pacientes",
+            card6_title: "Geolocalización",
+            card6_desc: "Visualiza los puntos críticos de incidentes en el mapa de la Ciudad.",
+            card6_btn: "🌐 Abrir Mapa Interactivo",
+            footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias",
+            loading_chart: "Cargando gráfico...",
+            no_chart: "Gráfico no disponible para este periodo.",
+            no_summary: "Resumen no disponible.",
+            lbl_sol: "Solicitudes",
+            lbl_pac: "Pacientes",
+            lbl_casos: "casos"
+        },
+        en: {
+            box_title: "Monthly Report",
+            box_btn: "📄 View report",
+            main_title: "Traffic Incidents",
+            main_subtitle: "Monitoring of traffic incidents attended by the SAME / ECUES team.",
+            select_label: "Select Period",
+            card1_title: "Types of Incidents",
+            card2_title: "Vehicle Involvement",
+            card3_title: "Highest Impact Zones",
+            card4_title: "Peak Frequency",
+            card5_title: "Requests vs Patients",
+            card6_title: "Geolocation",
+            card6_desc: "Visualize critical incident hotspots on the City map.",
+            card6_btn: "🌐 Open Interactive Map",
+            footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team",
+            loading_chart: "Loading chart...",
+            no_chart: "Chart not available for this period.",
+            no_summary: "Summary not available.",
+            lbl_sol: "Requests",
+            lbl_pac: "Patients",
+            lbl_casos: "cases"
+        },
+        pt: {
+            box_title: "Relatório Mensal",
+            box_btn: "📄 Ver relatório",
+            main_title: "Incidentes de Trânsito",
+            main_subtitle: "Monitoramento de incidentes de trânsito atendidos pela equipe SAME / ECUES.",
+            select_label: "Selecionar Período",
+            card1_title: "Tipos de Incidentes",
+            card2_title: "Participação de Veículos",
+            card3_title: "Zonas de Maior Impacto",
+            card4_title: "Pico de Frequência",
+            card5_title: "Solicitações vs Pacientes",
+            card6_title: "Geolocalização",
+            card6_desc: "Visualize os pontos críticos de incidentes no mapa da Cidade.",
+            card6_btn: "🌐 Abrir Mapa Interativo",
+            footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde",
+            loading_chart: "Carregando gráfico...",
+            no_chart: "Gráfico não disponível para este período.",
+            no_summary: "Resumo não disponível.",
+            lbl_sol: "Solicitações",
+            lbl_pac: "Pacientes",
+            lbl_casos: "casos"
+        }
+    };
+
+    function cambiarIdioma(lang) {
+        idiomaActual = lang;
+        
+        // Cambiar estilo de botones
+        document.querySelectorAll('.btn-lang').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        // Traducir textos estáticos
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if(diccionario[lang][key]) {
+                el.innerHTML = diccionario[lang][key];
+            }
+        });
+
+        // Actualizar el enlace del PDF para que apunte a la carpeta del idioma correspondiente
+        // CUANDO CREES TUS CARPETAS (es, en, pt), DESCOMENTA LA LÍNEA DE ABAJO Y BORRA LA SIGUIENTE:
+        // const urlEnlace = `reportes/${idiomaActual}/${document.getElementById('sel-periodo').value.split("-")[0]}/${document.getElementById('sel-periodo').value}.pdf`;
+        const urlEnlace = `reportes/${document.getElementById('sel-periodo').value.split("-")[0]}/${document.getElementById('sel-periodo').value}.pdf`; 
+        document.getElementById('lnk-pdf').href = urlEnlace;
+
+        // Redibujar gráficos para traducir sus etiquetas
+        if (datosGlobales.vehLabels.length > 0) {
+            dibujar(datosGlobales.sol, datosGlobales.pac, datosGlobales.vehLabels, datosGlobales.vehData);
+        }
+    }
+
+    // --- LÓGICA ORIGINAL DEL PANEL ---
+    const periodos = ["2026-01", "2025-12", "2025-11", "2025-10"];
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
     let charts = {};
 
@@ -422,12 +303,30 @@
 
     async function cargarPDF(mes) {
         const anio = mes.split("-")[0];
-        
         const timeStamp = new Date().getTime();
-        const urlFetch = `reportes/${anio}/${mes}.pdf?v=${timeStamp}`;
-        const urlEnlace = `reportes/${anio}/${mes}.pdf`;
         
-        document.getElementById('lnk-pdf').href = urlEnlace;
+        // 1. CARGA DE IMAGEN MANUAL PARA TIPOS DE INCIDENTES (Busca en graficos/es/ o graficos/en/)
+        const imgEl = document.getElementById('img-tipos');
+        const errEl = document.getElementById('img-fallback');
+        
+        imgEl.style.display = 'none';
+        errEl.style.display = 'block';
+        errEl.innerText = diccionario[idiomaActual].loading_chart;
+        
+        // LÓGICA DE CARPETAS PARA GRÁFICOS
+        // Idealmente: `graficos/${idiomaActual}/${anio}/${mes}.png`
+        // Por ahora lo dejamos simple para que no se rompa:
+        const imgPath = `graficos/${anio}/${mes}.png?v=${timeStamp}`;
+        
+        imgEl.onload = () => { imgEl.style.display = 'block'; errEl.style.display = 'none'; };
+        imgEl.onerror = () => { imgEl.style.display = 'none'; errEl.style.display = 'block'; errEl.innerText = diccionario[idiomaActual].no_chart; };
+        imgEl.src = imgPath;
+
+        // 2. CARGA DEL PDF EN ESPAÑOL PARA EXTRAER LOS NÚMEROS (SIEMPRE LEE EL DE ESPAÑOL POR DEBAJO)
+        const urlFetch = `reportes/${anio}/${mes}.pdf?v=${timeStamp}`; // El escáner siempre mira el original
+        
+        // Actualizamos el enlace visual para el usuario (si usa carpetas por idioma, usa la variable urlEnlace comentada arriba en cambiarIdioma)
+        document.getElementById('lnk-pdf').href = `reportes/${anio}/${mes}.pdf`;
         
         try {
             const res = await fetch(urlFetch);
@@ -443,34 +342,27 @@
             }
             procesar(fullText);
         } catch (e) { 
-            document.getElementById('txt-parrafo').innerText = "Esperando la carga de datos locales para el periodo seleccionado."; 
+            document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
             document.getElementById('p-dia').innerText = "---";
             document.getElementById('p-hora').innerText = "--:-- hs";
-            
-            dibujar(150, 120, ['Autos', 'Motos', 'Atropellos'], [80, 45, 25], [40, 30, 20, 10]);
-            
-            dibujarComunas([
-                {n: "Comuna 1", v: "", p: 100},
-                {n: "Comuna 9", v: "", p: 75},
-                {n: "Comuna 14", v: "", p: 50},
-                {n: "Comuna 4", v: "", p: 25}
-            ]);
+            dibujar(0, 0, ['Autos', 'Motos', 'Atropellos'], [0, 0, 0]);
+            dibujarComunas([{n: "Comuna N/A", v: "", p: 0}, {n: "Comuna N/A", v: "", p: 0}, {n: "Comuna N/A", v: "", p: 0}, {n: "Comuna N/A", v: "", p: 0}]);
         }
     }
 
     function procesar(t) {
         const texto = t.replace(/\s+/g, ' ');
 
-        // 1. PÁRRAFO RESUMEN 
-        let textoResumen = "Resumen no disponible.";
+        // 1. PÁRRAFO RESUMEN
+        let textoResumen = diccionario[idiomaActual].no_summary;
         const matchResumen = texto.match(/((?:En el mes|Durante el mes|En [a-záéíóú]+ de).{10,250}?(?:pacientes|atenciones)\.?)/i) 
                           || texto.match(/([A-Z][^\.]{10,150}solicitudes[^\.]{5,150}pacientes\.)/i);
-        if (matchResumen) {
-            textoResumen = matchResumen[1];
-        }
+        if (matchResumen) { textoResumen = matchResumen[1]; }
+        // NOTA: Para traducir el resumen, tendrías que tener un diccionario pre-armado o cargar el texto del PDF en inglés si logras extraerlo.
+        // Por ahora mostramos el extraído tal cual (en español).
         document.getElementById('txt-parrafo').innerText = textoResumen;
 
-        // 2. PARTICIPACIÓN VEHICULAR 
+        // 2. PARTICIPACIÓN VEHICULAR
         let vehiculosMap = {};
         const fragmentoVehicular = texto.substring(0, 1500); 
         
@@ -485,60 +377,30 @@
 
         const reg1 = /(autom[óo]vil(?:es)?|autos?|motoveh[íi]culos?|motocicletas?|motos?|atropellamientos?|peat[óo]n|peatones|bicicletas?).{1,45}?(\d+)\s*(?:casos|incidentes)/gi;
         let match;
-        while ((match = reg1.exec(fragmentoVehicular)) !== null) {
-            vehiculosMap[normalizarTipo(match[1])] = parseInt(match[2]);
-        }
+        while ((match = reg1.exec(fragmentoVehicular)) !== null) vehiculosMap[normalizarTipo(match[1])] = parseInt(match[2]);
 
         if (Object.keys(vehiculosMap).length === 0) {
             const reg2 = /(\d+)\s*(?:casos|incidentes)?.{1,40}?(autom[óo]vil(?:es)?|autos?|motoveh[íi]culos?|motocicletas?|motos?|atropellamientos?|peat[óo]n|peatones|bicicletas?)/gi;
-            while ((match = reg2.exec(fragmentoVehicular)) !== null) {
-                vehiculosMap[normalizarTipo(match[2])] = parseInt(match[1]);
-            }
+            while ((match = reg2.exec(fragmentoVehicular)) !== null) vehiculosMap[normalizarTipo(match[2])] = parseInt(match[1]);
         }
 
         if (Object.keys(vehiculosMap).length === 0) {
             const reg3 = /(autom[óo]vil(?:es)?|autos?|motoveh[íi]culos?|motocicletas?|motos?|atropellamientos?|peat[óo]n|peatones|bicicletas?)[^\d]{1,20}?(\d+)/gi;
-            while ((match = reg3.exec(fragmentoVehicular)) !== null) {
-                vehiculosMap[normalizarTipo(match[1])] = parseInt(match[2]);
-            }
+            while ((match = reg3.exec(fragmentoVehicular)) !== null) vehiculosMap[normalizarTipo(match[1])] = parseInt(match[2]);
         }
 
         let vehiculosLabels = Object.keys(vehiculosMap);
         let vehiculosData = Object.values(vehiculosMap);
 
-        if (vehiculosLabels.length === 0) {
-            vehiculosLabels = ['Autos', 'Motos', 'Atropellos'];
-            vehiculosData = [0, 0, 0];
-        }
-
-        // 3. TIPOS DE INCIDENTES 
-        const matchP1 = texto.match(/(?:Auto-Moto|Moto-Auto|Auto y Moto)[^\d]*?(\d+(?:,\d+)?)%/i);
-        const p1 = matchP1 ? parseFloat(matchP1[1].replace(',','.')) : 0;
-
-        const matchP2 = texto.match(/(?:auto\s*[-–y]\s*auto|autos?)[^\d]*?(\d+(?:,\d+)?)%/i);
-        const p2 = matchP2 ? parseFloat(matchP2[1].replace(',','.')) : 0;
-
-        const matchP3 = texto.match(/(?:caíd[ao] de moto|caída|moto sola)[^\d]*?(\d+(?:,\d+)?)%/i);
-        const p3 = matchP3 ? parseFloat(matchP3[1].replace(',','.')) : 0;
-
-        const matchP4 = texto.match(/(?:atropellamientos?|atropellos?|peat[óo]n)[^\d]*?(\d+(?:,\d+)?)%/i);
-        const p4 = matchP4 ? parseFloat(matchP4[1].replace(',','.')) : 0;
-
-        // 4. SOLICITUDES VS PACIENTES
+        // 3. SOLICITUDES VS PACIENTES
         const sol = texto.match(/total de (\d+)\s*solicitudes/i) ? parseInt(texto.match(/total de (\d+)\s*solicitudes/i)[1]) : 0;
         const pac = texto.match(/total de (\d+)\s*pacientes/i) ? parseInt(texto.match(/total de (\d+)\s*pacientes/i)[1]) : 0;
 
-        // 5. PICO DE FRECUENCIA (LÓGICA SÚPER FLEXIBLE)
-        let d = "---";
-        let h = "--:-- hs";
-
-        // Extraer Día
+        // 4. PICO DE FRECUENCIA
+        let d = "---"; let h = "--:-- hs";
         const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?)/i);
-        if (matchDia) {
-            d = matchDia[1];
-        }
+        if (matchDia) d = matchDia[1];
 
-        // Extraer Hora (Soporta "entre las X y las Y", "de X a Y", "desde las X hasta las Y", "X a Y hs", "X:00 - Y:00", etc.)
         const matchHora = texto.match(/(?:entre|de|desde)\s*(?:las\s*)?(\d{1,2})\s*(?:hs|hrs|horas|:00)?\s*(?:y|a|hasta|-)\s*(?:las\s*)?(\d{1,2})/i) 
                        || texto.match(/(\d{1,2})\s*(?:hs|hrs|horas|:00)?\s*(?:a|y|-|hasta)\s*(\d{1,2})\s*(?:hs|hrs|horas|:00)/i)
                        || texto.match(/(\d{1,2}):00\s*(?:a|y|-|hasta|al?)\s*(\d{1,2}):00/i);
@@ -548,145 +410,77 @@
             let hora2 = matchHora[2].padStart(2, '0');
             h = `${hora1}:00 — ${hora2}:00 hs`;
         }
-        
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-        // 6. ZONAS DE MAYOR IMPACTO (COMUNAS)
+        // 5. ZONAS DE MAYOR IMPACTO
         const matchTituloComunas = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES)/i);
         let comunasExtraidas = [];
-        
         if (matchTituloComunas) {
-            const indiceComunas = matchTituloComunas.index;
-            const fragmento = texto.substring(indiceComunas, indiceComunas + 500); 
-            
-            const regexComunas = /Comuna\s+(\d+)/gi;
-            let matchC;
-            
+            const fragmento = texto.substring(matchTituloComunas.index, matchTituloComunas.index + 500); 
+            const regexComunas = /Comuna\s+(\d+)/gi; let matchC;
             while ((matchC = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 5) {
                 let nombreComuna = `Comuna ${matchC[1]}`;
-                if (!comunasExtraidas.includes(nombreComuna)) {
-                    comunasExtraidas.push(nombreComuna);
-                }
+                if (!comunasExtraidas.includes(nombreComuna)) comunasExtraidas.push(nombreComuna);
             }
         }
 
-        const barrasVisuales = [100, 80, 60, 40, 20]; 
-        let dataComunas = [];
-
+        const barrasVisuales = [100, 80, 60, 40, 20]; let dataComunas = [];
         for (let i = 0; i < 5; i++) {
-            if (comunasExtraidas[i]) {
-                dataComunas.push({
-                    n: comunasExtraidas[i],
-                    v: "",
-                    p: barrasVisuales[i]
-                });
-            } else {
-                dataComunas.push({n: "", v: "", p: 0});
-            }
+            if (comunasExtraidas[i]) dataComunas.push({ n: comunasExtraidas[i], v: "", p: barrasVisuales[i] });
+            else dataComunas.push({n: "", v: "", p: 0});
         }
 
-        // LLAMADAS PARA DIBUJAR 
-        dibujar(sol, pac, vehiculosLabels, vehiculosData, [p1, p2, p3, p4]);
+        // Guardar para redibujado por idioma
+        datosGlobales = { sol: sol, pac: pac, vehLabels: vehiculosLabels, vehData: vehiculosData };
+
+        dibujar(sol, pac, vehiculosLabels, vehiculosData); 
         dibujarComunas(dataComunas); 
     }
 
     function dibujarComunas(data) {
         const list = document.getElementById('comuna-list');
-        
         list.innerHTML = data.map(c => `
             <div class="comuna-row">
                 <div class="comuna-info"><span>${c.n}</span><span>${c.v}</span></div>
                 <div class="progress-bg"><div class="progress-fill" style="width: 0%"></div></div>
             </div>
         `).join('');
-
         setTimeout(() => {
-            const fills = document.querySelectorAll('.progress-fill');
-            fills.forEach((fill, index) => {
-                fill.style.width = data[index].p + "%";
-            });
+            document.querySelectorAll('.progress-fill').forEach((fill, index) => { fill.style.width = data[index].p + "%"; });
         }, 100);
     }
 
-    function dibujar(sol, pac, vehLabels, vehData, tipos) {
-        if(charts.c1) Object.values(charts).forEach(c => c.destroy());
+    function dibujar(sol, pac, vehLabels, vehData) {
+        if(charts.c2) charts.c2.destroy();
+        if(charts.c4) charts.c4.destroy();
         
         Chart.defaults.font.family = "'Inter', sans-serif";
         Chart.defaults.color = '#64748b';
 
-        const opt = { 
-            maintainAspectRatio: false, 
-            plugins: { legend: { display: false } },
-            scales: {
-                y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
-                x: { grid: { display: false } }
-            }
-        };
+        const opt = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } };
 
-        const colorNavy = '#1e293b';
-        const colorOrange = '#ea580c';
-        const colorBlue = '#3b82f6';
-        const colorTeal = '#14b8a6';
-        const colorPurple = '#9b59b6';
-        const colorYellow = '#f1c40f';
-
-        charts.c1 = new Chart(document.getElementById('c1'), {
-            type: 'bar', 
-            data: { 
-                labels: ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], 
-                datasets: [{ 
-                    data: tipos, 
-                    backgroundColor: colorNavy,
-                    borderRadius: 6
-                }] 
-            }, 
-            options: opt
-        });
-
+        // PARTICIPACIÓN VEHICULAR
         charts.c2 = new Chart(document.getElementById('c2'), {
             type: 'doughnut', 
-            data: { 
-                labels: vehLabels, 
-                datasets: [{ 
-                    data: vehData, 
-                    backgroundColor: [colorBlue, colorOrange, colorTeal, colorPurple, colorYellow, '#e74c3c'],
-                    borderWidth: 0,
-                    hoverOffset: 4
-                }] 
-            }, 
+            data: { labels: vehLabels, datasets: [{ data: vehData, backgroundColor: ['#3b82f6', '#ea580c', '#14b8a6', '#9b59b6', '#f1c40f', '#e74c3c'], borderWidth: 0, hoverOffset: 4 }] }, 
             options: { 
-                maintainAspectRatio: false,
-                plugins: { 
-                    legend: { position: 'bottom' },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                if (label) {
-                                    label += ': ';
-                                }
-                                let value = context.raw;
-                                let total = context.chart._metasets[context.datasetIndex].total;
-                                let percentage = total > 0 ? ((value / total) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
-                                return label + value + ' casos (' + percentage + ')';
-                            }
-                        }
-                    }
-                },
-                cutout: '70%'
+                maintainAspectRatio: false, plugins: { legend: { position: 'bottom' },
+                    tooltip: { callbacks: { label: function(context) {
+                        let value = context.raw; let total = context.chart._metasets[context.datasetIndex].total;
+                        let percentage = total > 0 ? ((value / total) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
+                        return context.label + ': ' + value + ' ' + diccionario[idiomaActual].lbl_casos + ' (' + percentage + ')';
+                    }}}
+                }, cutout: '70%'
             }
         });
 
+        // SOLICITUDES VS PACIENTES (Toma etiquetas del diccionario)
         charts.c4 = new Chart(document.getElementById('c4'), {
             type: 'bar', 
             data: { 
-                labels: ['Solicitudes', 'Pacientes'], 
-                datasets: [{ 
-                    data: [sol, pac], 
-                    backgroundColor: colorTeal,
-                    borderRadius: 6
-                }] 
+                labels: [diccionario[idiomaActual].lbl_sol, diccionario[idiomaActual].lbl_pac], 
+                datasets: [{ data: [sol, pac], backgroundColor: '#14b8a6', borderRadius: 6 }] 
             }, 
             options: opt
         });
