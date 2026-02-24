@@ -208,7 +208,248 @@ footer {
     .title-section h1 { font-size: 1.8rem; }
     select { width: 100%; }
 }
+
+    * { box-sizing: border-box; }
+
+:root {
+    --bg1: #1f2a40;
+    --bg2: #2b3a51;
+    --bg3: #32445f;
+    --orange: #f5a65b;
+    --orange2: #f39c12;
+    --white: #ffffff;
+    --navy: #242f48;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 60%, var(--bg3) 100%);
+    color: white;
+    min-height: 100vh;
+}
+
+/* HEADER */
+
+header {
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(6px);
+    padding: 12px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.logo {
+    height: 55px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+}
+
+main { padding: 50px; }
+
+/* HERO */
+
+.hero {
+    display: flex;
+    gap: 60px;
+    margin-bottom: 60px;
+    align-items: flex-start;
+}
+
+/* ORANGE BOX */
+
+.orange-box {
+    background: linear-gradient(135deg, var(--orange), var(--orange2));
+    color: white;
+    padding: 30px;
+    border-radius: 20px;
+    width: 440px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.orange-box h2 {
+    margin: 0 0 15px;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
+}
+
+.orange-box p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.btn-download {
+    display: inline-block;
+    background: var(--navy);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.85rem;
+    transition: 0.3s ease;
+}
+
+.btn-download:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
+
+/* TITLES */
+
+.title-section h1 {
+    font-size: 3.2rem;
+    margin: 0;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    opacity: 0.75;
+    margin: 15px 0 25px;
+}
+
+/* SELECT */
+
+select {
+    padding: 14px;
+    border-radius: 10px;
+    background: #1a2436;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.15);
+    font-weight: 600;
+    width: 260px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+select:hover {
+    border-color: var(--orange);
+}
+
+/* GRID */
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* CARDS */
+
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    color: #333;
+    min-height: 280px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 45px rgba(0,0,0,0.25);
+}
+
+.card h3 {
+    margin: 0 0 18px;
+    font-size: 0.8rem;
+    color: #777;
+    text-transform: uppercase;
+    border-left: 4px solid var(--orange);
+    padding-left: 10px;
+}
+
+/* CHARTS */
+
+.chart-wrap {
+    height: 220px;
+    position: relative;
+}
+
+/* COMUNAS */
+
+.comuna-row { margin-bottom: 14px; }
+
+.comuna-info {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    color: var(--navy);
+}
+
+.progress-bg {
+    background: #eee;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    background: var(--orange);
+    height: 100%;
+    border-radius: 4px;
+    width: 0%;
+    transition: width 1s;
+}
+
+/* PICO */
+
+.pico-val { text-align: center; margin-top: 30px; }
+
+.pico-dia {
+    font-size: 2.8rem;
+    color: #e74c3c;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+/* MAP BUTTON */
+
+.btn-mapa {
+    background: linear-gradient(135deg, #242f48, #1a2436);
+    color: white;
+    padding: 18px 25px;
+    border: none;
+    border-radius: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: 0.3s ease;
+}
+
+.btn-mapa:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+
+/* FOOTER */
+
+footer {
+    padding: 40px 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.85rem;
+    opacity: 0.7;
+}
 </style>
+    
 </head>
 <body>
 
@@ -240,18 +481,42 @@ footer {
         </div>
     </div>
 
-<div class="grid">
-    <div class="card"><h3>Tipos de Incidentes (%)</h3><div class="chart-wrap"><canvas id="c1"></canvas></div></div>
-    <div class="card"><h3>Participación Vehicular</h3><div class="chart-wrap"><canvas id="c2"></canvas></div></div>
-    <div class="card"><h3>Distribución por Comuna</h3><div id="comuna-list"></div></div>
-    <div class="card"><h3>Pico de Frecuencia</h3><div id="p-dia"></div><div id="p-hora"></div></div>
-    <div class="card"><h3>Solicitudes vs Pacientes</h3><div class="chart-wrap"><canvas id="c4"></canvas></div></div>
-    <div class="card" style="display:flex; justify-content:center; align-items:center;">
+    <div class="grid">
+        <div class="card">
+            <h3>Tipos de Incidentes (%)</h3>
+            <div class="chart-wrap"><canvas id="c1"></canvas></div>
+        </div>
+
+        <div class="card">
+            <h3>Participación Vehicular (Casos)</h3>
+            <div class="chart-wrap"><canvas id="c2"></canvas></div>
+        </div>
+
+        <div class="card">
+            <h3>Distribución por Comuna</h3>
+            <div id="comuna-list" style="margin-top:10px;"></div>
+        </div>
+
+        <div class="card">
+            <h3>Pico de Frecuencia</h3>
+            <div class="pico-val">
+                <div class="pico-dia" id="p-dia">---</div>
+                <div id="p-hora" style="color:#666">--:-- hs</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Solicitudes vs Pacientes</h3>
+            <div class="chart-wrap"><canvas id="c4"></canvas></div>
+        </div>
+
+        <div class="card" style="display:flex; justify-content:center; align-items:center;">
             <button class="btn-mapa"
                 onclick="window.open('https://same-ecues.github.io/VIALES-2025-ECUES/index.incidentesenero2026.html')">
                 🌐 VER MAPA INTERACTIVO
-            </button></div>
-</div>
+            </button>
+        </div>
+    </div>
 </main>
 
 <footer>
