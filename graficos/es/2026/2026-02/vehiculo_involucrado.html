@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico - Vehículos Involucrados</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            /* Fondo blanco para coincidir con la imagen de referencia */
+            background-color: #ffffff; 
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+        #grafico-contenedor {
+            width: 100%;
+            height: 100%;
+            min-height: 350px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="grafico-contenedor"></div>
+
+    <script>
+        var chartDom = document.getElementById('grafico-contenedor');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        option = {
+            // Título superior izquierdo
+            title: {
+                text: 'Vehículos Involucrados',
+                left: '2%',
+                top: '5%',
+                textStyle: {
+                    color: '#4b5563', // Gris oscuro
+                    fontFamily: 'Inter',
+                    fontSize: 16,
+                    fontWeight: 'normal'
+                }
+            },
+            // Insertar el Logo del SAME en la esquina superior derecha
+            graphic: {
+                elements: [
+                    {
+                        type: 'image',
+                        style: {
+                            image: 'https://i.imgur.com/GXTFolo.png',
+                            width: 140, // Ajusta el tamaño del logo según necesites
+                            height: 40
+                        },
+                        right: '5%',
+                        top: '4%'
+                    }
+                ]
+            },
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}: {c} ({d}%)',
+                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                textStyle: { color: '#333' }
+            },
+            // Leyenda a la derecha, debajo del logo
+            legend: {
+                orient: 'vertical',
+                right: '5%',
+                top: '20%',
+                icon: 'square', // Cuadraditos en lugar de líneas
+                itemGap: 10,
+                textStyle: {
+                    fontFamily: 'Inter',
+                    color: '#4b5563',
+                    fontSize: 12
+                }
+            },
+            // Paleta de colores extraída de tu imagen (Azul Oscuro, Gris Medio, Gris Claro)
+            color: ['#0B192C', '#A1AAB4', '#E6E9EB'], 
+            series: [
+                {
+                    name: 'Vehículo',
+                    type: 'pie',
+                    radius: '75%', // Torta grande como en la imagen
+                    center: ['40%', '55%'], // Desplazada un poco a la izquierda
+                    // Eliminamos el borde blanco para que las porciones estén pegadas
+                    itemStyle: {
+                        borderWidth: 0 
+                    },
+                    // Etiquetas dentro de la torta
+                    label: {
+                        position: 'inside',
+                        formatter: '{b}\n{d}%',
+                        fontFamily: 'Inter',
+                        fontSize: 11,
+                        lineHeight: 16,
+                        align: 'center'
+                    },
+                    data: [
+                        { 
+                            value: 705, 
+                            name: 'Automóviles',
+                            // Texto blanco para que contraste con el azul oscuro
+                            label: { color: '#ffffff' } 
+                        },
+                        { 
+                            value: 529, 
+                            name: 'Motocicletas',
+                            // Texto oscuro para que contraste con el gris
+                            label: { color: '#1f2937' } 
+                        },
+                        { 
+                            value: 207, 
+                            name: 'Atropellados',
+                            // Texto oscuro para que contraste con el gris claro
+                            label: { color: '#1f2937' } 
+                        }
+                    ]
+                }
+            ]
+        };
+
+        option && myChart.setOption(option);
+
+        // Hace que el gráfico se redimensione automáticamente
+        window.addEventListener('resize', function() {
+            myChart.resize();
+        });
+    </script>
+</body>
+</html>
