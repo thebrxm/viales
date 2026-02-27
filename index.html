@@ -57,7 +57,6 @@
     .title-section h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
     .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 25px; }
     
-    /* ZONA DE CONTROLES (Dropdown + Botón Mapa) */
     .controls-container { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; margin-bottom: 20px; }
     
     select {
@@ -75,7 +74,6 @@
     }
     .btn-mapa:hover { background: var(--primary); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3); }
 
-    /* MINI TARJETA PICO FRECUENCIA EN CABECERA */
     .mini-card-pico {
         background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px; padding: 15px 20px; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 20px;
@@ -91,7 +89,6 @@
     .mini-card-pico .pico-dia { font-size: 1.8rem; color: var(--primary); font-weight: 800; text-transform: capitalize; line-height: 1; }
     .mini-card-pico .pico-hora { color: #94a3b8; font-size: 1.1rem; font-weight: 600; }
 
-    /* DASHBOARD GRID */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; animation: fadeUp 1s ease; }
     .card {
         background: var(--card-bg); border-radius: 20px; padding: 25px; color: var(--text-dark);
@@ -330,13 +327,13 @@
         cargarDatosPanel(periodos[0]);
     }
 
+    // --- FUNCIÓN ACTUALIZADA DEL MAPA ---
     function abrirMapa() {
         const periodo = document.getElementById('sel-periodo').value;
-        const [anio, mesNum] = periodo.split("-");
-        const mesesNombreUrl = {"01":"enero", "02":"febrero", "03":"marzo", "04":"abril", "05":"mayo", "06":"junio", "07":"julio", "08":"agosto", "09":"septiembre", "10":"octubre", "11":"noviembre", "12":"diciembre"};
-        const mesStr = mesesNombreUrl[mesNum];
+        const anio = periodo.split("-")[0];
         
-        const urlMapa = `https://same-ecues.github.io/VIALES-${anio}-ECUES/index.incidentes${mesStr}${anio}.html`;
+        // La ruta será: mapas / idioma / año / periodo / mapa.html
+        const urlMapa = `mapas/${idiomaActual}/${anio}/${periodo}/mapa.html`;
         window.open(urlMapa, '_blank');
     }
 
@@ -375,7 +372,7 @@
         const anio = mes_anio.split("-")[0];
         const timeStamp = new Date().getTime();
         
-        // 1. CARGAMOS LOS GRÁFICOS HTML (AHORA SON 5 EN TOTAL)
+        // 1. CARGAMOS LOS GRÁFICOS HTML
         const rutaBaseHtml = `graficos/${idiomaActual}/${anio}/${mes_anio}`;
         
         cargarGraficoHTML('iframe-tipos', 'fallback-tipos', 'link-tipos', `${rutaBaseHtml}/tipo_incidente.html?v=${timeStamp}`);
