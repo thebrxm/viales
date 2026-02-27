@@ -138,10 +138,7 @@
         <div class="grid">
             <div class="card">
                 <h3 data-i18n="card1_title">Tipos de Incidentes</h3>
-                <div class="chart-wrap" style="display:flex; justify-content:center; align-items:center; flex-direction:column;">
-                    <img id="img-tipos" src="" alt="Gráfico" style="max-width:100%; max-height:220px; border-radius:8px; display:none; object-fit:contain; cursor:pointer;" onclick="if(this.src) window.open(this.src, '_blank')">
-                    <p id="img-fallback" style="color:var(--text-muted); font-size:0.9rem; text-align:center;" data-i18n="loading_chart">Cargando gráfico...</p>
-                </div>
+                <div class="chart-wrap"><canvas id="c1"></canvas></div>
             </div>
 
             <div class="card">
@@ -189,6 +186,7 @@
 <script>
     // --- SISTEMA DE IDIOMAS Y DICCIONARIOS ---
     let idiomaActual = 'es';
+    let datosGlobales = { sol: 0, pac: 0, vehLabels: [], vehData: [], tiposLabels: [], tiposData: [] };
 
     const diccionario = {
         es: {
@@ -199,9 +197,9 @@
             card4_title: "Pico de Frecuencia", card5_title: "Solicitudes vs Pacientes",
             card6_title: "Geolocalización", card6_desc: "Visualiza los puntos críticos de incidentes en el mapa de la Ciudad.",
             card6_btn: "🌐 Abrir Mapa Interactivo", footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias",
-            loading_chart: "Cargando gráfico...", no_chart: "Gráfico no disponible para este periodo.",
             no_summary: "Resumen no disponible.", lbl_sol: "Solicitudes", lbl_pac: "Pacientes", lbl_casos: "casos",
-            lbl_autos: "Autos", lbl_motos: "Motos", lbl_atrop: "Atropellos", lbl_bici: "Bicicletas", lbl_comuna_na: "Comuna N/A"
+            lbl_autos: "Autos", lbl_motos: "Motos", lbl_atrop: "Atropellos", lbl_bici: "Bicicletas", lbl_comuna_na: "Comuna N/A",
+            lbl_tipo_am: "Auto-Moto", lbl_tipo_aa: "Auto-Auto", lbl_tipo_cm: "Caído Moto", lbl_tipo_atr: "Atropellado"
         },
         en: {
             box_title: "Monthly Report", box_btn: "📄 View report",
@@ -211,9 +209,9 @@
             card4_title: "Peak Frequency", card5_title: "Requests vs Patients",
             card6_title: "Geolocation", card6_desc: "Visualize critical incident hotspots on the City map.",
             card6_btn: "🌐 Open Interactive Map", footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team",
-            loading_chart: "Loading chart...", no_chart: "Chart not available for this period.",
             no_summary: "Summary not available.", lbl_sol: "Requests", lbl_pac: "Patients", lbl_casos: "cases",
-            lbl_autos: "Cars", lbl_motos: "Motorcycles", lbl_atrop: "Pedestrians", lbl_bici: "Bicycles", lbl_comuna_na: "Commune N/A"
+            lbl_autos: "Cars", lbl_motos: "Motorcycles", lbl_atrop: "Pedestrians", lbl_bici: "Bicycles", lbl_comuna_na: "Commune N/A",
+            lbl_tipo_am: "Car-Motorcycle", lbl_tipo_aa: "Car-Car", lbl_tipo_cm: "Fallen Motorcycle", lbl_tipo_atr: "Pedestrian Hit"
         },
         pt: {
             box_title: "Relatório Mensal", box_btn: "📄 Ver relatório",
@@ -223,13 +221,12 @@
             card4_title: "Pico de Frequência", card5_title: "Solicitações vs Pacientes",
             card6_title: "Geolocalização", card6_desc: "Visualize os pontos críticos de incidentes no mapa da Cidade.",
             card6_btn: "🌐 Abrir Mapa Interativo", footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde",
-            loading_chart: "Carregando gráfico...", no_chart: "Gráfico não disponível para este período.",
             no_summary: "Resumo não disponível.", lbl_sol: "Solicitações", lbl_pac: "Pacientes", lbl_casos: "casos",
-            lbl_autos: "Carros", lbl_motos: "Motos", lbl_atrop: "Atropelamentos", lbl_bici: "Bicicletas", lbl_comuna_na: "Comuna N/A"
+            lbl_autos: "Carros", lbl_motos: "Motos", lbl_atrop: "Atropelamentos", lbl_bici: "Bicicletas", lbl_comuna_na: "Comuna N/A",
+            lbl_tipo_am: "Carro-Moto", lbl_tipo_aa: "Carro-Carro", lbl_tipo_cm: "Queda de Moto", lbl_tipo_atr: "Atropelamento"
         }
     };
 
-    // Mapeo universal de días de la semana
     const diasMapa = {
         es: { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo' },
         en: { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 7: 'Sunday' },
@@ -238,24 +235,17 @@
 
     function cambiarIdioma(lang) {
         idiomaActual = lang;
-        
-        // Cambiar estilo de botones
         document.querySelectorAll('.btn-lang').forEach(btn => btn.classList.remove('active'));
         event.target.classList.add('active');
 
-        // Traducir textos estáticos de la interfaz
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if(diccionario[lang][key]) el.innerHTML = diccionario[lang][key];
         });
 
-        // ¡EL TRUCO MAGNÍFICO! 
-        // Cuando cambias de idioma, volvemos a cargar el PDF desde cero pero desde la carpeta del nuevo idioma.
-        // Esto permite leer el resumen real en inglés o portugués.
         cargarPDF(document.getElementById('sel-periodo').value);
     }
 
-    // --- LÓGICA DE CARGA Y EXTRACCIÓN TRILINGÜE ---
     const periodos = ["2026-01", "2025-12", "2025-11", "2025-10"];
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
     let charts = {};
@@ -273,21 +263,6 @@
         const anio = mes.split("-")[0];
         const timeStamp = new Date().getTime();
         
-        // 1. CARGA DE IMAGEN MANUAL PARA TIPOS DE INCIDENTES
-        const imgEl = document.getElementById('img-tipos');
-        const errEl = document.getElementById('img-fallback');
-        
-        imgEl.style.display = 'none';
-        errEl.style.display = 'block';
-        errEl.innerText = diccionario[idiomaActual].loading_chart;
-        
-        // Busca el gráfico en la carpeta del idioma actual
-        const imgPath = `graficos/${idiomaActual}/${anio}/${mes}.png?v=${timeStamp}`;
-        imgEl.onload = () => { imgEl.style.display = 'block'; errEl.style.display = 'none'; };
-        imgEl.onerror = () => { imgEl.style.display = 'none'; errEl.style.display = 'block'; errEl.innerText = diccionario[idiomaActual].no_chart; };
-        imgEl.src = imgPath;
-
-        // 2. CARGA DEL PDF DE ACUERDO AL IDIOMA ACTUAL PARA LEER TEXTO NATIVO
         const urlFetch = `reportes/${idiomaActual}/${anio}/${mes}.pdf?v=${timeStamp}`; 
         document.getElementById('lnk-pdf').href = `reportes/${idiomaActual}/${anio}/${mes}.pdf`;
         
@@ -309,7 +284,10 @@
             document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
             document.getElementById('p-dia').innerText = "---";
             document.getElementById('p-hora').innerText = "--:-- hs";
-            dibujar(0, 0, [], []);
+            
+            // Gráficos vacíos como fallback
+            dibujar(0, 0, [], [], ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'], [0, 0, 0, 0]);
+            
             dibujarComunas([
                 {n: diccionario[idiomaActual].lbl_comuna_na, v: "", p: 0}, 
                 {n: diccionario[idiomaActual].lbl_comuna_na, v: "", p: 0}, 
@@ -322,14 +300,14 @@
     function procesar(t) {
         const texto = t.replace(/\s+/g, ' ');
 
-        // 1. PÁRRAFO RESUMEN (Expresión Regular Trilingüe)
+        // 1. PÁRRAFO RESUMEN
         let textoResumen = diccionario[idiomaActual].no_summary;
         const matchResumen = texto.match(/((?:En el mes|Durante|In the month|During|No m[êe]s|Em ).{10,300}?(?:pacientes|atenciones|patients|attentions|attended|atendimentos)\.?)/i) 
                           || texto.match(/([A-Z][^\.]{10,200}(?:solicitudes|requests|solicitações)[^\.]{5,200}(?:pacientes|patients)\.)/i);
         if (matchResumen) { textoResumen = matchResumen[1]; }
         document.getElementById('txt-parrafo').innerText = textoResumen;
 
-        // 2. PARTICIPACIÓN VEHICULAR (Diccionario interno normalizado para los 3 idiomas)
+        // 2. PARTICIPACIÓN VEHICULAR
         let vehiculosMap = {};
         const fragmentoVehicular = texto.substring(0, 1500); 
         
@@ -359,13 +337,73 @@
         let vehiculosLabels = Object.keys(vehiculosMap);
         let vehiculosData = Object.values(vehiculosMap);
 
-        // 3. SOLICITUDES VS PACIENTES (Trilingüe)
+        // 3. TIPOS DE INCIDENTES (NUEVA LÓGICA TRILINGÜE DE BARRAS)
+        let tiposMap = {};
+        let fragmentoTipos = texto;
+        const indexTipos = texto.search(/(tipo de incidente m[áa]s|frecuente|most frequent|mais frequente|tipos de incidentes)/i);
+        if (indexTipos !== -1) {
+             fragmentoTipos = texto.substring(Math.max(0, indexTipos - 50), indexTipos + 1000);
+        }
+
+        // Lista tolerante que incluye las variantes en español y algunas traducciones automáticas básicas
+        const variantesTipos = [
+            "CICLISTA ATROPELLADO POR COLECTIVO", "CICLISTA ATROPELLADO POR CAMIONETA", "MONOPATIN ATROPELLADO POR CAMIONETA",
+            "CICLISTA ATROPELLADO POR MOTO", "CICLISTA ATROPELLADO POR CAMION", "MONOPATIN ATROPELLADO POR MOTO",
+            "MONOPATIN ATROPELLADO POR CAMION", "COLISION COLECTIVO - CAMIONETA", "COLISION COLECTIVO - COLECTIVO",
+            "COLISION CAMIONETA - CAMIONETA", "COLISION CAMION - CAMIONETA", "COLISION TREN - CAMIONETA",
+            "CAIDO DENTRO DE COLECTIVO", "ATROPELLADO POR CAMIONETA", "COLISION CAMIONETA - OBJETO",
+            "COLISION CAMIONETA - MOTO", "COLISION CAMIONETA - AUTO", "COLISION COLECTIVO - OBJETO",
+            "COLISION COLECTIVO - AUTO", "COLISION COLECTIVO - MOTO", "ATROPELLADO POR COLECTIVO",
+            "COLISION CAMION - COLECTIVO", "ATROPELLADO POR MONOPATIN", "COLISION CAMION - CAMION",
+            "COLISION CAMION - OBJETO", "CICLISTA ATROPELLADO", "COLISION AUTO - OBJETO", "COLISION MOTO - OBJETO",
+            "ATROPELLADO POR MOTO", "ATROPELLADO POR TREN", "MONOPATIN ATROPELLADO", "ATROPELLADO POR BICICLETA",
+            "COLISION AUTO - MOTO", "COLISION AUTO - AUTO", "COLISION MOTO - MOTO", "COLISION CAMION - MOTO",
+            "COLISION CAMION - AUTO", "CAIDO DE BICICLETA", "CAIDO DE MONOPATIN", "COLISION VEHICULAR", 
+            "COLISION MULTIPLE", "INCIDENTE MONOPATIN", "INCIDENTE CAMIONETA", "INCIDENTE BICICLETA", 
+            "INCIDENTE COLECTIVO", "CAIDO DE MOTO", "INCIDENTE MOTO", "ATROPELLADO",
+            "CAR - MOTORCYCLE", "CAR - CAR", "FALLEN MOTORCYCLE", "PEDESTRIAN HIT", "RUN OVER",
+            "CARRO - MOTO", "CARRO - CARRO", "QUEDA DE MOTO", "ATROPELAMENTO"
+        ];
+
+        // Normalizamos la lista para que tolere "- " o espacios raros y plurales como "Caídas"
+        const variantesRegexStr = variantesTipos.map(v => {
+            return v.replace(/\s+/g, '\\s*')
+                    .replace(/-/g, '[-–]?')
+                    .replace(/CAIDO/g, 'CA[ÍI]D[OA]S?')
+                    .replace(/ATROPELLADO/g, '(?:ATROPELLAD[OA]S?|ATROPELLAMIENTOS?)');
+        }).join('|');
+        
+        // Busca variante seguida de un numero (admite comas o puntos decimales) y un %
+        const regexTipos = new RegExp(`(${variantesRegexStr})[^\\d]{1,35}?(\\d+(?:[,\\.]\\d+)?)\\s*(?:%)?`, 'gi');
+
+        let matchT;
+        while ((matchT = regexTipos.exec(fragmentoTipos)) !== null) {
+            let tipoBruto = matchT[1].toUpperCase().replace(/\s+/g, ' ').replace(/–/g, '-');
+            let valor = parseFloat(matchT[2].replace(',', '.'));
+            
+            if (tipoBruto.includes('AUTO - MOTO') || tipoBruto.includes('CAR - MOTORCYCLE') || tipoBruto.includes('CARRO - MOTO') || tipoBruto.includes('AUTO-MOTO')) tipoBruto = 'Auto-Moto';
+            else if (tipoBruto.includes('AUTO - AUTO') || tipoBruto.includes('CAR - CAR') || tipoBruto.includes('CARRO - CARRO') || tipoBruto.includes('AUTO-AUTO')) tipoBruto = 'Auto-Auto';
+            else if (tipoBruto.includes('CAIDO DE MOTO') || tipoBruto.includes('CAIDA DE MOTO') || tipoBruto.includes('FALLEN MOTORCYCLE') || tipoBruto.includes('QUEDA DE MOTO')) tipoBruto = 'Caído Moto';
+            else if (tipoBruto.includes('ATROPELL') || tipoBruto.includes('RUN OVER') || tipoBruto.includes('PEDESTRIAN')) tipoBruto = 'Atropellado';
+            else tipoBruto = tipoBruto.toLowerCase().replace(/\b\w/g, l => l.toUpperCase()); // Mayúsculas iniciales para los demás
+
+            if (!tiposMap[tipoBruto]) tiposMap[tipoBruto] = valor;
+        }
+
+        let tiposLabels = Object.keys(tiposMap);
+        let tiposData = Object.values(tiposMap);
+
+        if (tiposLabels.length === 0) {
+            tiposLabels = ['Auto-Moto', 'Auto-Auto', 'Caído Moto', 'Atropellado'];
+            tiposData = [0, 0, 0, 0];
+        }
+
+        // 4. SOLICITUDES VS PACIENTES 
         const sol = texto.match(/total (?:de|of) (\d+)\s*(?:solicitudes|requests|solicita[çc][õo]es)/i) ? parseInt(texto.match(/total (?:de|of) (\d+)\s*(?:solicitudes|requests|solicita[çc][õo]es)/i)[1]) : 0;
         const pac = texto.match(/total (?:de|of) (\d+)\s*(?:pacientes|patients)/i) ? parseInt(texto.match(/total (?:de|of) (\d+)\s*(?:pacientes|patients)/i)[1]) : 0;
 
-        // 4. PICO DE FRECUENCIA
+        // 5. PICO DE FRECUENCIA
         let d = "---"; let h = "--:-- hs";
-        // Busca cualquier día en ES, EN o PT
         const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?|monday|tuesday|wednesday|thursday|friday|saturday|sunday|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)/i);
         if (matchDia) {
             let dRaw = matchDia[1].toLowerCase();
@@ -378,7 +416,6 @@
             else if(dRaw.includes('sáb') || dRaw.includes('sab') || dRaw.includes('sat')) dayNum = 6;
             else if(dRaw.includes('dom') || dRaw.includes('sun')) dayNum = 7;
             
-            // Si encontró el día, lo traduce al idioma que el usuario está viendo
             if(dayNum > 0) d = diasMapa[idiomaActual][dayNum];
         }
 
@@ -394,7 +431,7 @@
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-        // 5. ZONAS DE MAYOR IMPACTO
+        // 6. ZONAS DE MAYOR IMPACTO
         const matchTituloComunas = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES|DISTRIBUTION|COMMUNES|DISTRIBUIÇÃO|ZONAS DE MAYOR IMPACTO)/i);
         let comunasExtraidas = [];
         if (matchTituloComunas) {
@@ -412,7 +449,7 @@
             else dataComunas.push({n: "", v: "", p: 0});
         }
 
-        // Traducimos las etiquetas de los vehículos antes de dibujar
+        // Traducción final de etiquetas antes de mandarlas a los gráficos
         let vehiculosLabelsTraducidos = vehiculosLabels.map(l => {
             if(l === 'Autos') return diccionario[idiomaActual].lbl_autos;
             if(l === 'Motos') return diccionario[idiomaActual].lbl_motos;
@@ -421,7 +458,15 @@
             return l;
         });
 
-        dibujar(sol, pac, vehiculosLabelsTraducidos, vehiculosData); 
+        let tiposLabelsTraducidos = tiposLabels.map(l => {
+            if(l === 'Auto-Moto') return diccionario[idiomaActual].lbl_tipo_am;
+            if(l === 'Auto-Auto') return diccionario[idiomaActual].lbl_tipo_aa;
+            if(l === 'Caído Moto') return diccionario[idiomaActual].lbl_tipo_cm;
+            if(l === 'Atropellado') return diccionario[idiomaActual].lbl_tipo_atr;
+            return l;
+        });
+
+        dibujar(sol, pac, vehiculosLabelsTraducidos, vehiculosData, tiposLabelsTraducidos, tiposData); 
         dibujarComunas(dataComunas); 
     }
 
@@ -438,7 +483,8 @@
         }, 100);
     }
 
-    function dibujar(sol, pac, vehLabels, vehData) {
+    function dibujar(sol, pac, vehLabels, vehData, tiposLabels, tiposData) {
+        if(charts.c1) charts.c1.destroy();
         if(charts.c2) charts.c2.destroy();
         if(charts.c4) charts.c4.destroy();
         
@@ -447,7 +493,17 @@
 
         const opt = { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } } };
 
-        // PARTICIPACIÓN VEHICULAR
+        // 1. TIPOS DE INCIDENTES (BARRAS VERTICALES)
+        charts.c1 = new Chart(document.getElementById('c1'), {
+            type: 'bar', 
+            data: { 
+                labels: tiposLabels, 
+                datasets: [{ data: tiposData, backgroundColor: '#1e293b', borderRadius: 6 }] 
+            }, 
+            options: opt
+        });
+
+        // 2. PARTICIPACIÓN VEHICULAR
         charts.c2 = new Chart(document.getElementById('c2'), {
             type: 'doughnut', 
             data: { labels: vehLabels, datasets: [{ data: vehData, backgroundColor: ['#3b82f6', '#ea580c', '#14b8a6', '#9b59b6', '#f1c40f', '#e74c3c'], borderWidth: 0, hoverOffset: 4 }] }, 
@@ -462,7 +518,7 @@
             }
         });
 
-        // SOLICITUDES VS PACIENTES 
+        // 3. SOLICITUDES VS PACIENTES 
         charts.c4 = new Chart(document.getElementById('c4'), {
             type: 'bar', 
             data: { 
