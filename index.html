@@ -71,15 +71,25 @@
         box-shadow: 0 10px 30px rgba(0,0,0,0.2); transition: all 0.3s ease; display: flex; flex-direction: column;
     }
     .card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .card h3 {
-        font-size: 0.85rem; text-transform: uppercase; margin-bottom: 20px; color: var(--text-muted);
+        font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin: 0;
         font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;
     }
     .card h3::before { content: ''; display: inline-block; width: 12px; height: 12px; background: var(--primary); border-radius: 4px; }
-    .chart-wrap { flex-grow: 1; min-height: 220px; position: relative; display:flex; justify-content:center; align-items:center; flex-direction:column; }
+    
+    .btn-expand {
+        background: rgba(100, 116, 139, 0.1); border: none; border-radius: 6px; color: var(--text-muted);
+        width: 30px; height: 30px; display: flex; justify-content: center; align-items: center;
+        cursor: pointer; transition: 0.3s; font-weight: bold;
+    }
+    .btn-expand:hover { background: var(--primary); color: white; }
 
-    .chart-img { max-width:100%; max-height:220px; border-radius:8px; display:none; object-fit:contain; cursor:zoom-in; transition: transform 0.3s ease; }
-    .chart-img:hover { transform: scale(1.02); }
+    .chart-wrap { flex-grow: 1; min-height: 220px; position: relative; display:flex; justify-content:center; align-items:center; flex-direction:column; }
+    
+    /* ESTILOS PARA EL IFRAME (HTML incrustado) */
+    .chart-iframe { width: 100%; height: 250px; border: none; border-radius: 8px; display: none; }
     .chart-fallback { color:var(--text-muted); font-size:0.9rem; text-align:center; }
 
     #comuna-list { display: flex; flex-direction: column; gap: 15px; }
@@ -140,28 +150,38 @@
 
         <div class="grid">
             <div class="card">
-                <h3 data-i18n="card1_title">Tipos de Incidentes</h3>
+                <div class="card-header">
+                    <h3 data-i18n="card1_title">Tipos de Incidentes</h3>
+                    <button id="link-tipos" class="btn-expand" style="display:none;" title="Ver en pantalla completa">↗</button>
+                </div>
                 <div class="chart-wrap">
-                    <img id="img-tipos" class="chart-img" src="" alt="Gráfico" onclick="if(this.src) window.open(this.src, '_blank')">
+                    <iframe id="iframe-tipos" class="chart-iframe" src="" scrolling="no"></iframe>
                     <p id="fallback-tipos" class="chart-fallback" data-i18n="loading_chart">Cargando gráfico...</p>
                 </div>
             </div>
 
             <div class="card">
-                <h3 data-i18n="card2_title">Vehículo Involucrado</h3>
+                <div class="card-header">
+                    <h3 data-i18n="card2_title">Vehículo Involucrado</h3>
+                    <button id="link-vehiculos" class="btn-expand" style="display:none;" title="Ver en pantalla completa">↗</button>
+                </div>
                 <div class="chart-wrap">
-                    <img id="img-vehiculos" class="chart-img" src="" alt="Gráfico" onclick="if(this.src) window.open(this.src, '_blank')">
+                    <iframe id="iframe-vehiculos" class="chart-iframe" src="" scrolling="no"></iframe>
                     <p id="fallback-vehiculos" class="chart-fallback" data-i18n="loading_chart">Cargando gráfico...</p>
                 </div>
             </div>
 
             <div class="card">
-                <h3 data-i18n="card3_title">Zonas de Mayor Impacto</h3>
+                <div class="card-header">
+                    <h3 data-i18n="card3_title">Zonas de Mayor Impacto</h3>
+                </div>
                 <div id="comuna-list"></div>
             </div>
 
             <div class="card">
-                <h3 data-i18n="card4_title">Pico de Frecuencia</h3>
+                <div class="card-header">
+                    <h3 data-i18n="card4_title">Pico de Frecuencia</h3>
+                </div>
                 <div class="pico-val">
                     <div class="pico-dia" id="p-dia">---</div>
                     <div class="pico-hora" id="p-hora">--:-- hs</div>
@@ -169,9 +189,12 @@
             </div>
 
             <div class="card">
-                <h3 data-i18n="card5_title">Tasa de Traslados</h3>
+                <div class="card-header">
+                    <h3 data-i18n="card5_title">Tasa de Traslados</h3>
+                    <button id="link-traslados" class="btn-expand" style="display:none;" title="Ver en pantalla completa">↗</button>
+                </div>
                 <div class="chart-wrap">
-                    <img id="img-traslados" class="chart-img" src="" alt="Gráfico" onclick="if(this.src) window.open(this.src, '_blank')">
+                    <iframe id="iframe-traslados" class="chart-iframe" src="" scrolling="no"></iframe>
                     <p id="fallback-traslados" class="chart-fallback" data-i18n="loading_chart">Cargando gráfico...</p>
                 </div>
             </div>
@@ -267,31 +290,48 @@
         cargarDatosPanel(periodos[0]);
     }
 
-    // Genera la URL dinámica del mapa dependiendo del periodo seleccionado
     function abrirMapa() {
         const periodo = document.getElementById('sel-periodo').value;
         const [anio, mesNum] = periodo.split("-");
         const mesesNombreUrl = {"01":"enero", "02":"febrero", "03":"marzo", "04":"abril", "05":"mayo", "06":"junio", "07":"julio", "08":"agosto", "09":"septiembre", "10":"octubre", "11":"noviembre", "12":"diciembre"};
         const mesStr = mesesNombreUrl[mesNum];
         
-        // URL Base: Ajusta el año y mes en el enlace
-        // Nota: Si el repositorio es siempre "VIALES-2025-ECUES" fijo, cambia "${anio}" por "2025" abajo:
+        // Asumo que tu repositorio de mapas en GitHub se llama siempre con el año (ej: VIALES-2025-ECUES)
+        // Si no es dinámico y el repositorio siempre se llama 2025, cámbialo abajo
         const urlMapa = `https://same-ecues.github.io/VIALES-${anio}-ECUES/index.incidentes${mesStr}${anio}.html`;
         window.open(urlMapa, '_blank');
     }
 
-    // --- MANEJO DE IMÁGENES MANUALES ---
-    function cargarImagenManual(imgId, fallbackId, ruta) {
-        const imgEl = document.getElementById(imgId);
+    // --- CARGA INTELIGENTE DE GRÁFICOS HTML ---
+    async function cargarGraficoHTML(iframeId, fallbackId, linkId, ruta) {
+        const iframeEl = document.getElementById(iframeId);
         const errEl = document.getElementById(fallbackId);
+        const linkEl = document.getElementById(linkId);
         
-        imgEl.style.display = 'none';
+        iframeEl.style.display = 'none';
+        linkEl.style.display = 'none';
         errEl.style.display = 'block';
         errEl.innerText = diccionario[idiomaActual].loading_chart;
-        
-        imgEl.onload = () => { imgEl.style.display = 'block'; errEl.style.display = 'none'; };
-        imgEl.onerror = () => { imgEl.style.display = 'none'; errEl.style.display = 'block'; errEl.innerText = diccionario[idiomaActual].no_chart; };
-        imgEl.src = ruta;
+
+        try {
+            // Hacemos una petición rápida para comprobar si el archivo HTML existe en tu carpeta
+            const res = await fetch(ruta, { method: 'HEAD' });
+            if (!res.ok) throw new Error("Archivo HTML no encontrado");
+            
+            // Si existe, lo incrustamos en el iframe
+            iframeEl.src = ruta;
+            iframeEl.onload = () => {
+                iframeEl.style.display = 'block';
+                linkEl.style.display = 'flex'; // Mostramos el botón ↗
+                linkEl.onclick = () => window.open(ruta, '_blank');
+                errEl.style.display = 'none';
+            };
+        } catch (error) {
+            iframeEl.style.display = 'none';
+            linkEl.style.display = 'none';
+            errEl.style.display = 'block';
+            errEl.innerText = diccionario[idiomaActual].no_chart;
+        }
     }
 
     // --- FUNCIÓN PRINCIPAL DE CARGA ---
@@ -299,15 +339,15 @@
         const anio = mes_anio.split("-")[0];
         const timeStamp = new Date().getTime();
         
-        // 1. CARGAMOS LAS IMÁGENES DESDE SUS CARPETAS
-        // Estructura: graficos/{idioma}/{año}/{periodo}/[nombre].png
-        const rutaBaseImg = `graficos/${idiomaActual}/${anio}/${mes_anio}`;
+        // 1. CARGAMOS LOS GRÁFICOS HTML DESDE SUS CARPETAS
+        // Estructura esperada: graficos/{idioma}/{año}/{periodo}/[nombre].html
+        const rutaBaseHtml = `graficos/${idiomaActual}/${anio}/${mes_anio}`;
         
-        cargarImagenManual('img-tipos', 'fallback-tipos', `${rutaBaseImg}/tipo_incidente.png?v=${timeStamp}`);
-        cargarImagenManual('img-vehiculos', 'fallback-vehiculos', `${rutaBaseImg}/vehiculo_involucrado.png?v=${timeStamp}`);
-        cargarImagenManual('img-traslados', 'fallback-traslados', `${rutaBaseImg}/tasa_traslados.png?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-tipos', 'fallback-tipos', 'link-tipos', `${rutaBaseHtml}/tipo_incidente.html?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-vehiculos', 'fallback-vehiculos', 'link-vehiculos', `${rutaBaseHtml}/vehiculo_involucrado.html?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-traslados', 'fallback-traslados', 'link-traslados', `${rutaBaseHtml}/tasa_traslados.html?v=${timeStamp}`);
 
-        // 2. CARGAMOS EL PDF PARA EL RESUMEN Y EXTRACCIONES DE TEXTO RESTANTES
+        // 2. CARGAMOS EL PDF PARA EL RESUMEN Y EXTRACCIONES DE TEXTO (COMUNAS / FRECUENCIA)
         const urlFetch = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf?v=${timeStamp}`; 
         document.getElementById('lnk-pdf').href = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf`;
         
