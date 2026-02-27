@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
     /* RESET Y VARIABLES */
@@ -174,7 +175,6 @@
                         <div class="pico-hora" id="p-hora">--:-- hs</div>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -193,11 +193,9 @@
             <div class="card">
                 <div class="card-header">
                     <h3 data-i18n="card2_title">Vehículo Involucrado</h3>
-                    <button id="link-vehiculos" class="btn-expand" style="display:none;" title="Ver en pantalla completa">↗</button>
                 </div>
                 <div class="chart-wrap">
-                    <iframe id="iframe-vehiculos" class="chart-iframe" src="" scrolling="no"></iframe>
-                    <p id="fallback-vehiculos" class="chart-fallback" data-i18n="loading_chart">Cargando gráfico...</p>
+                    <canvas id="c2"></canvas>
                 </div>
             </div>
 
@@ -267,7 +265,8 @@
             card_grilla_title: "Grilla de Calor", card_etario_title: "Rango Etario",
             footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias",
             loading_chart: "Cargando gráfico...", no_chart: "Gráfico no disponible para este periodo.",
-            no_summary: "Resumen no disponible.", lbl_comuna_na: "Comuna N/A"
+            no_summary: "Resumen no disponible.", lbl_comuna_na: "Comuna N/A",
+            lbl_autos: "Autos", lbl_motos: "Motos", lbl_atrop: "Atropellos", lbl_bici: "Bicicletas", lbl_casos: "casos"
         },
         en: {
             box_title: "Monthly Report", box_btn: "📄 View report",
@@ -279,7 +278,8 @@
             card_grilla_title: "Heatmap", card_etario_title: "Age Range",
             footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team",
             loading_chart: "Loading chart...", no_chart: "Chart not available for this period.",
-            no_summary: "Summary not available.", lbl_comuna_na: "Commune N/A"
+            no_summary: "Summary not available.", lbl_comuna_na: "Commune N/A",
+            lbl_autos: "Cars", lbl_motos: "Motorcycles", lbl_atrop: "Pedestrians", lbl_bici: "Bicycles", lbl_casos: "cases"
         },
         pt: {
             box_title: "Relatório Mensal", box_btn: "📄 Ver relatório",
@@ -291,7 +291,8 @@
             card_grilla_title: "Mapa de Calor", card_etario_title: "Faixa Etária",
             footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde",
             loading_chart: "Carregando gráfico...", no_chart: "Gráfico não disponível para este período.",
-            no_summary: "Resumo não disponível.", lbl_comuna_na: "Comuna N/A"
+            no_summary: "Resumo não disponível.", lbl_comuna_na: "Comuna N/A",
+            lbl_autos: "Carros", lbl_motos: "Motos", lbl_atrop: "Atropelamentos", lbl_bici: "Bicicletas", lbl_casos: "casos"
         }
     };
 
@@ -314,9 +315,9 @@
         cargarDatosPanel(document.getElementById('sel-periodo').value);
     }
 
-    // --- LÓGICA DE INICIO Y MAPA ---
-    const periodos = ["2026-02", "2026-01", "2025-12", "2025-11", "2025-10"];
+    const periodos = ["2026-01", "2025-12", "2025-11", "2025-10"];
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    let chartVehiculos = null; // Variable para almacenar el gráfico y poder destruirlo/actualizarlo
 
     function init() {
         const sel = document.getElementById('sel-periodo');
@@ -327,17 +328,13 @@
         cargarDatosPanel(periodos[0]);
     }
 
-    // --- FUNCIÓN ACTUALIZADA DEL MAPA ---
     function abrirMapa() {
         const periodo = document.getElementById('sel-periodo').value;
         const anio = periodo.split("-")[0];
-        
-        // La ruta será: mapa / idioma / año / periodo / mapa.html
         const urlMapa = `mapa/${idiomaActual}/${anio}/${periodo}/mapa.html`;
         window.open(urlMapa, '_blank');
     }
 
-    // --- CARGA INTELIGENTE DE GRÁFICOS HTML ---
     async function cargarGraficoHTML(iframeId, fallbackId, linkId, ruta) {
         const iframeEl = document.getElementById(iframeId);
         const errEl = document.getElementById(fallbackId);
@@ -367,21 +364,19 @@
         }
     }
 
-    // --- FUNCIÓN PRINCIPAL DE CARGA ---
     async function cargarDatosPanel(mes_anio) {
         const anio = mes_anio.split("-")[0];
         const timeStamp = new Date().getTime();
         
-        // 1. CARGAMOS LOS GRÁFICOS HTML
+        // 1. CARGAMOS LOS GRÁFICOS HTML (YA NO CARGAMOS vehiculo_involucrado)
         const rutaBaseHtml = `graficos/${idiomaActual}/${anio}/${mes_anio}`;
         
         cargarGraficoHTML('iframe-tipos', 'fallback-tipos', 'link-tipos', `${rutaBaseHtml}/tipo_incidente.html?v=${timeStamp}`);
-        cargarGraficoHTML('iframe-vehiculos', 'fallback-vehiculos', 'link-vehiculos', `${rutaBaseHtml}/vehiculo_involucrado.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-traslados', 'fallback-traslados', 'link-traslados', `${rutaBaseHtml}/tasa_traslados.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-grilla', 'fallback-grilla', 'link-grilla', `${rutaBaseHtml}/grilla_calor.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-etario', 'fallback-etario', 'link-etario', `${rutaBaseHtml}/rango_etario.html?v=${timeStamp}`);
 
-        // 2. CARGAMOS EL PDF PARA EL RESUMEN Y EXTRACCIONES DE TEXTO
+        // 2. CARGAMOS EL PDF PARA EL RESUMEN Y EXTRACCIONES DE TEXTO + GRÁFICO DE VEHÍCULOS
         const urlFetch = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf?v=${timeStamp}`; 
         document.getElementById('lnk-pdf').href = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf`;
         
@@ -404,6 +399,8 @@
             document.getElementById('p-dia').innerText = "---";
             document.getElementById('p-hora').innerText = "--:-- hs";
             
+            dibujarVehiculos([diccionario[idiomaActual].lbl_autos, diccionario[idiomaActual].lbl_motos, diccionario[idiomaActual].lbl_atrop], [0, 0, 0]);
+
             dibujarComunas([
                 {n: diccionario[idiomaActual].lbl_comuna_na, v: "", p: 0}, 
                 {n: diccionario[idiomaActual].lbl_comuna_na, v: "", p: 0}, 
@@ -423,7 +420,52 @@
         if (matchResumen) { textoResumen = matchResumen[1]; }
         document.getElementById('txt-parrafo').innerText = textoResumen;
 
-        // 2. PICO DE FRECUENCIA
+        // 2. VEHÍCULO INVOLUCRADO (EXTRACCIÓN PRECISA)
+        let vehiculosMap = {};
+        let fragmentoVehicular = texto;
+        
+        // Busca la frase clave para cortar el texto y no agarrar números de otras secciones
+        const indexVeh = texto.search(/(Del total de incidentes registrados|Of the total incidents recorded|Do total de incidentes registrados)/i);
+        if (indexVeh !== -1) {
+            fragmentoVehicular = texto.substring(indexVeh, indexVeh + 1500);
+        } else {
+            fragmentoVehicular = texto.substring(0, 1500); // Respaldo por si no halla la frase
+        }
+
+        function normalizarVehiculo(tipoBruto) {
+            tipoBruto = tipoBruto.toLowerCase();
+            if (tipoBruto.match(/auto|car|autom/)) return 'Autos';
+            if (tipoBruto.match(/moto/)) return 'Motos';
+            if (tipoBruto.match(/atropellamiento|peat|pedestrian|run over|atropelamento/)) return 'Atropellos';
+            if (tipoBruto.match(/bici|bike/)) return 'Bicicletas';
+            return tipoBruto.charAt(0).toUpperCase() + tipoBruto.slice(1);
+        }
+
+        const reg1 = /(autom[óo]vil|auto|car|motoveh[íi]culo|motocicleta|moto|motorcycle|atropellamiento|atropelamento|peat[óo]n|pedestrian|bicicleta|bicycle|bike)[a-z]*\s*.{1,45}?\s*(\d+)\s*(?:casos|incidentes|cases|incidents)/gi;
+        let matchV;
+        while ((matchV = reg1.exec(fragmentoVehicular)) !== null) vehiculosMap[normalizarVehiculo(matchV[1])] = parseInt(matchV[2]);
+
+        if (Object.keys(vehiculosMap).length === 0) {
+            const reg2 = /(\d+)\s*(?:casos|incidentes|cases|incidents)?.{1,40}?(autom[óo]vil|auto|car|motoveh[íi]culo|motocicleta|moto|motorcycle|atropellamiento|atropelamento|peat[óo]n|pedestrian|bicicleta|bicycle|bike)[a-z]*/gi;
+            while ((matchV = reg2.exec(fragmentoVehicular)) !== null) vehiculosMap[normalizarVehiculo(matchV[2])] = parseInt(matchV[1]);
+        }
+
+        let vehiculosLabels = Object.keys(vehiculosMap);
+        let vehiculosData = Object.values(vehiculosMap);
+
+        // Traducimos las etiquetas usando el diccionario antes de enviarlo al gráfico
+        let vehiculosLabelsTraducidos = vehiculosLabels.map(l => {
+            if(l === 'Autos') return diccionario[idiomaActual].lbl_autos;
+            if(l === 'Motos') return diccionario[idiomaActual].lbl_motos;
+            if(l === 'Atropellos') return diccionario[idiomaActual].lbl_atrop;
+            if(l === 'Bicicletas') return diccionario[idiomaActual].lbl_bici;
+            return l;
+        });
+
+        // Llamamos a la función que dibuja el gráfico de Chart.js
+        dibujarVehiculos(vehiculosLabelsTraducidos, vehiculosData);
+
+        // 3. PICO DE FRECUENCIA
         let d = "---"; let h = "--:-- hs";
         const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?|monday|tuesday|wednesday|thursday|friday|saturday|sunday|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)/i);
         if (matchDia) {
@@ -452,7 +494,7 @@
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
 
-        // 3. ZONAS DE MAYOR IMPACTO (COMUNAS)
+        // 4. ZONAS DE MAYOR IMPACTO (COMUNAS)
         const matchTituloComunas = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES|DISTRIBUTION|COMMUNES|DISTRIBUIÇÃO|ZONAS DE MAYOR IMPACTO)/i);
         let comunasExtraidas = [];
         if (matchTituloComunas) {
@@ -471,6 +513,42 @@
         }
 
         dibujarComunas(dataComunas); 
+    }
+
+    // --- FUNCIÓN PARA DIBUJAR EL GRÁFICO AUTOMÁTICO ---
+    function dibujarVehiculos(labels, data) {
+        if(chartVehiculos) chartVehiculos.destroy(); // Destruye el gráfico viejo antes de hacer uno nuevo
+        
+        Chart.defaults.font.family = "'Inter', sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        const canvas = document.getElementById('c2');
+        if(!canvas) return;
+
+        chartVehiculos = new Chart(canvas, {
+            type: 'doughnut', 
+            data: { 
+                labels: labels, 
+                datasets: [{ 
+                    data: data, 
+                    backgroundColor: ['#3b82f6', '#ea580c', '#14b8a6', '#9b59b6', '#f1c40f', '#e74c3c'], 
+                    borderWidth: 0, 
+                    hoverOffset: 4 
+                }] 
+            }, 
+            options: { 
+                maintainAspectRatio: false, 
+                plugins: { 
+                    legend: { position: 'bottom' },
+                    tooltip: { callbacks: { label: function(context) {
+                        let value = context.raw; let total = context.chart._metasets[context.datasetIndex].total;
+                        let percentage = total > 0 ? ((value / total) * 100).toFixed(1).replace('.', ',') + '%' : '0%';
+                        return context.label + ': ' + value + ' ' + diccionario[idiomaActual].lbl_casos + ' (' + percentage + ')';
+                    }}}
+                }, 
+                cutout: '70%'
+            }
+        });
     }
 
     function dibujarComunas(data) {
