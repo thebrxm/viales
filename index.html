@@ -35,7 +35,7 @@
     .logo:hover { transform: scale(1.05); }
     main { padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
     
-    .hero { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 50px; align-items: center; animation: fadeUp 0.8s ease; }
+    .hero { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 50px; align-items: flex-start; animation: fadeUp 0.8s ease; }
     .orange-box {
         background: linear-gradient(135deg, var(--primary-light), var(--primary));
         padding: 30px 35px; border-radius: 20px; width: 100%; max-width: 450px;
@@ -57,14 +57,41 @@
     .title-section h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
     .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 25px; }
     
+    /* ZONA DE CONTROLES (Dropdown + Botón Mapa) */
+    .controls-container { display: flex; gap: 20px; align-items: stretch; flex-wrap: wrap; margin-bottom: 20px; }
+    
     select {
         padding: 12px 16px; border-radius: 10px; background: rgba(255, 255, 255, 0.1);
-        color: white; border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; max-width: 280px;
+        color: white; border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; min-width: 220px;
         font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; outline: none; transition: 0.3s ease; appearance: none;
     }
     select:hover, select:focus { background: rgba(255, 255, 255, 0.15); border-color: var(--primary-light); }
     select option { background: var(--navy); color: white; }
 
+    .btn-mapa {
+        background: var(--navy); color: white; padding: 12px 20px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+        font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease;
+        display: flex; justify-content: center; align-items: center; gap: 10px; font-family: 'Inter', sans-serif;
+    }
+    .btn-mapa:hover { background: var(--primary); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3); }
+
+    /* MINI TARJETA PICO FRECUENCIA EN CABECERA */
+    .mini-card-pico {
+        background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px; padding: 15px 20px; display: inline-flex; align-items: center; flex-wrap: wrap; gap: 20px;
+    }
+    .mini-card-pico .pico-title {
+        font-size: 0.8rem; text-transform: uppercase; color: #94a3b8; font-weight: 800; letter-spacing: 1px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .mini-card-pico .pico-title::before {
+        content: ''; display: inline-block; width: 10px; height: 10px; background: var(--primary); border-radius: 3px;
+    }
+    .mini-card-pico .pico-values { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;}
+    .mini-card-pico .pico-dia { font-size: 1.8rem; color: var(--primary); font-weight: 800; text-transform: capitalize; line-height: 1; }
+    .mini-card-pico .pico-hora { color: #94a3b8; font-size: 1.1rem; font-weight: 600; }
+
+    /* DASHBOARD GRID */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; animation: fadeUp 1s ease; }
     .card {
         background: var(--card-bg); border-radius: 20px; padding: 25px; color: var(--text-dark);
@@ -88,7 +115,6 @@
 
     .chart-wrap { flex-grow: 1; min-height: 220px; position: relative; display:flex; justify-content:center; align-items:center; flex-direction:column; }
     
-    /* ESTILOS PARA EL IFRAME (HTML incrustado) */
     .chart-iframe { width: 100%; height: 250px; border: none; border-radius: 8px; display: none; }
     .chart-fallback { color:var(--text-muted); font-size:0.9rem; text-align:center; }
 
@@ -97,17 +123,6 @@
     .comuna-info { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; color: var(--text-dark); }
     .progress-bg { background: #f1f5f9; height: 10px; border-radius: 10px; overflow: hidden; }
     .progress-fill { background: linear-gradient(90deg, var(--primary), var(--primary-light)); height: 100%; border-radius: 10px; width: 0%; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
-
-    .pico-val { text-align: center; margin: auto; padding: 20px 0; }
-    .pico-dia { font-size: 3rem; color: var(--primary); font-weight: 800; text-transform: capitalize; line-height: 1; margin-bottom: 10px; }
-    .pico-hora { color: var(--text-muted); font-size: 1.2rem; font-weight: 600; }
-
-    .btn-mapa {
-        background: var(--navy); color: white; padding: 16px; border: none; border-radius: 12px;
-        font-weight: 600; font-size: 1rem; width: 100%; cursor: pointer; transition: all 0.3s ease;
-        display: flex; justify-content: center; align-items: center; gap: 10px; font-family: 'Inter', sans-serif;
-    }
-    .btn-mapa:hover { background: var(--primary); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3); }
 
     footer {
         margin-top: 60px; padding: 30px 5%; border-top: 1px solid rgba(255,255,255,0.1);
@@ -141,10 +156,28 @@
             <div class="title-section">
                 <h1 data-i18n="main_title">Incidentes de Tránsito</h1>
                 <p class="subtitle" data-i18n="main_subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
-                <div style="display:flex; flex-direction:column; gap:8px;">
-                    <label style="font-size:0.8rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;" data-i18n="select_label">Seleccionar Periodo</label>
-                    <select id="sel-periodo" onchange="cargarDatosPanel(this.value)"></select>
+                
+                <div class="controls-container">
+                    <div style="display:flex; flex-direction:column; gap:8px;">
+                        <label style="font-size:0.8rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;" data-i18n="select_label">Seleccionar Periodo</label>
+                        <select id="sel-periodo" onchange="cargarDatosPanel(this.value)"></select>
+                    </div>
+                    
+                    <div style="display:flex; align-items: flex-end;">
+                        <button class="btn-mapa" onclick="abrirMapa()">
+                            <span data-i18n="btn_mapa">🌐 Abrir Mapa Interactivo</span>
+                        </button>
+                    </div>
                 </div>
+
+                <div class="mini-card-pico">
+                    <div class="pico-title" data-i18n="card4_title">Pico de Frecuencia</div>
+                    <div class="pico-values">
+                        <div class="pico-dia" id="p-dia">---</div>
+                        <div class="pico-hora" id="p-hora">--:-- hs</div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -180,11 +213,12 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h3 data-i18n="card4_title">Pico de Frecuencia</h3>
+                    <h3 data-i18n="card_grilla_title">Grilla de Calor</h3>
+                    <button id="link-grilla" class="btn-expand" style="display:none;" title="Ver en pantalla completa">↗</button>
                 </div>
-                <div class="pico-val">
-                    <div class="pico-dia" id="p-dia">---</div>
-                    <div class="pico-hora" id="p-hora">--:-- hs</div>
+                <div class="chart-wrap">
+                    <iframe id="iframe-grilla" class="chart-iframe" src="" scrolling="no"></iframe>
+                    <p id="fallback-grilla" class="chart-fallback" data-i18n="loading_chart">Cargando gráfico...</p>
                 </div>
             </div>
 
@@ -199,12 +233,15 @@
                 </div>
             </div>
 
-            <div class="card" style="justify-content:center; align-items:center; text-align:center; background:var(--navy);">
-                <h3 style="color:white; border:none; width:100%; justify-content:center;" data-i18n="card6_title">Mapa Interactivo</h3>
-                <p style="color:#94a3b8; font-size:0.9rem; margin-bottom:20px;" data-i18n="card6_desc">Visualiza los puntos críticos de incidentes en el mapa de la Ciudad.</p>
-                <button class="btn-mapa" onclick="abrirMapa()">
-                    <span data-i18n="card6_btn">🌐 Abrir Mapa Interactivo</span>
-                </button>
+            <div class="card">
+                <div class="card-header">
+                    <h3 data-i18n="card_etario_title">Rango Etario</h3>
+                    <button id="link-etario" class="btn-expand" style="display:none;" title="Ver en pantalla completa">↗</button>
+                </div>
+                <div class="chart-wrap">
+                    <iframe id="iframe-etario" class="chart-iframe" src="" scrolling="no"></iframe>
+                    <p id="fallback-etario" class="chart-fallback" data-i18n="loading_chart">Cargando gráfico...</p>
+                </div>
             </div>
         </div>
     </main>
@@ -226,33 +263,36 @@
         es: {
             box_title: "Informe Mensual", box_btn: "📄 Ver informe",
             main_title: "Incidentes de Tránsito", main_subtitle: "Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.",
-            select_label: "Seleccionar Periodo", card1_title: "Tipos de Incidentes",
-            card2_title: "Vehículo Involucrado", card3_title: "Zonas de Mayor Impacto",
-            card4_title: "Pico de Frecuencia", card5_title: "Tasa de Traslados",
-            card6_title: "Mapa Interactivo", card6_desc: "Visualiza los puntos críticos de incidentes en el mapa de la Ciudad.",
-            card6_btn: "🌐 Abrir Mapa Interactivo", footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias",
+            select_label: "Seleccionar Periodo", btn_mapa: "🌐 Abrir Mapa Interactivo",
+            card1_title: "Tipos de Incidentes", card2_title: "Vehículo Involucrado", 
+            card3_title: "Zonas de Mayor Impacto", card4_title: "Pico de Frecuencia", 
+            card5_title: "Tasa de Traslados", 
+            card_grilla_title: "Grilla de Calor", card_etario_title: "Rango Etario",
+            footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias",
             loading_chart: "Cargando gráfico...", no_chart: "Gráfico no disponible para este periodo.",
             no_summary: "Resumen no disponible.", lbl_comuna_na: "Comuna N/A"
         },
         en: {
             box_title: "Monthly Report", box_btn: "📄 View report",
             main_title: "Traffic Incidents", main_subtitle: "Monitoring of traffic incidents attended by the SAME / ECUES team.",
-            select_label: "Select Period", card1_title: "Types of Incidents",
-            card2_title: "Involved Vehicle", card3_title: "Highest Impact Zones",
-            card4_title: "Peak Frequency", card5_title: "Transfer Rate",
-            card6_title: "Interactive Map", card6_desc: "Visualize critical incident hotspots on the City map.",
-            card6_btn: "🌐 Open Interactive Map", footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team",
+            select_label: "Select Period", btn_mapa: "🌐 Open Interactive Map",
+            card1_title: "Types of Incidents", card2_title: "Involved Vehicle", 
+            card3_title: "Highest Impact Zones", card4_title: "Peak Frequency", 
+            card5_title: "Transfer Rate", 
+            card_grilla_title: "Heatmap", card_etario_title: "Age Range",
+            footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team",
             loading_chart: "Loading chart...", no_chart: "Chart not available for this period.",
             no_summary: "Summary not available.", lbl_comuna_na: "Commune N/A"
         },
         pt: {
             box_title: "Relatório Mensal", box_btn: "📄 Ver relatório",
             main_title: "Incidentes de Trânsito", main_subtitle: "Monitoramento de incidentes de trânsito atendidos pela equipe SAME / ECUES.",
-            select_label: "Selecionar Período", card1_title: "Tipos de Incidentes",
-            card2_title: "Veículo Envolvido", card3_title: "Zonas de Maior Impacto",
-            card4_title: "Pico de Frequência", card5_title: "Taxa de Traslados",
-            card6_title: "Mapa Interativo", card6_desc: "Visualize os pontos críticos de incidentes no mapa da Cidade.",
-            card6_btn: "🌐 Abrir Mapa Interativo", footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde",
+            select_label: "Selecionar Período", btn_mapa: "🌐 Abrir Mapa Interativo",
+            card1_title: "Tipos de Incidentes", card2_title: "Veículo Envolvido", 
+            card3_title: "Zonas de Maior Impacto", card4_title: "Pico de Frequência", 
+            card5_title: "Taxa de Traslados", 
+            card_grilla_title: "Mapa de Calor", card_etario_title: "Faixa Etária",
+            footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde",
             loading_chart: "Carregando gráfico...", no_chart: "Gráfico não disponível para este período.",
             no_summary: "Resumo não disponível.", lbl_comuna_na: "Comuna N/A"
         }
@@ -296,8 +336,6 @@
         const mesesNombreUrl = {"01":"enero", "02":"febrero", "03":"marzo", "04":"abril", "05":"mayo", "06":"junio", "07":"julio", "08":"agosto", "09":"septiembre", "10":"octubre", "11":"noviembre", "12":"diciembre"};
         const mesStr = mesesNombreUrl[mesNum];
         
-        // Asumo que tu repositorio de mapas en GitHub se llama siempre con el año (ej: VIALES-2025-ECUES)
-        // Si no es dinámico y el repositorio siempre se llama 2025, cámbialo abajo
         const urlMapa = `https://same-ecues.github.io/VIALES-${anio}-ECUES/index.incidentes${mesStr}${anio}.html`;
         window.open(urlMapa, '_blank');
     }
@@ -314,15 +352,13 @@
         errEl.innerText = diccionario[idiomaActual].loading_chart;
 
         try {
-            // Hacemos una petición rápida para comprobar si el archivo HTML existe en tu carpeta
             const res = await fetch(ruta, { method: 'HEAD' });
             if (!res.ok) throw new Error("Archivo HTML no encontrado");
             
-            // Si existe, lo incrustamos en el iframe
             iframeEl.src = ruta;
             iframeEl.onload = () => {
                 iframeEl.style.display = 'block';
-                linkEl.style.display = 'flex'; // Mostramos el botón ↗
+                linkEl.style.display = 'flex'; 
                 linkEl.onclick = () => window.open(ruta, '_blank');
                 errEl.style.display = 'none';
             };
@@ -339,15 +375,16 @@
         const anio = mes_anio.split("-")[0];
         const timeStamp = new Date().getTime();
         
-        // 1. CARGAMOS LOS GRÁFICOS HTML DESDE SUS CARPETAS
-        // Estructura esperada: graficos/{idioma}/{año}/{periodo}/[nombre].html
+        // 1. CARGAMOS LOS GRÁFICOS HTML (AHORA SON 5 EN TOTAL)
         const rutaBaseHtml = `graficos/${idiomaActual}/${anio}/${mes_anio}`;
         
         cargarGraficoHTML('iframe-tipos', 'fallback-tipos', 'link-tipos', `${rutaBaseHtml}/tipo_incidente.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-vehiculos', 'fallback-vehiculos', 'link-vehiculos', `${rutaBaseHtml}/vehiculo_involucrado.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-traslados', 'fallback-traslados', 'link-traslados', `${rutaBaseHtml}/tasa_traslados.html?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-grilla', 'fallback-grilla', 'link-grilla', `${rutaBaseHtml}/grilla_calor.html?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-etario', 'fallback-etario', 'link-etario', `${rutaBaseHtml}/rango_etario.html?v=${timeStamp}`);
 
-        // 2. CARGAMOS EL PDF PARA EL RESUMEN Y EXTRACCIONES DE TEXTO (COMUNAS / FRECUENCIA)
+        // 2. CARGAMOS EL PDF PARA EL RESUMEN Y EXTRACCIONES DE TEXTO
         const urlFetch = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf?v=${timeStamp}`; 
         document.getElementById('lnk-pdf').href = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf`;
         
