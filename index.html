@@ -61,7 +61,7 @@
     
     select {
         padding: 12px 16px; border-radius: 10px; background: rgba(255, 255, 255, 0.1);
-        color: white; border: 1px solid rgba(255, 255, 255, 0.2); width: 100%; min-width: 220px;
+        color: white; border: 1px solid rgba(255, 255, 255, 0.2); 
         font-family: 'Inter', sans-serif; font-weight: 600; cursor: pointer; outline: none; transition: 0.3s ease; appearance: none;
     }
     select:hover, select:focus { background: rgba(255, 255, 255, 0.15); border-color: var(--primary-light); }
@@ -69,7 +69,7 @@
 
     .btn-mapa {
         background: var(--navy); color: white; padding: 12px 20px; border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
-        font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease;
+        font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; height: 100%;
         display: flex; justify-content: center; align-items: center; gap: 10px; font-family: 'Inter', sans-serif;
     }
     .btn-mapa:hover { background: var(--primary); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(234, 88, 12, 0.3); }
@@ -110,10 +110,13 @@
     }
     .btn-expand:hover { background: var(--primary); color: white; }
 
-    .chart-wrap { flex-grow: 1; min-height: 220px; position: relative; display:flex; justify-content:center; align-items:center; flex-direction:column; }
+    .chart-wrap { flex-grow: 1; min-height: 220px; position: relative; display:flex; justify-content:center; align-items:center; flex-direction:column; overflow:hidden; }
     
     .chart-iframe { width: 100%; height: 250px; border: none; border-radius: 8px; display: none; }
-    .chart-img { width: 100%; max-height: 300px; object-fit: contain; border-radius: 8px; display: none; transform: scale(1.1); }
+    
+    /* ZOOM aplicado a la miniatura de imagen para ocultar bordes blancos */
+    .chart-img { width: 100%; max-height: 280px; object-fit: contain; border-radius: 8px; display: none; transform: scale(1.15); }
+    
     .chart-fallback { color:var(--text-muted); font-size:0.9rem; text-align:center; }
 
     #comuna-list { display: flex; flex-direction: column; gap: 15px; }
@@ -156,9 +159,16 @@
                 <p class="subtitle" data-i18n="main_subtitle">Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.</p>
                 
                 <div class="controls-container">
-                    <div style="display:flex; flex-direction:column; gap:8px;">
-                        <label style="font-size:0.8rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;" data-i18n="select_label">Seleccionar Periodo</label>
-                        <select id="sel-periodo" onchange="cargarDatosPanel(this.value)"></select>
+                    <div style="display:flex; gap:15px; flex-wrap:wrap; align-items: flex-end;">
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <label style="font-size:0.8rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;" data-i18n="select_year">Año</label>
+                            <select id="sel-anio" onchange="actualizarOpcionesMeses()" style="min-width: 100px;"></select>
+                        </div>
+                        
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            <label style="font-size:0.8rem; font-weight:600; color:#94a3b8; text-transform:uppercase; letter-spacing:1px;" data-i18n="select_month">Mes</label>
+                            <select id="sel-mes" onchange="actualizarPeriodo()" style="min-width: 150px;"></select>
+                        </div>
                     </div>
                     
                     <div style="display:flex; align-items: flex-end;">
@@ -260,7 +270,7 @@
         es: {
             box_title: "Informe Mensual", box_btn: "📄 Ver informe",
             main_title: "Incidentes de Tránsito", main_subtitle: "Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.",
-            select_label: "Seleccionar Periodo", btn_mapa: "🌐 Abrir Mapa Interactivo",
+            select_year: "Año", select_month: "Mes", btn_mapa: "🌐 Abrir Mapa Interactivo",
             card1_title: "Tipos de Incidentes", card2_title: "Vehículo Involucrado", 
             card3_title: "Zonas de Mayor Impacto", card4_title: "Pico de Frecuencia", 
             card5_title: "Tasa de Traslados", 
@@ -272,7 +282,7 @@
         en: {
             box_title: "Monthly Report", box_btn: "📄 View report",
             main_title: "Traffic Incidents", main_subtitle: "Monitoring of traffic incidents attended by the SAME / ECUES team.",
-            select_label: "Select Period", btn_mapa: "🌐 Open Interactive Map",
+            select_year: "Year", select_month: "Month", btn_mapa: "🌐 Open Interactive Map",
             card1_title: "Types of Incidents", card2_title: "Involved Vehicle", 
             card3_title: "Highest Impact Zones", card4_title: "Peak Frequency", 
             card5_title: "Transfer Rate", 
@@ -284,7 +294,7 @@
         pt: {
             box_title: "Relatório Mensal", box_btn: "📄 Ver relatório",
             main_title: "Incidentes de Trânsito", main_subtitle: "Monitoramento de incidentes de trânsito atendidos pela equipe SAME / ECUES.",
-            select_label: "Selecionar Período", btn_mapa: "🌐 Abrir Mapa Interativo",
+            select_year: "Ano", select_month: "Mês", btn_mapa: "🌐 Abrir Mapa Interativo",
             card1_title: "Tipos de Incidentes", card2_title: "Veículo Envolvido", 
             card3_title: "Zonas de Maior Impacto", card4_title: "Pico de Frequência", 
             card5_title: "Taxa de Traslados", 
@@ -293,6 +303,12 @@
             loading_chart: "Carregando gráfico...", no_chart: "Gráfico não disponível para este período.",
             no_summary: "Resumo não disponível.", lbl_comuna_na: "Comuna N/A"
         }
+    };
+
+    const nombresMeses = {
+        es: {"01":"Enero", "02":"Febrero", "03":"Marzo", "04":"Abril", "05":"Mayo", "06":"Junio", "07":"Julio", "08":"Agosto", "09":"Septiembre", "10":"Octubre", "11":"Noviembre", "12":"Diciembre"},
+        en: {"01":"January", "02":"February", "03":"March", "04":"April", "05":"May", "06":"June", "07":"July", "08":"August", "09":"September", "10":"October", "11":"November", "12":"December"},
+        pt: {"01":"Janeiro", "02":"Fevereiro", "03":"Março", "04":"Abril", "05":"Maio", "06":"Junho", "07":"Julho", "08":"Agosto", "09":"Setembro", "10":"Outubro", "11":"Novembro", "12":"Dezembro"}
     };
 
     const diasMapa = {
@@ -311,25 +327,83 @@
             if(diccionario[lang][key]) el.innerHTML = diccionario[lang][key];
         });
 
-        cargarDatosPanel(document.getElementById('sel-periodo').value);
+        // Actualizamos los textos de los meses en el dropdown al nuevo idioma
+        const selMes = document.getElementById('sel-mes');
+        Array.from(selMes.options).forEach(opt => {
+            opt.innerHTML = nombresMeses[idiomaActual][opt.value];
+        });
+
+        actualizarPeriodo();
     }
 
-    const periodos = ["2026-02", "2026-01", "2025-12", "2025-11", "2025-10", "2025-09", "2025-08", "2025-07", "2025-06", "2025-05", "2025-04", "2025-03", "2025-02", "2025-01"];
+    // --- MANEJO DE PERIODOS (AÑO Y MES SEPARADOS) ---
+    // Agrega aquí todos los periodos históricos que vayas subiendo.
+    const periodos = [
+        "2026-02", "2026-01", 
+        "2025-12", "2025-11", "2025-10", "2025-09", "2025-08", "2025-07", "2025-06", "2025-05", "2025-04", "2025-03", "2025-02", "2025-01"
+    ];
+
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
     
     function init() {
-        const sel = document.getElementById('sel-periodo');
-        periodos.sort().reverse().forEach(p => {
+        const selAnio = document.getElementById('sel-anio');
+        
+        // Obtenemos los años únicos y los ordenamos de más reciente a más viejo
+        const aniosUnicos = [...new Set(periodos.map(p => p.split('-')[0]))].sort().reverse();
+        
+        aniosUnicos.forEach(a => {
             const o = document.createElement('option');
-            o.value = p; o.innerHTML = p; sel.appendChild(o);
+            o.value = a; o.innerHTML = a;
+            selAnio.appendChild(o);
         });
-        cargarDatosPanel(periodos[0]);
+
+        actualizarOpcionesMeses();
+    }
+
+    // Se ejecuta al cambiar el Año. Actualiza la lista de meses permitidos.
+    function actualizarOpcionesMeses() {
+        const anioElegido = document.getElementById('sel-anio').value;
+        const selMes = document.getElementById('sel-mes');
+        const mesAnterior = selMes.value; // Guardamos el mes que estaba elegido
+        
+        selMes.innerHTML = ''; 
+        
+        // Filtramos solo los meses que existen para el año elegido
+        const mesesDelAnio = periodos
+            .filter(p => p.startsWith(anioElegido))
+            .map(p => p.split('-')[1])
+            .sort().reverse();
+
+        mesesDelAnio.forEach(m => {
+            const o = document.createElement('option');
+            o.value = m;
+            o.innerHTML = nombresMeses[idiomaActual][m];
+            selMes.appendChild(o);
+        });
+
+        // Intentamos mantener el mes seleccionado si existe en el nuevo año
+        if (mesAnterior && mesesDelAnio.includes(mesAnterior)) {
+            selMes.value = mesAnterior;
+        }
+
+        actualizarPeriodo();
+    }
+
+    // Une el Año y Mes actuales y desencadena la búsqueda
+    function actualizarPeriodo() {
+        const anio = document.getElementById('sel-anio').value;
+        const mes = document.getElementById('sel-mes').value;
+        const periodoCompuesto = `${anio}-${mes}`;
+        
+        cargarDatosPanel(periodoCompuesto);
     }
 
     function abrirMapa() {
-        const periodo = document.getElementById('sel-periodo').value;
-        const anio = periodo.split("-")[0];
-        const urlMapa = `mapa/${idiomaActual}/${anio}/${periodo}/mapa.html`;
+        const anio = document.getElementById('sel-anio').value;
+        const mes = document.getElementById('sel-mes').value;
+        const periodo = `${anio}-${mes}`;
+        
+        const urlMapa = `mapas/${idiomaActual}/${anio}/${periodo}/mapa.html`;
         window.open(urlMapa, '_blank');
     }
 
