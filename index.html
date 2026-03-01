@@ -22,7 +22,7 @@
     html { scroll-behavior: smooth; }
     body {
         font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-gradient) 100%);
+        background: #2b3756; /* Tu nuevo color de fondo principal */
         color: white; min-height: 100vh;
     }
     header {
@@ -154,8 +154,17 @@
     .progress-fill { background: linear-gradient(90deg, var(--primary), var(--primary-light)); height: 100%; border-radius: 10px; width: 0%; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
 
     footer {
-        margin-top: 60px; padding: 30px 5%; border-top: 1px solid rgba(255,255,255,0.1);
-        font-size: 0.9rem; color: #94a3b8; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
+        background-color: #1f2a44; /* Tu nuevo color para el pie de página */
+        margin-top: 60px; 
+        padding: 30px 5%; 
+        border-top: 1px solid rgba(0,0,0,0.2); /* Borde un poco más oscuro para que combine mejor */
+        font-size: 0.9rem; 
+        color: #94a3b8; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        flex-wrap: wrap; 
+        gap: 20px;
     }
     .lang-controls { display: flex; gap: 10px; }
     .btn-lang {
