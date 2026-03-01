@@ -244,7 +244,7 @@
                             <div class="lbl" data-i18n="card4_title">Pico de Frecuencia</div>
                             <div class="val">
                                 <span class="d" id="p-dia">---</span>
-                                <span class="h" id="p-hora">--:-- horas</span>
+                                <span class="h" id="p-hora">--:-- hs</span>
                             </div>
                         </div>
                     </div>
@@ -600,7 +600,7 @@
             console.error(e);
             document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
             document.getElementById('p-dia').innerText = "---";
-            document.getElementById('p-hora').innerText = "--:-- horas";
+            document.getElementById('p-hora').innerText = "--:-- hs";
 
             dibujarComunas([
                 {n: diccionario[idiomaActual].lbl_comuna_na, v: "", p: 0}, 
@@ -620,7 +620,7 @@
         if (matchResumen) { textoResumen = matchResumen[1]; }
         document.getElementById('txt-parrafo').innerText = textoResumen;
 
-        let d = "---"; let h = "--:-- horas";
+        let d = "---"; let h = "--:-- hs";
         const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?|monday|tuesday|wednesday|thursday|friday|saturday|sunday|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)/i);
         if (matchDia) {
             let dRaw = matchDia[1].toLowerCase();
@@ -644,7 +644,7 @@
             // padStart asegura que "9" se convierta en "09"
             let hora1 = matchHora[1].padStart(2, '0');
             let hora2 = matchHora[2].padStart(2, '0');
-            h = `${hora1}:00 — ${hora2}:00 horas`;
+            h = `${hora1}:00 — ${hora2}:00 hs`;
         }
         document.getElementById('p-dia').innerText = d;
         document.getElementById('p-hora').innerText = h;
