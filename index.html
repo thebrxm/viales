@@ -609,7 +609,7 @@
         // 1. Detección del Resumen
         let textoResumen = diccionario[idiomaActual].no_summary;
         const matchResumen = texto.match(/((?:En el mes|Durante|In the month|During|No m[êe]s de?|Em ).{10,300}?(?:pacientes|atenciones|patients|attentions|attended|atendimentos)\.?)/i) 
-                          || texto.match(/([A-Z][^\.]{10,200}(?:solicitudes|requests|solicitações)[^\.]{5,200}(?:pacientes|patients)\.)/i;
+                          || texto.match(/([A-Z][^\.]{10,200}(?:solicitudes|requests|solicitações)[^\.]{5,200}(?:pacientes|patients)\.)/i)
         if (matchResumen) { textoResumen = matchResumen[1]; }
         document.getElementById('txt-parrafo').innerText = textoResumen;
 
