@@ -87,10 +87,10 @@
                     // MINIATURA (Dentro de la tarjeta del panel)
                     query: { maxWidth: 499 },
                     option: {
-                        title: { show: false }, 
-                        graphic: { elements: [{ type: 'image', style: { image: 'https://i.imgur.com/GXTFolo.png', width: 90, height: 26 }, right: '2%', top: '2%' }] },
-                        // En la miniatura bajamos un poco el gráfico (top: 18%) para que no pise el logo
-                        grid: { top: '18%', left: '2%', right: '12%', bottom: '2%', containLabel: true } 
+                    title: { show: false }, 
+                    graphic: { elements: [] }, // <- Esto oculta el logo en la miniatura
+                    // En la miniatura bajamos un poco el gráfico (top: 5%) para aprovechar el espacio extra
+                    grid: { top: '5%', left: '2%', right: '12%', bottom: '2%', containLabel: true } 
                     }
                 }
             ]
@@ -99,4 +99,5 @@
         window.addEventListener('resize', () => myChart.resize());
     </script>
 </body>
+
 </html>
