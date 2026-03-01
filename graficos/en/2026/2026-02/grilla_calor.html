@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Calor Interactivo - Incidentes Viales (Paleta Categorizada)</title>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .chart-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1200px;
+            position: relative; /* Para posicionar el logo dentro */
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+        .chart-title {
+            margin: 0;
+            font-size: 24px;
+            color: #1e293b;
+        }
+        .logo-same {
+            max-width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chart-container">
+    <div class="header-container">
+        <h1 class="chart-title">Distribution of Traffic Incidents by Day and Hour</h1>
+        <img src="https://i.imgur.com/GXTFolo.png" alt="Logo de SAME" class="logo-same">
+    </div>
+    <div id="heatmap"></div>
+</div>
+
+<script>
+    // 1. Datos completos del CSV proporcionados
+    const rawData = [
+        {"Day": "monday", "Hour": 0, "Incidents": 1, "Porcentaje": 0.06},
+        {"Day": "monday", "Hour": 1, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "monday", "Hour": 2, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "monday", "Hour": 3, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "monday", "Hour": 4, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "monday", "Hour": 5, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "monday", "Hour": 6, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "monday", "Hour": 7, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "monday", "Hour": 8, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "monday", "Hour": 9, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "monday", "Hour": 10, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "monday", "Hour": 11, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "monday", "Hour": 12, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "monday", "Hour": 13, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "monday", "Hour": 14, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "monday", "Hour": 15, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "monday", "Hour": 16, "Incidents": 22, "Porcentaje": 1.38},
+        {"Day": "monday", "Hour": 17, "Incidents": 7, "Porcentaje": 0.44},
+        {"Day": "monday", "Hour": 18, "Incidents": 20, "Porcentaje": 1.26},
+        {"Day": "monday", "Hour": 19, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "monday", "Hour": 20, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "monday", "Hour": 21, "Incidents": 6, "Porcentaje": 0.38},
+        {"Day": "monday", "Hour": 22, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "monday", "Hour": 23, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "tuesday", "Hour": 0, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "tuesday", "Hour": 1, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "tuesday", "Hour": 2, "Incidents": 1, "Porcentaje": 0.06},
+        {"Day": "tuesday", "Hour": 3, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "tuesday", "Hour": 4, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "tuesday", "Hour": 5, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "tuesday", "Hour": 6, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "tuesday", "Hour": 7, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "tuesday", "Hour": 8, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "tuesday", "Hour": 9, "Incidents": 18, "Porcentaje": 1.13},
+        {"Day": "tuesday", "Hour": 10, "Incidents": 7, "Porcentaje": 0.44},
+        {"Day": "tuesday", "Hour": 11, "Incidents": 6, "Porcentaje": 0.38},
+        {"Day": "tuesday", "Hour": 12, "Incidents": 22, "Porcentaje": 1.38},
+        {"Day": "tuesday", "Hour": 13, "Incidents": 11, "Porcentaje": 0.69},
+        {"Day": "tuesday", "Hour": 14, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "tuesday", "Hour": 15, "Incidents": 16, "Porcentaje": 1.01},
+        {"Day": "tuesday", "Hour": 16, "Incidents": 20, "Porcentaje": 1.26},
+        {"Day": "tuesday", "Hour": 17, "Incidents": 21, "Porcentaje": 1.32},
+        {"Day": "tuesday", "Hour": 18, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "tuesday", "Hour": 19, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "tuesday", "Hour": 20, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "tuesday", "Hour": 21, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "tuesday", "Hour": 22, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "tuesday", "Hour": 23, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "wednesday", "Hour": 0, "Incidents": 1, "Porcentaje": 0.06},
+        {"Day": "wednesday", "Hour": 1, "Incidents": 1, "Porcentaje": 0.06},
+        {"Day": "wednesday", "Hour": 2, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "wednesday", "Hour": 3, "Incidents": 1, "Porcentaje": 0.06},
+        {"Day": "wednesday", "Hour": 4, "Incidents": 1, "Porcentaje": 0.06},
+        {"Day": "wednesday", "Hour": 5, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "wednesday", "Hour": 6, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "wednesday", "Hour": 7, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "wednesday", "Hour": 8, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "wednesday", "Hour": 9, "Incidents": 18, "Porcentaje": 1.13},
+        {"Day": "wednesday", "Hour": 10, "Incidents": 11, "Porcentaje": 0.69},
+        {"Day": "wednesday", "Hour": 11, "Incidents": 11, "Porcentaje": 0.69},
+        {"Day": "wednesday", "Hour": 12, "Incidents": 15, "Porcentaje": 0.94},
+        {"Day": "wednesday", "Hour": 13, "Incidents": 18, "Porcentaje": 1.13},
+        {"Day": "wednesday", "Hour": 14, "Incidents": 22, "Porcentaje": 1.38},
+        {"Day": "wednesday", "Hour": 15, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "wednesday", "Hour": 16, "Incidents": 21, "Porcentaje": 1.32},
+        {"Day": "wednesday", "Hour": 17, "Incidents": 20, "Porcentaje": 1.26},
+        {"Day": "wednesday", "Hour": 18, "Incidents": 22, "Porcentaje": 1.38},
+        {"Day": "wednesday", "Hour": 19, "Incidents": 13, "Porcentaje": 0.82},
+        {"Day": "wednesday", "Hour": 20, "Incidents": 6, "Porcentaje": 0.38},
+        {"Day": "wednesday", "Hour": 21, "Incidents": 7, "Porcentaje": 0.44},
+        {"Day": "wednesday", "Hour": 22, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "wednesday", "Hour": 23, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "thusday", "Hour": 0, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "thusday", "Hour": 1, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "thusday", "Hour": 2, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "thusday", "Hour": 3, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "thusday", "Hour": 4, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "thusday", "Hour": 5, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "thusday", "Hour": 6, "Incidents": 4, "Porcentaje": 0.25},
+        {"Day": "thusday", "Hour": 7, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "thusday", "Hour": 8, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "thusday", "Hour": 9, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "thusday", "Hour": 10, "Incidents": 19, "Porcentaje": 1.19},
+        {"Day": "thusday", "Hour": 11, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "thusday", "Hour": 12, "Incidents": 23, "Porcentaje": 1.45},
+        {"Day": "thusday", "Hour": 13, "Incidents": 25, "Porcentaje": 1.57},
+        {"Day": "thusday", "Hour": 14, "Incidents": 27, "Porcentaje": 1.7},
+        {"Day": "thusday", "Hour": 15, "Incidents": 13, "Porcentaje": 0.82},
+        {"Day": "thusday", "Hour": 16, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "thusday", "Hour": 17, "Incidents": 17, "Porcentaje": 1.07},
+        {"Day": "thusday", "Hour": 18, "Incidents": 17, "Porcentaje": 1.07},
+        {"Day": "thusday", "Hour": 19, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "thusday", "Hour": 20, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "thusday", "Hour": 21, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "thusday", "Hour": 22, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "thusday", "Hour": 23, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "friday", "Hour": 0, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "friday", "Hour": 1, "Incidents": 4, "Porcentaje": 0.25},
+        {"Day": "friday", "Hour": 2, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "friday", "Hour": 3, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "friday", "Hour": 4, "Incidents": 1, "Porcentaje": 0.06},
+        {"Day": "friday", "Hour": 5, "Incidents": 4, "Porcentaje": 0.25},
+        {"Day": "friday", "Hour": 6, "Incidents": 7, "Porcentaje": 0.44},
+        {"Day": "friday", "Hour": 7, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "friday", "Hour": 8, "Incidents": 11, "Porcentaje": 0.69},
+        {"Day": "friday", "Hour": 9, "Incidents": 13, "Porcentaje": 0.82},
+        {"Day": "friday", "Hour": 10, "Incidents": 21, "Porcentaje": 1.32},
+        {"Day": "friday", "Hour": 11, "Incidents": 13, "Porcentaje": 0.82},
+        {"Day": "friday", "Hour": 12, "Incidents": 16, "Porcentaje": 1.01},
+        {"Day": "friday", "Hour": 13, "Incidents": 18, "Porcentaje": 1.13},
+        {"Day": "friday", "Hour": 14, "Incidents": 20, "Porcentaje": 1.26},
+        {"Day": "friday", "Hour": 15, "Incidents": 24, "Porcentaje": 1.51},
+        {"Day": "friday", "Hour": 16, "Incidents": 23, "Porcentaje": 1.45},
+        {"Day": "friday", "Hour": 17, "Incidents": 32, "Porcentaje": 2.01},
+        {"Day": "friday", "Hour": 18, "Incidents": 15, "Porcentaje": 0.94},
+        {"Day": "friday", "Hour": 19, "Incidents": 16, "Porcentaje": 1.01},
+        {"Day": "friday", "Hour": 20, "Incidents": 15, "Porcentaje": 0.94},
+        {"Day": "friday", "Hour": 21, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "friday", "Hour": 22, "Incidents": 11, "Porcentaje": 0.69},
+        {"Day": "friday", "Hour": 23, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "saturday", "Hour": 0, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "saturday", "Hour": 1, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "saturday", "Hour": 2, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "saturday", "Hour": 3, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "saturday", "Hour": 4, "Incidents": 0, "Porcentaje": 0},
+        {"Day": "saturday", "Hour": 5, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "saturday", "Hour": 6, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "saturday", "Hour": 7, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "saturday", "Hour": 8, "Incidents": 4, "Porcentaje": 0.25},
+        {"Day": "saturday", "Hour": 9, "Incidents": 6, "Porcentaje": 0.38},
+        {"Day": "saturday", "Hour": 10, "Incidents": 17, "Porcentaje": 1.07},
+        {"Day": "saturday", "Hour": 11, "Incidents": 13, "Porcentaje": 0.82},
+        {"Day": "saturday", "Hour": 12, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "saturday", "Hour": 13, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "saturday", "Hour": 14, "Incidents": 17, "Porcentaje": 1.07},
+        {"Day": "saturday", "Hour": 15, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "saturday", "Hour": 16, "Incidents": 7, "Porcentaje": 0.44},
+        {"Day": "saturday", "Hour": 17, "Incidents": 7, "Porcentaje": 0.44},
+        {"Day": "saturday", "Hour": 18, "Incidents": 14, "Porcentaje": 0.88},
+        {"Day": "saturday", "Hour": 19, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "saturday", "Hour": 20, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "saturday", "Hour": 21, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "saturday", "Hour": 22, "Incidents": 13, "Porcentaje": 0.82},
+        {"Day": "saturday", "Hour": 23, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "sunday", "Hour": 0, "Incidents": 4, "Porcentaje": 0.25},
+        {"Day": "sunday", "Hour": 1, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "sunday", "Hour": 2, "Incidents": 4, "Porcentaje": 0.25},
+        {"Day": "sunday", "Hour": 3, "Incidents": 2, "Porcentaje": 0.13},
+        {"Day": "sunday", "Hour": 4, "Incidents": 3, "Porcentaje": 0.19},
+        {"Day": "sunday", "Hour": 5, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "sunday", "Hour": 6, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "sunday", "Hour": 7, "Incidents": 9, "Porcentaje": 0.57},
+        {"Day": "sunday", "Hour": 8, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "sunday", "Hour": 9, "Incidents": 4, "Porcentaje": 0.25},
+        {"Day": "sunday", "Hour": 10, "Incidents": 6, "Porcentaje": 0.38},
+        {"Day": "sunday", "Hour": 11, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "sunday", "Hour": 12, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "sunday", "Hour": 13, "Incidents": 6, "Porcentaje": 0.38},
+        {"Day": "sunday", "Hour": 14, "Incidents": 4, "Porcentaje": 0.25},
+        {"Day": "sunday", "Hour": 15, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "sunday", "Hour": 16, "Incidents": 7, "Porcentaje": 0.44},
+        {"Day": "sunday", "Hour": 17, "Incidents": 7, "Porcentaje": 0.44},
+        {"Day": "sunday", "Hour": 18, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "sunday", "Hour": 19, "Incidents": 5, "Porcentaje": 0.31},
+        {"Day": "sunday", "Hour": 20, "Incidents": 8, "Porcentaje": 0.5},
+        {"Day": "sunday", "Hour": 21, "Incidents": 12, "Porcentaje": 0.75},
+        {"Day": "sunday", "Hour": 22, "Incidents": 10, "Porcentaje": 0.63},
+        {"Day": "sunday", "Hour": 23, "Incidents": 5, "Porcentaje": 0.31}
+    ];
+
+    // 2. Procesar datos para Plotly
+    const daysOrder = ['monday', 'tuesday', 'wednesday', 'thusday', 'friday', 'saturday', 'monday'];
+    // Invertimos el orden para que Lunes salga arriba en el gráfico
+    const yLabels = [...daysOrder].reverse(); 
+    const xLabels = Array.from({length: 24}, (_, i) => i); // Horas 0 a 23
+
+    // Inicializar matrices vacías para z (valores) y text (hover)
+    let zMatrix = Array(7).fill().map(() => Array(24).fill(0));
+    let textMatrix = Array(7).fill().map(() => Array(24).fill(''));
+
+    // Rellenar matrices
+    rawData.forEach(item => {
+        const dayIndex = yLabels.indexOf(item.Dia);
+        const hourIndex = item.Hora;
+        if (dayIndex !== -1) {
+            zMatrix[dayIndex][hourIndex] = item.Incidents;
+            // Crear texto informativo para el hover
+            textMatrix[dayIndex][hourIndex] = 
+                `<b>Día:</b> ${item.Dia.charAt(0).toUpperCase() + item.Dia.slice(1)}<br>` +
+                `<b>Hora:</b> ${item.Hora}:00h<br>` +
+                `<b>Incidentes:</b> ${item.Incidentes}<br>` +
+                `<b>Porcentaje:</b> ${item.Porcentaje.toFixed(2)}%`;
+        }
+    });
+
+    // 3. Definir la paleta categórica basada en las imágenes proporcionadas
+    const categoricalPalette = [
+    [0.00, '#f3e7c2'],
+    [0.15, '#f0d88a'],
+    [0.35, '#f5b041'],
+    [0.55, '#f57c3d'],
+    [0.75, '#ff3d2e'],
+    [1.00, '#99002b']
+];
+
+    // 4. Configuración del rastro del Heatmap
+    const data = [{
+        x: xLabels,
+        y: yLabels,
+        z: zMatrix,
+        text: textMatrix, // Datos para mostrar al pasar el mouse
+        hoverinfo: 'text', // Mostrar solo el texto personalizado
+        type: 'heatmap',
+        colorscale: categoricalPalette, // Aplicar la nueva paleta categórica
+        showscale: true, // Mostrar la barra de escala de colores
+        colorbar: {
+            title: 'Nº Incidentes',
+            titleside: 'right'
+        }
+    }];
+
+    // 5. Configuración del diseño (Layout)
+    const layout = {
+        xaxis: {
+            title: 'Time of Day',
+            tickmode: 'linear',
+            dtick: 1,
+            range: [-0.5, 23.5]
+        },
+        yaxis: {
+            tickmode: 'array',
+            tickvals: yLabels,
+            ticktext: yLabels.map(d => d.charAt(0).toUpperCase() + d.slice(1)) // Capitalizar nombres
+        },
+        margins: { l: 100, r: 50, b: 50, t: 30 },
+        height: 550,
+        backgroundColor: { fill: 'transparent' }
+    };
+
+    // 6. Dibujar el gráfico
+    Plotly.newPlot('heatmap', data, layout, {responsive: true});
+
+</script>
+
+</body>
+</html>
