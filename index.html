@@ -607,46 +607,59 @@
         const texto = t.replace(/\s+/g, ' ');
 
         // 1. Detección del Resumen
-        let textoResumen = diccionario[idiomaActual].no_summary;
-        const matchResumen = texto.match(/((?:En el mes|Durante|In the month|During|No m[êe]s de?|Em ).{10,300}?(?:pacientes|atenciones|patients|attentions|attended|atendimentos)\.?)/i) 
-                          || texto.match(/([A-Z][^\.]{10,200}(?:solicitudes|requests|solicitações)[^\.]{5,200}(?:pacientes|patients)\.)/i);
-        if (matchResumen) { textoResumen = matchResumen[1]; }
-        document.getElementById('txt-parrafo').innerText = textoResumen;
+let textoResumen = diccionario[idiomaActual].no_summary;
+
+// Agregamos: "No mês de", "During the month", "During"
+const regexResumen = /((?:En el mes|Durante|In the month|During|No m[êe]s de?|Em ).{10,300}?(?:pacientes|atenciones|patients|attentions|attended|atendimentos)\.?)/i;
+const regexAlternativa = /([A-Z][^\.]{10,200}(?:solicitudes|requests|solicitações)[^\.]{5,200}(?:pacientes|patients)\.)/i;
+
+const matchResumen = texto.match(regexResumen) || texto.match(regexAlternativa);
+
+if (matchResumen) { 
+    textoResumen = matchResumen[1]; 
+}
+document.getElementById('txt-parrafo').innerText = textoResumen;
 
         // 2. Detección del Día
-        let d = "---"; let h = "--:-- hs";
-        const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?|monday|tuesday|wednesday|thursday|friday|saturday|sunday|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)/i);
-        if (matchDia) {
-            let dRaw = matchDia[1].toLowerCase();
-            let dayNum = 0;
-            if(dRaw.includes('lun') || dRaw.includes('mon') || dRaw.includes('seg')) dayNum = 1;
-            else if(dRaw.includes('mar') || dRaw.includes('tue') || dRaw.includes('ter')) dayNum = 2;
-            else if(dRaw.includes('mi') || dRaw.includes('wed') || dRaw.includes('qua')) dayNum = 3;
-            else if(dRaw.includes('jue') || dRaw.includes('thu') || dRaw.includes('qui')) dayNum = 4;
-            else if(dRaw.includes('vie') || dRaw.includes('fri') || dRaw.includes('sex')) dayNum = 5;
-            else if(dRaw.includes('sáb') || dRaw.includes('sab') || dRaw.includes('sat')) dayNum = 6;
-            else if(dRaw.includes('dom') || dRaw.includes('sun')) dayNum = 7;
-            
-            if(dayNum > 0) d = diasMapa[idiomaActual][dayNum];
-        }
+let d = "---";
+// El regex ahora busca los nombres de los días en los 3 idiomas
+const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?|monday|tuesday|wednesday|thursday|friday|saturday|sunday|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)/i);
 
-        // 3. Detección de la Hora
-        let matchHora = null;
-        matchHora = texto.match(/(?:entre|between|de|desde|às|as)\s*(\d{1,2})(?::00|h|hs)?\s*(?:y|a|hasta|-|and|e)\s*(\d{1,2})(?::00|h|hs)?\s*(?:hs|hrs|horas|hours|h)?/i);
-        if (!matchHora) { matchHora = texto.match(/(\d{1,2})(?:\:00)?\s*(?:a|y|hasta|-)\s*(?:las\s*)?(\d{1,2})(?:\:00)?\s*(?:hs|hrs|horas|hours)/i); }
-        if (!matchHora) { matchHora = texto.match(/(\d{1,2}):00\s*(?:a|y|hasta|-)\s*(\d{1,2}):00/i); }
+if (matchDia) {
+    let dRaw = matchDia[1].toLowerCase();
+    let dayNum = 0;
+    if(dRaw.includes('lun') || dRaw.includes('mon') || dRaw.includes('seg')) dayNum = 1;
+    else if(dRaw.includes('mar') || dRaw.includes('tue') || dRaw.includes('ter')) dayNum = 2;
+    else if(dRaw.includes('mi') || dRaw.includes('wed') || dRaw.includes('qua')) dayNum = 3;
+    else if(dRaw.includes('jue') || dRaw.includes('thu') || dRaw.includes('qui')) dayNum = 4;
+    else if(dRaw.includes('vie') || dRaw.includes('fri') || dRaw.includes('sex')) dayNum = 5;
+    else if(dRaw.includes('sáb') || dRaw.includes('sab') || dRaw.includes('sat')) dayNum = 6;
+    else if(dRaw.includes('dom') || dRaw.includes('sun')) dayNum = 7;
+    
+    if(dayNum > 0) d = diasMapa[idiomaActual][dayNum];
+}
 
-        if (matchHora) {
-            let hora1 = matchHora[1].toString().padStart(2, '0');
-            let hora2 = matchHora[2].toString().padStart(2, '0');
-            h = `${hora1}:00 — ${hora2}:00 hs`;
-        }
-        document.getElementById('p-dia').innerText = d;
-        document.getElementById('p-hora').innerText = h;
-        
-        // NOTA: Como ahora usamos un gráfico HTML para las zonas de impacto, 
-        // ya no necesitamos el código antiguo que extraía las comunas y dibujaba barras manualmente.
-    }
+// 3. Detección de la Hora
+let h = "--:-- hs";
+let matchHora = null;
+
+// Esta versión incluye "between/and" (inglés) y "entre/e" (portugués)
+// También acepta formatos como "12h" o "12 hs"
+matchHora = texto.match(/(?:entre|between|de|desde|às|as)\s*(\d{1,2})(?::00|h|hs)?\s*(?:y|a|hasta|-|and|e)\s*(\d{1,2})(?::00|h|hs)?\s*(?:hs|hrs|horas|hours|h)?/i);
+
+// Si no encuentra el anterior, busca el formato simple "12:00 a 17:00"
+if (!matchHora) { 
+    matchHora = texto.match(/(\d{1,2})(?::00)?\s*(?:a|y|hasta|-|and|e)\s*(\d{1,2})(?::00)?\s*(?:hs|hrs|horas|hours|h)/i); 
+}
+
+if (matchHora) {
+    let hora1 = matchHora[1].toString().padStart(2, '0');
+    let hora2 = matchHora[2].toString().padStart(2, '0');
+    h = `${hora1}:00 — ${hora2}:00 hs`;
+}
+
+document.getElementById('p-dia').innerText = d;
+document.getElementById('p-hora').innerText = h;
 
     window.onload = init;
 
