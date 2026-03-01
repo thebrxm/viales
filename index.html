@@ -154,18 +154,20 @@
     .progress-fill { background: linear-gradient(90deg, var(--primary), var(--primary-light)); height: 100%; border-radius: 10px; width: 0%; transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
 
     footer {
-        background-color: #1f2a44; /* Tu nuevo color para el pie de página */
+        background-color: #1f2a44;
         margin-top: 60px; 
         padding: 30px 5%; 
-        border-top: 1px solid rgba(0,0,0,0.2); /* Borde un poco más oscuro para que combine mejor */
+        border-top: 1px solid rgba(0,0,0,0.2); 
         font-size: 0.9rem; 
         color: #94a3b8; 
+        font-weight: 600; /* <--- Esta línea hace que el texto sea negrita */
         display: flex; 
         justify-content: space-between; 
         align-items: center; 
         flex-wrap: wrap; 
         gap: 20px;
     }
+    
     .lang-controls { display: flex; gap: 10px; }
     .btn-lang {
         background: rgba(255,255,255,0.1); border: none; color: white; padding: 5px 12px;
