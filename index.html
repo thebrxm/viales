@@ -631,7 +631,6 @@
         }
 
         // 3. Detección de la Hora
-        let h = "--:-- hs";
         let matchHora = null;
         matchHora = texto.match(/(?:entre|between|de|desde|às|as)\s*(\d{1,2})(?::00|h|hs)?\s*(?:y|a|hasta|-|and|e)\s*(\d{1,2})(?::00|h|hs)?\s*(?:hs|hrs|horas|hours|h)?/i);
         if (!matchHora) { matchHora = texto.match(/(\d{1,2})(?:\:00)?\s*(?:a|y|hasta|-)\s*(?:las\s*)?(\d{1,2})(?:\:00)?\s*(?:hs|hrs|horas|hours)/i); }
