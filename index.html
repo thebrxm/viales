@@ -672,7 +672,7 @@
             const regexComunas = /(?:Comuna|Commune)\s*(\d+)/gi; 
             let matchC;
             
-            while ((matchC = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 5) {
+            while ((matchC = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 6) {
                 let nomC = idiomaActual === 'en' ? `Commune ${matchC[1]}` : `Comuna ${matchC[1]}`;
                 if (!comunasExtraidas.includes(nomC)) comunasExtraidas.push(nomC);
             }
@@ -680,7 +680,7 @@
 
         const barrasVisuales = [100, 80, 60, 40, 20]; 
         let dataComunas = [];
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 6; i++) {
             if (comunasExtraidas[i]) dataComunas.push({ n: comunasExtraidas[i], v: "", p: barrasVisuales[i] });
             else dataComunas.push({n: "", v: "", p: 0});
         }
