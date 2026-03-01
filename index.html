@@ -635,12 +635,13 @@
             
             if(dayNum > 0) d = diasMapa[idiomaActual][dayNum];
         }
-
-        const matchHora = texto.match(/(?:entre|de|desde|between|from)\s*(?:las\s*|das\s*)?(\d{1,2})\s*(?:hs|hrs|horas|hours|:00)?\s*(?:y|a|hasta|and|to|-|e|às|as)\s*(?:las\s*|as\s*)?(\d{1,2})/i) 
+// 2. Detección de la Hora (Corregido)
+        const matchHora = texto.match(/(?:entre|de|desde|between|from)\s*(?:las\s*|das\s*)?(\d{1,2})\s*(?:hs|hrs|horas|hours|:00)?\s*(?:y|a|hasta|and|to|-|e|às|as)\s*(?:las\s*|as\s*)?(\d{1,2})\s*(?:hs|hrs|horas|hours|:00)/i) 
                        || texto.match(/(\d{1,2})\s*(?:hs|hrs|horas|hours|:00)?\s*(?:a|y|-|hasta|to|and|e)\s*(\d{1,2})\s*(?:hs|hrs|horas|hours|:00)/i)
                        || texto.match(/(\d{1,2}):00\s*(?:a|y|-|hasta|al?|to|and|e)\s*(\d{1,2}):00/i);
 
         if (matchHora) {
+            // padStart asegura que "9" se convierta en "09"
             let hora1 = matchHora[1].padStart(2, '0');
             let hora2 = matchHora[2].padStart(2, '0');
             h = `${hora1}:00 — ${hora2}:00 hs`;
