@@ -663,16 +663,23 @@
 
         const matchTituloComunas = texto.match(/(DISTRIBUCI[OÓ]N POR COMUNAS|MAPA DE INCIDENTES|DISTRIBUTION|COMMUNES|DISTRIBUIÇÃO|ZONAS DE MAYOR IMPACTO)/i);
         let comunasExtraidas = [];
+        
         if (matchTituloComunas) {
-            const fragmento = texto.substring(matchTituloComunas.index, matchTituloComunas.index + 500); 
-            const regexComunas = /(?:Comuna|Commune)\s+(\d+)/gi; let matchC;
+            // Aumentamos de 500 a 1500 para asegurarnos de que lea todo el bloque
+            const fragmento = texto.substring(matchTituloComunas.index, matchTituloComunas.index + 1500); 
+            
+            // Cambiamos \s+ por \s* por si el PDF pegó la palabra (ej. "Comuna13")
+            const regexComunas = /(?:Comuna|Commune)\s*(\d+)/gi; 
+            let matchC;
+            
             while ((matchC = regexComunas.exec(fragmento)) !== null && comunasExtraidas.length < 5) {
                 let nomC = idiomaActual === 'en' ? `Commune ${matchC[1]}` : `Comuna ${matchC[1]}`;
                 if (!comunasExtraidas.includes(nomC)) comunasExtraidas.push(nomC);
             }
         }
 
-        const barrasVisuales = [100, 80, 60, 40, 20]; let dataComunas = [];
+        const barrasVisuales = [100, 80, 60, 40, 20]; 
+        let dataComunas = [];
         for (let i = 0; i < 5; i++) {
             if (comunasExtraidas[i]) dataComunas.push({ n: comunasExtraidas[i], v: "", p: barrasVisuales[i] });
             else dataComunas.push({n: "", v: "", p: 0});
