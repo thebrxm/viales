@@ -62,7 +62,8 @@
         padding: 10px 16px; font-weight: 600; font-size: 0.85rem; gap: 8px; flex-grow: 1;
     }
     .btn-descarga {
-        width: 42px; height: 42px; font-size: 1.2rem; flex-shrink: 0;
+        width: 42px; height: 42px; flex-shrink: 0;
+        display: flex; justify-content: center; align-items: center; /* Centraliza o ícone */
     }
     .btn-informe:hover, .btn-descarga:hover { 
         background: rgba(255, 255, 255, 0.3); transform: translateY(-3px); 
@@ -206,7 +207,13 @@
                     <button id="btn-ver-pdf" class="btn-informe">
                         <span data-i18n="box_btn">👁️ Ver informe</span>
                     </button>
-                    <a id="lnk-pdf-download" class="btn-descarga" href="#" target="_blank" download title="Descargar PDF"> 📥</a>
+                    <a id="lnk-pdf-download" class="btn-descarga" href="#" target="_blank" download title="Descargar PDF">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+</a>
                 </div>
             </div>
 
