@@ -47,11 +47,27 @@
     }
     .orange-box h2 { font-size: 1.4rem; margin-bottom: 12px; font-weight: 800; letter-spacing: 0.5px; }
     .orange-box p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; opacity: 0.95; }
-    #lnk-pdf {
-        display: inline-flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.2);
-        padding: 10px 16px; border-radius: 8px; color: white; text-decoration: none; font-weight: 600; font-size: 0.85rem; transition: all 0.3s ease;
+    
+    /* --- ESTILOS DE LOS BOTONES DEL INFORME --- */
+    .box-buttons {
+        display: flex; gap: 10px; align-items: center;
     }
-    #lnk-pdf:hover { background: rgba(255, 255, 255, 0.3); transform: translateX(5px); }
+    .btn-informe, .btn-descarga {
+        display: inline-flex; align-items: center; justify-content: center;
+        background: rgba(255, 255, 255, 0.2); border: none; cursor: pointer;
+        border-radius: 8px; color: white; text-decoration: none; transition: all 0.3s ease;
+        font-family: 'Inter', sans-serif;
+    }
+    .btn-informe {
+        padding: 10px 16px; font-weight: 600; font-size: 0.85rem; gap: 8px; flex-grow: 1;
+    }
+    .btn-descarga {
+        width: 42px; height: 42px; font-size: 1.2rem; flex-shrink: 0;
+    }
+    .btn-informe:hover, .btn-descarga:hover { 
+        background: rgba(255, 255, 255, 0.3); transform: translateY(-3px); 
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
     
     .title-section { flex: 1; min-width: 300px; }
     .title-section h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
@@ -222,7 +238,13 @@
             <div class="orange-box">
                 <h2 data-i18n="box_title">Informe Mensual</h2>
                 <p id="txt-parrafo" data-i18n="box_desc">Cargando...</p>
-                <a id="lnk-pdf" href="#" target="_blank"><span data-i18n="box_btn">📄 Ver informe</span></a>
+                
+                <div class="box-buttons">
+                    <button id="btn-ver-pdf" class="btn-informe">
+                        <span data-i18n="box_btn">👁️ Ver informe</span>
+                    </button>
+                    <a id="lnk-pdf-download" class="btn-descarga" href="#" target="_blank" download title="Descargar PDF"> 📥</a>
+                </div>
             </div>
 
             <div class="title-section">
@@ -592,8 +614,14 @@
         cargarGraficoHTML('iframe-etario', 'fallback-etario', 'link-etario', `${rutaBaseHtml}/rango_etario.html?v=${timeStamp}`);
 
         const urlFetch = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf?v=${timeStamp}`; 
-        document.getElementById('lnk-pdf').href = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf`;
+        const urlPdfPuro = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf`;
         
+        // 1. Configuramos el botón de descarga para que baje el archivo o lo abra en pestaña nueva
+        document.getElementById('lnk-pdf-download').href = urlPdfPuro;
+        
+        // 2. Configuramos el botón "Ver Informe" para que use tu función Modal y muestre el PDF
+        document.getElementById('btn-ver-pdf').onclick = () => abrirModal(urlPdfPuro, false);
+       
         try {
             const res = await fetch(urlFetch);
             if (!res.ok) throw new Error("PDF no encontrado");
