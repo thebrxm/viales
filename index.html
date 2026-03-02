@@ -25,33 +25,37 @@
         background: #233259;
         color: white; min-height: 100vh;
     }
+    
+    /* --- HEADER Y LOGOS --- */
     header {
         background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
         padding: 15px 5%; display: flex; justify-content: space-between;
         align-items: center; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         position: sticky; top: 0; z-index: 100;
     }
-    
-    /* --- NUEVOS CONTROLES DE IDIOMA EN EL HEADER --- */
-    .lang-controls { display: flex; gap: 12px; align-items: center; }
-    .btn-lang {
-        background: rgba(0,0,0,0.05); border: 2px solid transparent; 
-        border-radius: 50%; width: 38px; height: 38px; cursor: pointer; font-size: 1.2rem;
-        display: flex; justify-content: center; align-items: center; transition: all 0.3s ease;
-        padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    .btn-lang:hover { background: rgba(0,0,0,0.1); transform: scale(1.1); }
-    .btn-lang.active { 
-        border-color: var(--primary); background: #ffffff; 
-        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3); transform: scale(1.1);
-    }
-    
-    .logos { display: flex; gap: 20px; align-items: center; }
     .logo { height: 48px; transition: transform 0.3s ease; }
     .logo:hover { transform: scale(1.05); }
     
     main { padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
     
+    /* --- BANDERAS DE IDIOMA --- */
+    .lang-controls-top {
+        display: flex; gap: 15px; margin-bottom: 30px; align-items: center;
+    }
+    .btn-lang {
+        background-color: transparent; border: none; 
+        border-radius: 50%; width: 36px; height: 36px; cursor: pointer; 
+        transition: all 0.3s ease; padding: 0; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+        background-size: cover; background-position: center;
+    }
+    .btn-lang:hover { transform: scale(1.15); }
+    .btn-lang.active { 
+        box-shadow: 0 0 0 3px #233259, 0 0 0 5px var(--primary); /* Anillo de selección */
+        transform: scale(1.15);
+    }
+    
+    /* --- HERO Y CAJA NARANJA --- */
     .hero { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 50px; align-items: flex-start; animation: fadeUp 0.8s ease; }
     .orange-box {
         background: linear-gradient(135deg, var(--primary-light), var(--primary));
@@ -83,6 +87,7 @@
     .title-section h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
     .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 25px; }
     
+    /* --- CONTROLES Y PICO DE FRECUENCIA --- */
     .controls-wrapper { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-top: 25px; }
     .control-col { display: flex; flex-direction: column; gap: 8px; }
     .control-label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
@@ -105,20 +110,24 @@
     }
     .btn-mapa:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(234, 88, 12, 0.25); }
     
-    /* --- PICO PILL ACTUALIZADO: BLANCO Y CENTRADO --- */
+    /* PICO PILL BLANCO Y AJUSTADO */
     .pico-pill {
         height: 46px; 
         background: #ffffff; /* Fondo Blanco */
-        border: 1px solid rgba(0, 0, 0, 0.1); /* Borde suave */
-        border-radius: 10px; padding: 0 20px; display: inline-flex; align-items: center; gap: 12px;
-        min-width: 280px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); /* Sombra para resaltar */
+        border-radius: 10px; padding: 0 18px; 
+        display: inline-flex; align-items: center; gap: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15); /* Sombra elegante */
     }
     .pico-pill .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 8px var(--primary); flex-shrink: 0; }
     .pico-pill .lbl { font-size: 0.75rem; text-transform: uppercase; color: var(--text-dark); font-weight: 800; letter-spacing: 0.5px; white-space: nowrap; }
     
-    .pico-iframe-container { flex-grow: 1; height: 30px; display: flex; align-items: center; justify-content: center; /* Centra el contenido del iframe */ }
+    .pico-iframe-container { 
+        height: 30px; display: flex; align-items: center; justify-content: center; 
+        min-width: 150px; /* Evita que se encoja o distorsione */
+    }
     #iframe-pico { width: 100%; height: 100%; border: none; background: transparent; overflow: hidden; display: block; }
 
+    /* --- TARJETAS --- */
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; animation: fadeUp 1s ease; }
     .card {
         background: var(--card-bg); border-radius: 20px; padding: 25px; color: var(--text-dark);
@@ -154,10 +163,10 @@
 
     footer {
         background-color: #192542; margin-top: 60px; padding: 30px 5%; border-top: 1px solid rgba(0,0,0,0.2); 
-        font-size: 0.9rem; color: #FFFFFF; font-weight: 600; display: flex; justify-content: center; /* Centrado */
+        font-size: 0.9rem; color: #FFFFFF; font-weight: 600; display: flex; justify-content: center; 
         align-items: center; flex-wrap: wrap; text-align: center;
     }
-
+    
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
     ::-webkit-scrollbar { width: 8px; height: 8px; }
@@ -194,19 +203,17 @@
 <body>
 
     <header>
-        <div class="lang-controls">
-            <button class="btn-lang active" onclick="cambiarIdioma('es')" title="Español">🇦🇷</button>
-            <button class="btn-lang" onclick="cambiarIdioma('en')" title="English">🇺🇸</button>
-            <button class="btn-lang" onclick="cambiarIdioma('pt')" title="Português">🇧🇷</button>
-        </div>
-        
-        <div class="logos">
-            <img src="https://i.imgur.com/GXTFolo.png" alt="SAME" class="logo">
-            <img src="https://i.imgur.com/W5Mo4rc.png" alt="ECUES" class="logo">
-        </div>
+        <img src="https://i.imgur.com/W5Mo4rc.png" alt="ECUES" class="logo">
+        <img src="https://i.imgur.com/GXTFolo.png" alt="SAME" class="logo">
     </header>
 
     <main>
+        <div class="lang-controls-top">
+            <button class="btn-lang active" onclick="cambiarIdioma('es')" title="Español" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Flag_of_Argentina.png/960px-Flag_of_Argentina.png');"></button>
+            <button class="btn-lang" onclick="cambiarIdioma('en')" title="English" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Flag_of_the_United_States_%28DDD-F-416E_specifications%29.svg/330px-Flag_of_the_United_States_%28DDD-F-416E_specifications%29.svg.png');"></button>
+            <button class="btn-lang" onclick="cambiarIdioma('pt')" title="Português" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/250px-Flag_of_Brazil.svg.png');"></button>
+        </div>
+
         <div class="hero">
             <div class="orange-box">
                 <h2 data-i18n="box_title">Informe Mensual</h2>
@@ -340,6 +347,7 @@
     </footer>
 
 <script>
+    // --- SISTEMA DE IDIOMAS Y DICCIONARIOS ---
     let idiomaActual = 'es';
 
     const diccionario = {
