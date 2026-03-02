@@ -31,8 +31,25 @@
         align-items: center; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
         position: sticky; top: 0; z-index: 100;
     }
+    
+    /* --- NUEVOS CONTROLES DE IDIOMA EN EL HEADER --- */
+    .lang-controls { display: flex; gap: 12px; align-items: center; }
+    .btn-lang {
+        background: rgba(0,0,0,0.05); border: 2px solid transparent; 
+        border-radius: 50%; width: 38px; height: 38px; cursor: pointer; font-size: 1.2rem;
+        display: flex; justify-content: center; align-items: center; transition: all 0.3s ease;
+        padding: 0; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .btn-lang:hover { background: rgba(0,0,0,0.1); transform: scale(1.1); }
+    .btn-lang.active { 
+        border-color: var(--primary); background: #ffffff; 
+        box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3); transform: scale(1.1);
+    }
+    
+    .logos { display: flex; gap: 20px; align-items: center; }
     .logo { height: 48px; transition: transform 0.3s ease; }
     .logo:hover { transform: scale(1.05); }
+    
     main { padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
     
     .hero { display: flex; gap: 40px; flex-wrap: wrap; margin-bottom: 50px; align-items: flex-start; animation: fadeUp 0.8s ease; }
@@ -48,23 +65,15 @@
     .orange-box h2 { font-size: 1.4rem; margin-bottom: 12px; font-weight: 800; letter-spacing: 0.5px; }
     .orange-box p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; opacity: 0.95; }
     
-    /* --- ESTILOS DE LOS BOTONES DEL INFORME --- */
-    .box-buttons {
-        display: flex; gap: 10px; align-items: center;
-    }
+    .box-buttons { display: flex; gap: 10px; align-items: center; }
     .btn-informe, .btn-descarga {
         display: inline-flex; align-items: center; justify-content: center;
         background: rgba(255, 255, 255, 0.2); border: none; cursor: pointer;
         border-radius: 8px; color: white; text-decoration: none; transition: all 0.3s ease;
         font-family: 'Inter', sans-serif;
     }
-    .btn-informe {
-        padding: 10px 16px; font-weight: 600; font-size: 0.85rem; gap: 8px; flex-grow: 1;
-    }
-    .btn-descarga {
-        width: 42px; height: 42px; flex-shrink: 0;
-        display: flex; justify-content: center; align-items: center; 
-    }
+    .btn-informe { padding: 10px 16px; font-weight: 600; font-size: 0.85rem; gap: 8px; flex-grow: 1; }
+    .btn-descarga { width: 42px; height: 42px; flex-shrink: 0; }
     .btn-informe:hover, .btn-descarga:hover { 
         background: rgba(255, 255, 255, 0.3); transform: translateY(-3px); 
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -74,14 +83,9 @@
     .title-section h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
     .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 25px; }
     
-    /* ----- NUEVA BARRA DE CONTROLES UNIFICADA ----- */
-    .controls-wrapper {
-        display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-top: 25px;
-    }
+    .controls-wrapper { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-top: 25px; }
     .control-col { display: flex; flex-direction: column; gap: 8px; }
-    .control-label {
-        font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;
-    }
+    .control-label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
     .control-input {
         height: 46px; padding: 0 35px 0 16px; 
         border-radius: 10px; background-color: rgba(255, 255, 255, 0.05); color: white;
@@ -101,17 +105,19 @@
     }
     .btn-mapa:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(234, 88, 12, 0.25); }
     
-    /* --- PICO PILL ACTUALIZADO --- */
+    /* --- PICO PILL ACTUALIZADO: BLANCO Y CENTRADO --- */
     .pico-pill {
-        height: 46px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+        height: 46px; 
+        background: #ffffff; /* Fondo Blanco */
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Borde suave */
         border-radius: 10px; padding: 0 20px; display: inline-flex; align-items: center; gap: 12px;
-        min-width: 280px; /* Evita que el iframe se apriete */
+        min-width: 280px; box-shadow: 0 6px 15px rgba(0,0,0,0.1); /* Sombra para resaltar */
     }
     .pico-pill .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 8px var(--primary); flex-shrink: 0; }
-    .pico-pill .lbl { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+    .pico-pill .lbl { font-size: 0.75rem; text-transform: uppercase; color: var(--text-dark); font-weight: 800; letter-spacing: 0.5px; white-space: nowrap; }
     
-    .pico-iframe-container { flex-grow: 1; height: 30px; display: flex; align-items: center; }
-    #iframe-pico { width: 100%; height: 100%; border: none; background: transparent; overflow: hidden; }
+    .pico-iframe-container { flex-grow: 1; height: 30px; display: flex; align-items: center; justify-content: center; /* Centra el contenido del iframe */ }
+    #iframe-pico { width: 100%; height: 100%; border: none; background: transparent; overflow: hidden; display: block; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; animation: fadeUp 1s ease; }
     .card {
@@ -148,16 +154,9 @@
 
     footer {
         background-color: #192542; margin-top: 60px; padding: 30px 5%; border-top: 1px solid rgba(0,0,0,0.2); 
-        font-size: 0.9rem; color: #FFFFFF; font-weight: 600; display: flex; justify-content: space-between; 
-        align-items: center; flex-wrap: wrap; gap: 20px;
+        font-size: 0.9rem; color: #FFFFFF; font-weight: 600; display: flex; justify-content: center; /* Centrado */
+        align-items: center; flex-wrap: wrap; text-align: center;
     }
-    
-    .lang-controls { display: flex; gap: 10px; }
-    .btn-lang {
-        background: rgba(255,255,255,0.1); border: none; color: white; padding: 5px 12px;
-        border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s;
-    }
-    .btn-lang:hover, .btn-lang.active { background: var(--primary); }
 
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -195,8 +194,16 @@
 <body>
 
     <header>
-        <img src="https://i.imgur.com/GXTFolo.png" alt="SAME" class="logo">
-        <img src="https://i.imgur.com/W5Mo4rc.png" alt="ECUES" class="logo">
+        <div class="lang-controls">
+            <button class="btn-lang active" onclick="cambiarIdioma('es')" title="Español">🇦🇷</button>
+            <button class="btn-lang" onclick="cambiarIdioma('en')" title="English">🇺🇸</button>
+            <button class="btn-lang" onclick="cambiarIdioma('pt')" title="Português">🇧🇷</button>
+        </div>
+        
+        <div class="logos">
+            <img src="https://i.imgur.com/GXTFolo.png" alt="SAME" class="logo">
+            <img src="https://i.imgur.com/W5Mo4rc.png" alt="ECUES" class="logo">
+        </div>
     </header>
 
     <main>
@@ -210,12 +217,12 @@
                         <span data-i18n="box_btn">👁️ Ver informe</span>
                     </button>
                     <a id="lnk-pdf-download" class="btn-descarga" href="#" target="_blank" download title="Descargar PDF">
-    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-        <polyline points="7 10 12 15 17 10"></polyline>
-        <line x1="12" y1="15" x2="12" y2="3"></line>
-    </svg>
-</a>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="7 10 12 15 17 10"></polyline>
+                            <line x1="12" y1="15" x2="12" y2="3"></line>
+                        </svg>
+                    </a>
                 </div>
             </div>
 
@@ -330,15 +337,9 @@
     
     <footer>
         <div data-i18n="footer_text">&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias</div>
-        <div class="lang-controls">
-            <button class="btn-lang active" onclick="cambiarIdioma('es')">ES</button>
-            <button class="btn-lang" onclick="cambiarIdioma('en')">EN</button>
-            <button class="btn-lang" onclick="cambiarIdioma('pt')">PT</button>
-        </div>
     </footer>
 
 <script>
-    // --- SISTEMA DE IDIOMAS Y DICCIONARIOS ---
     let idiomaActual = 'es';
 
     const diccionario = {
@@ -593,7 +594,6 @@
         } catch (e) { 
             console.error(e);
             document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
-            // ¡AQUÍ ESTABA EL ERROR OCULTO! Eliminé las dos líneas que causaban problema si fallaba el PDF
         }
     }
 
