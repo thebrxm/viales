@@ -63,7 +63,7 @@
     }
     .btn-descarga {
         width: 42px; height: 42px; flex-shrink: 0;
-        display: flex; justify-content: center; align-items: center; /* Centraliza o ícone */
+        display: flex; justify-content: center; align-items: center; 
     }
     .btn-informe:hover, .btn-descarga:hover { 
         background: rgba(255, 255, 255, 0.3); transform: translateY(-3px); 
@@ -101,15 +101,17 @@
     }
     .btn-mapa:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(234, 88, 12, 0.25); }
     
+    /* --- PICO PILL ACTUALIZADO --- */
     .pico-pill {
         height: 46px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px; padding: 0 20px; display: inline-flex; align-items: center; gap: 12px;
+        min-width: 280px; /* Evita que el iframe se apriete */
     }
-    .pico-pill .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 8px var(--primary); }
-    .pico-pill .lbl { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px; }
-    .pico-pill .val { display: flex; align-items: baseline; gap: 6px; }
-    .pico-pill .d { color: white; font-weight: 700; font-size: 1rem; text-transform: capitalize; }
-    .pico-pill .h { color: var(--primary-light); font-weight: 600; font-size: 0.9rem; }
+    .pico-pill .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 8px var(--primary); flex-shrink: 0; }
+    .pico-pill .lbl { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
+    
+    .pico-iframe-container { flex-grow: 1; height: 30px; display: flex; align-items: center; }
+    #iframe-pico { width: 100%; height: 100%; border: none; background: transparent; overflow: hidden; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; animation: fadeUp 1s ease; }
     .card {
@@ -241,9 +243,8 @@
                         <div class="pico-pill">
                             <div class="dot"></div>
                             <div class="lbl" data-i18n="card4_title">Pico de Frecuencia</div>
-                            <div class="val">
-                                <span class="d" id="p-dia">---</span>
-                                <span class="h" id="p-hora">--:-- hs</span>
+                            <div class="pico-iframe-container">
+                                <iframe id="iframe-pico" src="about:blank"></iframe>
                             </div>
                         </div>
                     </div>
@@ -383,12 +384,6 @@
         es: {"01":"Enero", "02":"Febrero", "03":"Marzo", "04":"Abril", "05":"Mayo", "06":"Junio", "07":"Julio", "08":"Agosto", "09":"Septiembre", "10":"Octubre", "11":"Noviembre", "12":"Diciembre"},
         en: {"01":"January", "02":"February", "03":"March", "04":"April", "05":"May", "06":"June", "07":"July", "08":"August", "09":"September", "10":"October", "11":"November", "12":"December"},
         pt: {"01":"Janeiro", "02":"Fevereiro", "03":"Março", "04":"Abril", "05":"Maio", "06":"Junho", "07":"Julho", "08":"Agosto", "09":"Setembro", "10":"Outubro", "11":"Novembro", "12":"Dezembro"}
-    };
-
-    const diasMapa = {
-        es: { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo' },
-        en: { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 7: 'Sunday' },
-        pt: { 1: 'Segunda-feira', 2: 'Terça-feira', 3: 'Quarta-feira', 4: 'Quinta-feira', 5: 'Sexta-feira', 6: 'Sábado', 7: 'Domingo' }
     };
 
     function cambiarIdioma(lang) {
@@ -571,10 +566,7 @@
         );
         
         cargarGraficoHTML('iframe-vehiculos', 'fallback-vehiculos', 'link-vehiculos', `${rutaBaseHtml}/vehiculo_involucrado.html?v=${timeStamp}`);
-        
-        // --- AQUÍ CARGAMOS TU NUEVO GRÁFICO DE ZONAS DE IMPACTO ---
         cargarGraficoHTML('iframe-zonas', 'fallback-zonas', 'link-zonas', `${rutaBaseHtml}/zonas_impacto.html?v=${timeStamp}`);
-        
         cargarGraficoHTML('iframe-traslados', 'fallback-traslados', 'link-traslados', `${rutaBaseHtml}/tasa_traslados.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-grilla', 'fallback-grilla', 'link-grilla', `${rutaBaseHtml}/grilla_calor.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-etario', 'fallback-etario', 'link-etario', `${rutaBaseHtml}/rango_etario.html?v=${timeStamp}`);
@@ -601,15 +593,13 @@
         } catch (e) { 
             console.error(e);
             document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
-            document.getElementById('p-dia').innerText = "---";
-            document.getElementById('p-hora').innerText = "--:-- hs";
+            // ¡AQUÍ ESTABA EL ERROR OCULTO! Eliminé las dos líneas que causaban problema si fallaba el PDF
         }
     }
 
     function procesarTextosDinamicos(t) {
         const texto = t.replace(/\s+/g, ' ');
 
-        // 1. Detección del Resumen
         let textoResumen = diccionario[idiomaActual].no_summary;
         const matchResumen = texto.match(/((?:En el mes|Durante|In the month|During|No m[êe]s de|Em ).{10,300}?(?:pacientes|atenciones|patients|attentions|attended|atendimentos)\.?)/i) 
                           || texto.match(/([A-Z][^\.]{10,200}(?:solicitudes|requests|solicitações)[^\.]{5,200}(?:pacientes|patients)\.)/i);
