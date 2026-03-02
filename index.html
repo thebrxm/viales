@@ -630,25 +630,23 @@
             if(dayNum > 0) d = diasMapa[idiomaActual][dayNum];
         }
 
-        // 3. Detección de la Hora (ampliado para casos como "12h - 17h")
-let matchHora = texto.match(/(?:entre|between|de|desde|às|as|at)\s*(\d{1,2})(?::00|h|hs)?\s*(?:y|a|hasta|-|and|e|to)\s*(\d{1,2})(?::00|h|hs)?\s*(?:hs|hrs|horas|hours|h)?/i);
-if (!matchHora) {
-    matchHora = texto.match(/(\d{1,2})(?:\:00|h|hs)?\s*[-–]\s*(\d{1,2})(?:\:00|h|hs)?/i);
-}
+        // 3. Detección de la Hora
+        let matchHora = null;
+        matchHora = texto.match(/(?:entre|between|de|desde|às|as|at)\s*(\d{1,2})(?::00|h|hs)?\s*(?:y|a|hasta|-|and|e|to)\s*(\d{1,2})(?::00|h|hs)?\s*(?:hs|hrs|horas|hours|h)?/i);
+        if (!matchHora) { matchHora = texto.match(/(\d{1,2})(?:\:00)?\s*(?:a|y|hasta|-)\s*(?:las\s*)?(\d{1,2})(?:\:00)?\s*(?:h|hs|hrs|horas|hours)/i); }
+        if (!matchHora) { matchHora = texto.match(/(\d{1,2}):00\s*(?:a|y|hasta|-)\s*(\d{1,2}):00/i); }
 
-if (!matchHora) {
-    matchHora = texto.match(/(\d{1,2})(?:\:00)?\s*(?:a|y|hasta|-)\s*(?:las\s*)?(\d{1,2})(?:\:00)?\s*(?:h|hs|hrs|horas|hours)/i);
-}
-
-if (!matchHora) {
-    matchHora = texto.match(/(\d{1,2}):00\s*(?:a|y|hasta|-)\s*(\d{1,2}):00/i);
-}
-
-if (matchHora) {
-    let hora1 = matchHora[1].toString().padStart(2, '0');
-    let hora2 = matchHora[2].toString().padStart(2, '0');
-    h = `${hora1}:00 — ${hora2}:00 hs`;
-}
+        if (matchHora) {
+            let hora1 = matchHora[1].toString().padStart(2, '0');
+            let hora2 = matchHora[2].toString().padStart(2, '0');
+            h = `${hora1}:00 — ${hora2}:00 hs`;
+        }
+        document.getElementById('p-dia').innerText = d;
+        document.getElementById('p-hora').innerText = h;
+        
+        // NOTA: Como ahora usamos un gráfico HTML para las zonas de impacto, 
+        // ya no necesitamos el código antiguo que extraía las comunas y dibujaba barras manualmente.
+    }
 
     window.onload = init;
 
