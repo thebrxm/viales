@@ -464,4 +464,190 @@
     }
 
     function actualizarOpcionesMeses() {
-        const anioElegido = document.getElementById('sel
+        const anioElegido = document.getElementById('sel-anio').value;
+        const selMes = document.getElementById('sel-mes');
+        const mesAnterior = selMes.value; 
+        
+        selMes.innerHTML = ''; 
+        
+        const mesesDelAnio = periodos
+            .filter(p => p.startsWith(anioElegido))
+            .map(p => p.split('-')[1])
+            .sort().reverse();
+
+        mesesDelAnio.forEach(m => {
+            const o = document.createElement('option');
+            o.value = m;
+            o.innerHTML = nombresMeses[idiomaActual][m];
+            selMes.appendChild(o);
+        });
+
+        if (mesAnterior && mesesDelAnio.includes(mesAnterior)) {
+            selMes.value = mesAnterior;
+        }
+
+        actualizarPeriodo();
+    }
+
+    function actualizarPeriodo() {
+        const anio = document.getElementById('sel-anio').value;
+        const mes = document.getElementById('sel-mes').value;
+        const periodoCompuesto = `${anio}-${mes}`;
+        
+        cargarDatosPanel(periodoCompuesto);
+    }
+
+    function abrirMapa() {
+        const anio = document.getElementById('sel-anio').value;
+        const mes = document.getElementById('sel-mes').value;
+        const periodo = `${anio}-${mes}`;
+        
+        const urlMapa = `mapas/${idiomaActual}/${anio}/${periodo}/mapa.html`;
+        window.open(urlMapa, '_blank');
+    }
+
+    async function cargarGraficoHTML(iframeId, fallbackId, linkId, ruta) {
+        const iframeEl = document.getElementById(iframeId);
+        const errEl = document.getElementById(fallbackId);
+        const linkEl = document.getElementById(linkId);
+        
+        iframeEl.style.display = 'none';
+        linkEl.style.display = 'none';
+        errEl.style.display = 'block';
+
+        try {
+            const res = await fetch(ruta, { method: 'HEAD' });
+            if (!res.ok) throw new Error("Archivo HTML no encontrado");
+            
+            iframeEl.src = ruta;
+            iframeEl.onload = () => {
+                iframeEl.style.display = 'block';
+                linkEl.style.display = 'flex'; 
+                linkEl.onclick = () => abrirModal(ruta, false);
+                errEl.style.display = 'none';
+            };
+        } catch (error) {
+            iframeEl.style.display = 'none';
+            linkEl.style.display = 'none';
+            errEl.style.display = 'block';
+            errEl.style.background = 'transparent';
+            errEl.innerText = diccionario[idiomaActual].no_chart;
+        }
+    }
+
+    function cargarImagenYHTML(imgId, fallbackId, linkId, rutaImg, rutaHtml) {
+        const imgEl = document.getElementById(imgId);
+        const errEl = document.getElementById(fallbackId);
+        const linkEl = document.getElementById(linkId);
+
+        imgEl.style.display = 'none';
+        linkEl.style.display = 'none';
+        errEl.style.display = 'block';
+
+        imgEl.onload = async () => {
+            imgEl.style.display = 'block';
+            errEl.style.display = 'none';
+            try {
+                const res = await fetch(rutaHtml, { method: 'HEAD' });
+                if (res.ok) {
+                    linkEl.style.display = 'flex';
+                    linkEl.onclick = () => abrirModal(rutaHtml, false);
+                }
+            } catch(e) {}
+        };
+        imgEl.onerror = () => {
+            imgEl.style.display = 'none';
+            errEl.style.display = 'block';
+            errEl.style.background = 'transparent';
+            errEl.innerText = diccionario[idiomaActual].no_chart;
+        };
+        imgEl.src = rutaImg;
+    }
+
+    function abrirModal(ruta, esImagen = false) {
+        const modal = document.getElementById('lightbox-modal');
+        const modalBody = document.getElementById('modal-body');
+        
+        if (esImagen) {
+            modalBody.innerHTML = `<img src="${ruta}" alt="Gráfico ampliado">`;
+        } else {
+            modalBody.innerHTML = `<iframe src="${ruta}"></iframe>`;
+        }
+        
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('active'), 10);
+    }
+
+    function cerrarModal() {
+        const modal = document.getElementById('lightbox-modal');
+        modal.classList.remove('active');
+        
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.getElementById('modal-body').innerHTML = ''; 
+        }, 300);
+    }
+
+    document.getElementById('lightbox-modal').addEventListener('click', function(e) {
+        if(e.target === this) cerrarModal();
+    });
+    
+    async function cargarDatosPanel(mes_anio) {
+        const anio = mes_anio.split("-")[0];
+        const timeStamp = new Date().getTime();
+        const rutaBaseHtml = `graficos/${idiomaActual}/${anio}/${mes_anio}`;
+
+        const iframePico = document.getElementById('iframe-pico');
+        iframePico.src = `${rutaBaseHtml}/pico_frecuencia.html?v=${timeStamp}`;
+        
+        cargarImagenYHTML('img-tipos', 'fallback-tipos', 'link-tipos', 
+            `${rutaBaseHtml}/tipo_incidente.png?v=${timeStamp}`, 
+            `${rutaBaseHtml}/tipo_incidente.html?v=${timeStamp}`
+        );
+        
+        cargarGraficoHTML('iframe-vehiculos', 'fallback-vehiculos', 'link-vehiculos', `${rutaBaseHtml}/vehiculo_involucrado.html?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-zonas', 'fallback-zonas', 'link-zonas', `${rutaBaseHtml}/zonas_impacto.html?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-traslados', 'fallback-traslados', 'link-traslados', `${rutaBaseHtml}/tasa_traslados.html?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-grilla', 'fallback-grilla', 'link-grilla', `${rutaBaseHtml}/grilla_calor.html?v=${timeStamp}`);
+        cargarGraficoHTML('iframe-etario', 'fallback-etario', 'link-etario', `${rutaBaseHtml}/rango_etario.html?v=${timeStamp}`);
+
+        const urlFetch = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf?v=${timeStamp}`; 
+        const urlPdfPuro = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf`;
+        
+        document.getElementById('lnk-pdf-download').href = urlPdfPuro;
+        document.getElementById('btn-ver-pdf').onclick = () => abrirModal(urlPdfPuro, false);
+        
+        try {
+            const res = await fetch(urlFetch);
+            if (!res.ok) throw new Error("PDF no encontrado");
+            
+            const data = await res.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument({data}).promise;
+            let fullText = "";
+            for(let i=1; i<=pdf.numPages; i++){
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                fullText += content.items.map(item => item.str).join(" ");
+            }
+            procesarTextosDinamicos(fullText);
+        } catch (e) { 
+            console.error(e);
+            document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
+        }
+    }
+
+    function procesarTextosDinamicos(t) {
+        const texto = t.replace(/\s+/g, ' ');
+
+        let textoResumen = diccionario[idiomaActual].no_summary;
+        const matchResumen = texto.match(/((?:En el mes|Durante|In the month|During|No m[êe]s de|Em ).{10,300}?(?:pacientes|atenciones|patients|attentions|attended|atendimentos)\.?)/i) 
+                          || texto.match(/([A-Z][^\.]{10,200}(?:solicitudes|requests|solicitações)[^\.]{5,200}(?:pacientes|patients)\.)/i);
+        if (matchResumen) { textoResumen = matchResumen[1]; }
+        document.getElementById('txt-parrafo').innerText = textoResumen;
+    }
+
+    window.onload = init;
+
+</script>
+</body>
+</html>
