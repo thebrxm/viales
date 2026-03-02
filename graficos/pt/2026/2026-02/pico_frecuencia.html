@@ -3,11 +3,17 @@
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@600;800&display=swap" rel="stylesheet">
     <style>
+        /* El secreto está aquí: le damos altura completa para que el centrado funcione */
+        html, body {
+            height: 100vh;
+        }
+        
         body { 
             margin: 0; padding: 0; overflow: hidden; background: transparent; 
             font-family: 'Inter', sans-serif; display: flex; align-items: center; 
-            justify-content: center; gap: 8px; /* <- CENTRADO PERFECTO */
+            justify-content: center; gap: 8px; 
         }
+        
         .dia { color: #334155; font-weight: 800; font-size: 14px; text-transform: capitalize; }
         .hora { color: #ea580c; font-weight: 600; font-size: 13px; }
     </style>
@@ -18,5 +24,6 @@
 </body>
 
 </html>
+
 
 
