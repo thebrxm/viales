@@ -48,15 +48,23 @@
     .orange-box h2 { font-size: 1.4rem; margin-bottom: 12px; font-weight: 800; letter-spacing: 0.5px; }
     .orange-box p { font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; opacity: 0.95; }
     
-    .box-buttons { display: flex; gap: 10px; align-items: center; }
+    /* --- ESTILOS DE LOS BOTONES DEL INFORME --- */
+    .box-buttons {
+        display: flex; gap: 10px; align-items: center;
+    }
     .btn-informe, .btn-descarga {
         display: inline-flex; align-items: center; justify-content: center;
         background: rgba(255, 255, 255, 0.2); border: none; cursor: pointer;
         border-radius: 8px; color: white; text-decoration: none; transition: all 0.3s ease;
         font-family: 'Inter', sans-serif;
     }
-    .btn-informe { padding: 10px 16px; font-weight: 600; font-size: 0.85rem; gap: 8px; flex-grow: 1; }
-    .btn-descarga { width: 42px; height: 42px; flex-shrink: 0; }
+    .btn-informe {
+        padding: 10px 16px; font-weight: 600; font-size: 0.85rem; gap: 8px; flex-grow: 1;
+    }
+    .btn-descarga {
+        width: 42px; height: 42px; flex-shrink: 0;
+        display: flex; justify-content: center; align-items: center; /* Centraliza o ícone */
+    }
     .btn-informe:hover, .btn-descarga:hover { 
         background: rgba(255, 255, 255, 0.3); transform: translateY(-3px); 
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
@@ -66,56 +74,96 @@
     .title-section h1 { font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
     .subtitle { color: #94a3b8; font-size: 1.1rem; margin-bottom: 25px; }
     
-    .controls-wrapper { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-top: 25px; }
+    /* ----- NUEVA BARRA DE CONTROLES UNIFICADA ----- */
+    .controls-wrapper {
+        display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; margin-top: 25px;
+    }
     .control-col { display: flex; flex-direction: column; gap: 8px; }
-    .control-label { font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+    .control-label {
+        font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;
+    }
     .control-input {
-        height: 46px; padding: 0 35px 0 16px; border-radius: 10px; background-color: rgba(255, 255, 255, 0.05); color: white;
+        height: 46px; padding: 0 35px 0 16px; 
+        border-radius: 10px; background-color: rgba(255, 255, 255, 0.05); color: white;
         border: 1px solid rgba(255, 255, 255, 0.15); font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem;
         outline: none; transition: 0.3s ease; cursor: pointer; appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
         background-repeat: no-repeat; background-position: right 12px center;
     }
+    .control-input:hover, .control-input:focus { background-color: rgba(255, 255, 255, 0.1); border-color: var(--primary-light); }
+    .control-input option { background: var(--navy); color: white; }
     
     .btn-mapa {
         height: 46px; background: rgba(234, 88, 12, 0.1); color: var(--primary-light);
         padding: 0 20px; border: 1px solid rgba(234, 88, 12, 0.3); border-radius: 10px;
         font-weight: 600; font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease;
-        display: inline-flex; justify-content: center; align-items: center; gap: 8px;
+        display: inline-flex; justify-content: center; align-items: center; gap: 8px; font-family: 'Inter', sans-serif;
     }
+    .btn-mapa:hover { background: var(--primary); color: white; border-color: var(--primary); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(234, 88, 12, 0.25); }
     
-    /* MODIFICACIÓN PICO PILL PARA IFRAME */
     .pico-pill {
         height: 46px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 10px; padding: 0 15px; display: inline-flex; align-items: center; gap: 10px; min-width: 280px;
+        border-radius: 10px; padding: 0 20px; display: inline-flex; align-items: center; gap: 12px;
     }
-    .pico-pill .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 8px var(--primary); }
-    .pico-pill .lbl { font-size: 0.7rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px; white-space: nowrap; }
-    
-    /* Contenedor del Iframe del Pico */
-    .pico-iframe-container { flex-grow: 1; height: 30px; display: flex; align-items: center; }
-    #iframe-pico { width: 100%; height: 100%; border: none; background: transparent; overflow: hidden; }
+    .pico-pill .dot { width: 8px; height: 8px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 8px var(--primary); }
+    .pico-pill .lbl { font-size: 0.75rem; text-transform: uppercase; color: #94a3b8; font-weight: 700; letter-spacing: 0.5px; }
+    .pico-pill .val { display: flex; align-items: baseline; gap: 6px; }
+    .pico-pill .d { color: white; font-weight: 700; font-size: 1rem; text-transform: capitalize; }
+    .pico-pill .h { color: var(--primary-light); font-weight: 600; font-size: 0.9rem; }
 
     .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; animation: fadeUp 1s ease; }
     .card {
         background: var(--card-bg); border-radius: 20px; padding: 25px; color: var(--text-dark);
-        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15); transition: all 0.3s ease; display: flex; flex-direction: column;
+        box-shadow: 0 10px 40px -10px rgba(0,0,0,0.15); 
+        transition: all 0.3s ease; display: flex; flex-direction: column;
     }
+    .card:hover { transform: translateY(-5px); box-shadow: 0 15px 50px -10px rgba(0,0,0,0.25); }
+        
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .card h3 {
+        font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); margin: 0;
+        font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 10px;
+    }
+    .card h3::before { content: ''; display: inline-block; width: 12px; height: 12px; background: var(--primary); border-radius: 4px; }
     
+    .btn-expand {
+        background: rgba(100, 116, 139, 0.1); border: none; border-radius: 6px; color: var(--text-muted);
+        width: 30px; height: 30px; display: flex; justify-content: center; align-items: center;
+        cursor: pointer; transition: 0.3s; font-weight: bold;
+    }
+    .btn-expand:hover { background: var(--primary); color: white; }
+
     .chart-wrap { flex-grow: 1; min-height: 220px; position: relative; display:flex; justify-content:center; align-items:center; flex-direction:column; overflow:hidden; }
+    
     .chart-iframe { width: 100%; height: 250px; border: none; border-radius: 8px; display: none; }
-    .chart-img { width: 100%; max-height: 280px; object-fit: contain; border-radius: 8px; display: none; }
+    .chart-img { width: 100%; max-height: 280px; object-fit: contain; border-radius: 8px; display: none; transform: scale(1.0); }
     .chart-fallback {
         width: 100%; height: 250px; border-radius: 8px;
         background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
         background-size: 200% 100%; animation: pulseLoading 1.5s infinite; color: transparent;
     }
+    @keyframes pulseLoading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
 
     footer {
         background-color: #192542; margin-top: 60px; padding: 30px 5%; border-top: 1px solid rgba(0,0,0,0.2); 
-        font-size: 0.9rem; color: #FFFFFF; font-weight: 600; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;
+        font-size: 0.9rem; color: #FFFFFF; font-weight: 600; display: flex; justify-content: space-between; 
+        align-items: center; flex-wrap: wrap; gap: 20px;
     }
     
+    .lang-controls { display: flex; gap: 10px; }
+    .btn-lang {
+        background: rgba(255,255,255,0.1); border: none; color: white; padding: 5px 12px;
+        border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.3s;
+    }
+    .btn-lang:hover, .btn-lang.active { background: var(--primary); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
     .modal-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(5px);
@@ -125,10 +173,20 @@
     .modal-overlay.active { display: flex; opacity: 1; }
     .modal-content {
         width: 90%; max-width: 1200px; height: 85vh; background: var(--card-bg);
-        border-radius: 12px; position: relative; padding: 20px; display: flex; flex-direction: column;
+        border-radius: 12px; position: relative; padding: 20px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5); transform: scale(0.95); transition: transform 0.3s ease;
+        display: flex; flex-direction: column;
     }
-    .modal-body { flex-grow: 1; width: 100%; height: 100%; overflow: hidden; }
-    .modal-body iframe { width: 100%; height: 100%; border: none; }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+    .modal-close {
+        position: absolute; top: -15px; right: -15px; background: var(--primary);
+        color: white; border: none; border-radius: 50%; width: 35px; height: 35px;
+        font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; align-items: center;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 10; transition: background 0.3s;
+    }
+    .modal-close:hover { background: var(--primary-light); }
+    .modal-body { flex-grow: 1; width: 100%; height: 100%; overflow: hidden; border-radius: 8px; }
+    .modal-body iframe, .modal-body img { width: 100%; height: 100%; border: none; object-fit: contain; }
     
 </style>
 </head>
@@ -144,11 +202,18 @@
             <div class="orange-box">
                 <h2 data-i18n="box_title">Informe Mensual</h2>
                 <p id="txt-parrafo" data-i18n="box_desc">Cargando...</p>
+                
                 <div class="box-buttons">
-                    <button id="btn-ver-pdf" class="btn-informe"><span data-i18n="box_btn">👁️ Ver informe</span></button>
+                    <button id="btn-ver-pdf" class="btn-informe">
+                        <span data-i18n="box_btn">👁️ Ver informe</span>
+                    </button>
                     <a id="lnk-pdf-download" class="btn-descarga" href="#" target="_blank" download title="Descargar PDF">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    </a>
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+</a>
                 </div>
             </div>
 
@@ -167,16 +232,18 @@
                     </div>
                     <div class="control-col">
                         <label class="control-label" style="opacity:0; user-select:none;">-</label>
-                        <button class="btn-mapa" onclick="abrirMapa()"><span data-i18n="btn_mapa">🌐 Abrir Mapa Interactivo</span></button>
+                        <button class="btn-mapa" onclick="abrirMapa()">
+                            <span data-i18n="btn_mapa">🌐 Abrir Mapa Interactivo</span>
+                        </button>
                     </div>
-                    
                     <div class="control-col">
                         <label class="control-label" style="opacity:0; user-select:none;">-</label>
                         <div class="pico-pill">
                             <div class="dot"></div>
                             <div class="lbl" data-i18n="card4_title">Pico de Frecuencia</div>
-                            <div class="pico-iframe-container">
-                                <iframe id="iframe-pico" src="about:blank"></iframe>
+                            <div class="val">
+                                <span class="d" id="p-dia">---</span>
+                                <span class="h" id="p-hora">--:-- hs</span>
                             </div>
                         </div>
                     </div>
@@ -270,11 +337,46 @@
     </footer>
 
 <script>
+    // --- SISTEMA DE IDIOMAS Y DICCIONARIOS ---
     let idiomaActual = 'es';
+
     const diccionario = {
-        es: { box_title: "Informe Mensual", box_btn: "📄 Ver informe", main_title: "Incidentes de Tránsito", main_subtitle: "Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.", select_year: "Año", select_month: "Mes", btn_mapa: "🌐 Abrir Mapa Interactivo", card1_title: "Tipos de Incidentes", card2_title: "Vehículo Involucrado", card3_title: "Zonas de Mayor Impacto", card4_title: "Pico de Frecuencia", card5_title: "Tasa de Traslados", card_grilla_title: "Grilla de Calor", card_etario_title: "Rango Etario", footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias", loading_chart: "Cargando gráfico...", no_chart: "Gráfico no disponible.", no_summary: "Resumen no disponible." },
-        en: { box_title: "Monthly Report", box_btn: "📄 View report", main_title: "Traffic Incidents", main_subtitle: "Monitoring of traffic incidents attended by the SAME / ECUES team.", select_year: "Year", select_month: "Month", btn_mapa: "🌐 Open Interactive Map", card1_title: "Types of Incidents", card2_title: "Involved Vehicle", card3_title: "Highest Impact Zones", card4_title: "Peak Frequency", card5_title: "Transfer Rate", card_grilla_title: "Heatmap", card_etario_title: "Age Range", footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team", loading_chart: "Loading chart...", no_chart: "Chart not available.", no_summary: "Summary not available." },
-        pt: { box_title: "Relatório Mensal", box_btn: "📄 Ver relatório", main_title: "Incidentes de Trânsito", main_subtitle: "Monitoramento de incidentes de trânsito atendidos pela equipe SAME / ECUES.", select_year: "Ano", select_month: "Mês", btn_mapa: "🌐 Abrir Mapa Interactivo", card1_title: "Tipos de Incidentes", card2_title: "Veículo Envolvido", card3_title: "Zonas de Maior Impacto", card4_title: "Pico de Frecuencia", card5_title: "Taxa de Traslados", card_grilla_title: "Mapa de Calor", card_etario_title: "Faixa Etária", footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde", loading_chart: "Carregando gráfico...", no_chart: "Gráfico não disponível.", no_summary: "Resumo não disponível." }
+        es: {
+            box_title: "Informe Mensual", box_btn: "📄 Ver informe",
+            main_title: "Incidentes de Tránsito", main_subtitle: "Monitoreo de incidentes viales atendidos por el equipo SAME / ECUES.",
+            select_year: "Año", select_month: "Mes", btn_mapa: "🌐 Abrir Mapa Interactivo",
+            card1_title: "Tipos de Incidentes", card2_title: "Vehículo Involucrado", 
+            card3_title: "Zonas de Mayor Impacto", card4_title: "Pico de Frecuencia", 
+            card5_title: "Tasa de Traslados", 
+            card_grilla_title: "Grilla de Calor", card_etario_title: "Rango Etario",
+            footer_text: "&copy; SAME / ECUES - Equipo de Comunicación Unificada de Emergencias Sanitarias",
+            loading_chart: "Cargando gráfico...", no_chart: "Gráfico no disponible para este periodo.",
+            no_summary: "Resumen no disponible.", lbl_comuna_na: "Comuna N/A"
+        },
+        en: {
+            box_title: "Monthly Report", box_btn: "📄 View report",
+            main_title: "Traffic Incidents", main_subtitle: "Monitoring of traffic incidents attended by the SAME / ECUES team.",
+            select_year: "Year", select_month: "Month", btn_mapa: "🌐 Open Interactive Map",
+            card1_title: "Types of Incidents", card2_title: "Involved Vehicle", 
+            card3_title: "Highest Impact Zones", card4_title: "Peak Frequency", 
+            card5_title: "Transfer Rate", 
+            card_grilla_title: "Heatmap", card_etario_title: "Age Range",
+            footer_text: "&copy; SAME / ECUES - Unified Health Emergency Communication Team",
+            loading_chart: "Loading chart...", no_chart: "Chart not available for this period.",
+            no_summary: "Summary not available.", lbl_comuna_na: "Commune N/A"
+        },
+        pt: {
+            box_title: "Relatório Mensal", box_btn: "📄 Ver relatório",
+            main_title: "Incidentes de Trânsito", main_subtitle: "Monitoramento de incidentes de trânsito atendidos pela equipe SAME / ECUES.",
+            select_year: "Ano", select_month: "Mês", btn_mapa: "🌐 Abrir Mapa Interativo",
+            card1_title: "Tipos de Incidentes", card2_title: "Veículo Envolvido", 
+            card3_title: "Zonas de Maior Impacto", card4_title: "Pico de Frequência", 
+            card5_title: "Taxa de Traslados", 
+            card_grilla_title: "Mapa de Calor", card_etario_title: "Faixa Etária",
+            footer_text: "&copy; SAME / ECUES - Equipe de Comunicação Unificada de Emergências de Saúde",
+            loading_chart: "Carregando gráfico...", no_chart: "Gráfico não disponível para este período.",
+            no_summary: "Resumo não disponível.", lbl_comuna_na: "Comuna N/A"
+        }
     };
 
     const nombresMeses = {
@@ -283,33 +385,160 @@
         pt: {"01":"Janeiro", "02":"Fevereiro", "03":"Março", "04":"Abril", "05":"Maio", "06":"Junho", "07":"Julho", "08":"Agosto", "09":"Setembro", "10":"Outubro", "11":"Novembro", "12":"Dezembro"}
     };
 
-    const periodos = ["2026-02"];
+    const diasMapa = {
+        es: { 1: 'Lunes', 2: 'Martes', 3: 'Miércoles', 4: 'Jueves', 5: 'Viernes', 6: 'Sábado', 7: 'Domingo' },
+        en: { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday', 6: 'Saturday', 7: 'Sunday' },
+        pt: { 1: 'Segunda-feira', 2: 'Terça-feira', 3: 'Quarta-feira', 4: 'Quinta-feira', 5: 'Sexta-feira', 6: 'Sábado', 7: 'Domingo' }
+    };
 
+    function cambiarIdioma(lang) {
+        idiomaActual = lang;
+        document.querySelectorAll('.btn-lang').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if(diccionario[lang][key]) el.innerHTML = diccionario[lang][key];
+        });
+
+        const selMes = document.getElementById('sel-mes');
+        Array.from(selMes.options).forEach(opt => {
+            opt.innerHTML = nombresMeses[idiomaActual][opt.value];
+        });
+
+        actualizarPeriodo();
+    }
+
+    const periodos = [
+        "2026-02", 
+    ];
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    
     function init() {
         const selAnio = document.getElementById('sel-anio');
         const aniosUnicos = [...new Set(periodos.map(p => p.split('-')[0]))].sort().reverse();
-        aniosUnicos.forEach(a => { const o = document.createElement('option'); o.value = a; o.innerHTML = a; selAnio.appendChild(o); });
+        
+        aniosUnicos.forEach(a => {
+            const o = document.createElement('option');
+            o.value = a; o.innerHTML = a;
+            selAnio.appendChild(o);
+        });
+
         actualizarOpcionesMeses();
     }
 
     function actualizarOpcionesMeses() {
         const anioElegido = document.getElementById('sel-anio').value;
         const selMes = document.getElementById('sel-mes');
+        const mesAnterior = selMes.value; 
+        
         selMes.innerHTML = ''; 
-        const mesesDelAnio = periodos.filter(p => p.startsWith(anioElegido)).map(p => p.split('-')[1]).sort().reverse();
-        mesesDelAnio.forEach(m => { const o = document.createElement('option'); o.value = m; o.innerHTML = nombresMeses[idiomaActual][m]; selMes.appendChild(o); });
+        
+        const mesesDelAnio = periodos
+            .filter(p => p.startsWith(anioElegido))
+            .map(p => p.split('-')[1])
+            .sort().reverse();
+
+        mesesDelAnio.forEach(m => {
+            const o = document.createElement('option');
+            o.value = m;
+            o.innerHTML = nombresMeses[idiomaActual][m];
+            selMes.appendChild(o);
+        });
+
+        if (mesAnterior && mesesDelAnio.includes(mesAnterior)) {
+            selMes.value = mesAnterior;
+        }
+
         actualizarPeriodo();
     }
 
     function actualizarPeriodo() {
         const anio = document.getElementById('sel-anio').value;
         const mes = document.getElementById('sel-mes').value;
-        cargarDatosPanel(`${anio}-${mes}`);
+        const periodoCompuesto = `${anio}-${mes}`;
+        
+        cargarDatosPanel(periodoCompuesto);
     }
 
-    function abrirModal(ruta) {
+    function abrirMapa() {
+        const anio = document.getElementById('sel-anio').value;
+        const mes = document.getElementById('sel-mes').value;
+        const periodo = `${anio}-${mes}`;
+        
+        const urlMapa = `mapas/${idiomaActual}/${anio}/${periodo}/mapa.html`;
+        window.open(urlMapa, '_blank');
+    }
+
+    async function cargarGraficoHTML(iframeId, fallbackId, linkId, ruta) {
+        const iframeEl = document.getElementById(iframeId);
+        const errEl = document.getElementById(fallbackId);
+        const linkEl = document.getElementById(linkId);
+        
+        iframeEl.style.display = 'none';
+        linkEl.style.display = 'none';
+        errEl.style.display = 'block';
+
+        try {
+            const res = await fetch(ruta, { method: 'HEAD' });
+            if (!res.ok) throw new Error("Archivo HTML no encontrado");
+            
+            iframeEl.src = ruta;
+            iframeEl.onload = () => {
+                iframeEl.style.display = 'block';
+                linkEl.style.display = 'flex'; 
+                linkEl.onclick = () => abrirModal(ruta, false);
+                errEl.style.display = 'none';
+            };
+        } catch (error) {
+            iframeEl.style.display = 'none';
+            linkEl.style.display = 'none';
+            errEl.style.display = 'block';
+            errEl.style.background = 'transparent';
+            errEl.innerText = diccionario[idiomaActual].no_chart;
+        }
+    }
+
+    function cargarImagenYHTML(imgId, fallbackId, linkId, rutaImg, rutaHtml) {
+        const imgEl = document.getElementById(imgId);
+        const errEl = document.getElementById(fallbackId);
+        const linkEl = document.getElementById(linkId);
+
+        imgEl.style.display = 'none';
+        linkEl.style.display = 'none';
+        errEl.style.display = 'block';
+
+        imgEl.onload = async () => {
+            imgEl.style.display = 'block';
+            errEl.style.display = 'none';
+            try {
+                const res = await fetch(rutaHtml, { method: 'HEAD' });
+                if (res.ok) {
+                    linkEl.style.display = 'flex';
+                    linkEl.onclick = () => abrirModal(rutaHtml, false);
+                }
+            } catch(e) {}
+        };
+        imgEl.onerror = () => {
+            imgEl.style.display = 'none';
+            errEl.style.display = 'block';
+            errEl.style.background = 'transparent';
+            errEl.innerText = diccionario[idiomaActual].no_chart;
+        };
+        imgEl.src = rutaImg;
+    }
+
+    function abrirModal(ruta, esImagen = false) {
         const modal = document.getElementById('lightbox-modal');
-        document.getElementById('modal-body').innerHTML = `<iframe src="${ruta}"></iframe>`;
+        const modalBody = document.getElementById('modal-body');
+        
+        if (esImagen) {
+            modalBody.innerHTML = `<img src="${ruta}" alt="Gráfico ampliado">`;
+        } else {
+            modalBody.innerHTML = `<iframe src="${ruta}"></iframe>`;
+        }
+        
         modal.style.display = 'flex';
         setTimeout(() => modal.classList.add('active'), 10);
     }
@@ -317,63 +546,110 @@
     function cerrarModal() {
         const modal = document.getElementById('lightbox-modal');
         modal.classList.remove('active');
-        setTimeout(() => { modal.style.display = 'none'; document.getElementById('modal-body').innerHTML = ''; }, 300);
+        
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.getElementById('modal-body').innerHTML = ''; 
+        }, 300);
     }
 
+    document.getElementById('lightbox-modal').addEventListener('click', function(e) {
+        if(e.target === this) cerrarModal();
+    });
+    
     async function cargarDatosPanel(mes_anio) {
         const anio = mes_anio.split("-")[0];
         const timeStamp = new Date().getTime();
         const rutaBaseHtml = `graficos/${idiomaActual}/${anio}/${mes_anio}`;
         
-        // CARGA DEL NUEVO ARCHIVO HTML PARA PICO DE FRECUENCIA
-        const iframePico = document.getElementById('iframe-pico');
-        iframePico.src = `${rutaBaseHtml}/pico_frecuencia.html?v=${timeStamp}`;
-
-        cargarImagenYHTML('img-tipos', 'fallback-tipos', 'link-tipos', `${rutaBaseHtml}/tipo_incidente.png?v=${timeStamp}`, `${rutaBaseHtml}/tipo_incidente.html?v=${timeStamp}`);
+        cargarImagenYHTML('img-tipos', 'fallback-tipos', 'link-tipos', 
+            `${rutaBaseHtml}/tipo_incidente.png?v=${timeStamp}`, 
+            `${rutaBaseHtml}/tipo_incidente.html?v=${timeStamp}`
+        );
+        
         cargarGraficoHTML('iframe-vehiculos', 'fallback-vehiculos', 'link-vehiculos', `${rutaBaseHtml}/vehiculo_involucrado.html?v=${timeStamp}`);
+        
+        // --- AQUÍ CARGAMOS TU NUEVO GRÁFICO DE ZONAS DE IMPACTO ---
         cargarGraficoHTML('iframe-zonas', 'fallback-zonas', 'link-zonas', `${rutaBaseHtml}/zonas_impacto.html?v=${timeStamp}`);
+        
         cargarGraficoHTML('iframe-traslados', 'fallback-traslados', 'link-traslados', `${rutaBaseHtml}/tasa_traslados.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-grilla', 'fallback-grilla', 'link-grilla', `${rutaBaseHtml}/grilla_calor.html?v=${timeStamp}`);
         cargarGraficoHTML('iframe-etario', 'fallback-etario', 'link-etario', `${rutaBaseHtml}/rango_etario.html?v=${timeStamp}`);
 
         const urlFetch = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf?v=${timeStamp}`; 
-        document.getElementById('lnk-pdf-download').href = urlFetch;
-        document.getElementById('btn-ver-pdf').onclick = () => abrirModal(urlFetch);
+        const urlPdfPuro = `reportes/${idiomaActual}/${anio}/${mes_anio}.pdf`;
+        
+        document.getElementById('lnk-pdf-download').href = urlPdfPuro;
+        document.getElementById('btn-ver-pdf').onclick = () => abrirModal(urlPdfPuro, false);
         
         try {
             const res = await fetch(urlFetch);
             if (!res.ok) throw new Error("PDF no encontrado");
+            
             const data = await res.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({data}).promise;
             let fullText = "";
-            for(let i=1; i<=pdf.numPages; i++){ const page = await pdf.getPage(i); const content = await page.getTextContent(); fullText += content.items.map(item => item.str).join(" "); }
-            document.getElementById('txt-parrafo').innerText = fullText.substring(0, 300) + "..."; // Simplificado para el ejemplo
-        } catch (e) { document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; }
+            for(let i=1; i<=pdf.numPages; i++){
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                fullText += content.items.map(item => item.str).join(" ");
+            }
+            procesarTextosDinamicos(fullText);
+        } catch (e) { 
+            console.error(e);
+            document.getElementById('txt-parrafo').innerText = diccionario[idiomaActual].no_summary; 
+            document.getElementById('p-dia').innerText = "---";
+            document.getElementById('p-hora').innerText = "--:-- hs";
+        }
     }
 
-    function cargarGraficoHTML(iframeId, fallbackId, linkId, ruta) {
-        const iframeEl = document.getElementById(iframeId);
-        const errEl = document.getElementById(fallbackId);
-        const linkEl = document.getElementById(linkId);
-        iframeEl.style.display = 'none';
-        fetch(ruta, { method: 'HEAD' }).then(res => {
-            if (res.ok) { 
-                iframeEl.src = ruta; 
-                iframeEl.onload = () => { iframeEl.style.display = 'block'; linkEl.style.display = 'flex'; linkEl.onclick = () => abrirModal(ruta); errEl.style.display = 'none'; };
-            } else { errEl.style.display = 'block'; errEl.style.background = 'transparent'; errEl.innerText = diccionario[idiomaActual].no_chart; }
-        });
-    }
+    function procesarTextosDinamicos(t) {
+        const texto = t.replace(/\s+/g, ' ');
 
-    function cargarImagenYHTML(imgId, fallbackId, linkId, rutaImg, rutaHtml) {
-        const imgEl = document.getElementById(imgId);
-        const errEl = document.getElementById(fallbackId);
-        const linkEl = document.getElementById(linkId);
-        imgEl.onload = () => { imgEl.style.display = 'block'; errEl.style.display = 'none'; fetch(rutaHtml, { method: 'HEAD' }).then(res => { if (res.ok) { linkEl.style.display = 'flex'; linkEl.onclick = () => abrirModal(rutaHtml); } }); };
-        imgEl.onerror = () => { imgEl.style.display = 'none'; errEl.style.display = 'block'; errEl.style.background = 'transparent'; errEl.innerText = diccionario[idiomaActual].no_chart; };
-        imgEl.src = rutaImg;
+        // 1. Detección del Resumen
+        let textoResumen = diccionario[idiomaActual].no_summary;
+        const matchResumen = texto.match(/((?:En el mes|Durante|In the month|During|No m[êe]s de|Em ).{10,300}?(?:pacientes|atenciones|patients|attentions|attended|atendimentos)\.?)/i) 
+                          || texto.match(/([A-Z][^\.]{10,200}(?:solicitudes|requests|solicitações)[^\.]{5,200}(?:pacientes|patients)\.)/i);
+        if (matchResumen) { textoResumen = matchResumen[1]; }
+        document.getElementById('txt-parrafo').innerText = textoResumen;
+
+        // 2. Detección del Día
+        let d = "---"; let h = "--:-- hs";
+        const matchDia = texto.match(/(lunes|martes|mi[eé]rcoles|jueves|viernes|s[aá]bados?|domingos?|monday|mondays|tuesday|tuesdays|wednesday|wednesdays|thursday|thursdays|friday|fridays|saturday|saturdays|sunday|sundays|segunda|ter[çc]a|quarta|quinta|sexta|s[áa]bado|domingo)/i);
+        if (matchDia) {
+            let dRaw = matchDia[1].toLowerCase();
+            let dayNum = 0;
+            if(dRaw.includes('lun') || dRaw.includes('mon') || dRaw.includes('seg')) dayNum = 1;
+            else if(dRaw.includes('mar') || dRaw.includes('tue') || dRaw.includes('ter')) dayNum = 2;
+            else if(dRaw.includes('mi') || dRaw.includes('wed') || dRaw.includes('qua')) dayNum = 3;
+            else if(dRaw.includes('jue') || dRaw.includes('thu') || dRaw.includes('qui')) dayNum = 4;
+            else if(dRaw.includes('vie') || dRaw.includes('fri') || dRaw.includes('sex')) dayNum = 5;
+            else if(dRaw.includes('sáb') || dRaw.includes('sab') || dRaw.includes('sat')) dayNum = 6;
+            else if(dRaw.includes('dom') || dRaw.includes('sun')) dayNum = 7;
+            
+            if(dayNum > 0) d = diasMapa[idiomaActual][dayNum];
+        }
+
+        // 3. Detección de la Hora
+        let matchHora = null;
+        matchHora = texto.match(/(?:entre|between|de|desde|às|as|at)\s*(\d{1,2})(?::00|h|hs)?\s*(?:y|a|hasta|-|and|e|to)\s*(\d{1,2})(?::00|h|hs)?\s*(?:hs|hrs|horas|hours|h)?/i);
+        if (!matchHora) { matchHora = texto.match(/(\d{1,2})(?:\:00)?\s*(?:a|y|hasta|-)\s*(?:las\s*)?(\d{1,2})(?:\:00)?\s*(?:h|hs|hrs|horas|hours)/i); }
+        if (!matchHora) { matchHora = texto.match(/(\d{1,2}):00\s*(?:a|y|hasta|-)\s*(\d{1,2}):00/i); }
+
+        if (matchHora) {
+            let hora1 = matchHora[1].toString().padStart(2, '0');
+            let hora2 = matchHora[2].toString().padStart(2, '0');
+            h = `${hora1}:00 — ${hora2}:00 hs`;
+        }
+        document.getElementById('p-dia').innerText = d;
+        document.getElementById('p-hora').innerText = h;
+        
+        // NOTA: Como ahora usamos un gráfico HTML para las zonas de impacto, 
+        // ya no necesitamos el código antiguo que extraía las comunas y dibujaba barras manualmente.
     }
 
     window.onload = init;
+
 </script>
 </body>
 </html>
